@@ -19,11 +19,17 @@
   --color-accent-500: #f59e0b;
 }
 
+html {
+  overflow: hidden;
+  height: 100%;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  overflow-x: hidden;
+  overflow: hidden;
+  height: 100%;
 }
 
 /* Glassmorphism utilities */
@@ -65,7 +71,4 @@ body {
   box-shadow: 0 0 20px rgba(6, 182, 212, 0.3), 0 0 40px rgba(6, 182, 212, 0.2);
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
+/* Smooth scrolling - aplicado ao container de conteúdo */

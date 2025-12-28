@@ -48,9 +48,9 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 glass-strong border-r border-white/10 flex flex-col">
+    <aside className="w-64 glass-strong border-r border-white/10 flex flex-col h-full overflow-hidden">
       {/* Logo */}
-      <div className="p-6 border-b border-white/10">
+      <div className="p-6 border-b border-white/10 flex-shrink-0">
         <Link href="/dashboard" className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-lg flex items-center justify-center font-bold text-xl">
             R
@@ -60,7 +60,7 @@ export default function Sidebar() {
       </div>
 
       {/* User Info */}
-      <div className="p-6 border-b border-white/10">
+      <div className="p-6 border-b border-white/10 flex-shrink-0">
         <div className="glass rounded-xl p-4">
           <p className="text-sm text-gray-400 mb-1">Olá,</p>
           <p className="font-bold text-lg mb-3">{user?.name}</p>
@@ -82,7 +82,7 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -103,7 +103,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Referral Link */}
-      <div className="p-4 border-t border-white/10">
+      <div className="p-4 border-t border-white/10 flex-shrink-0">
         <div className="glass rounded-xl p-4">
           <p className="text-xs text-gray-400 mb-2">Seu link de indicação:</p>
           <div className="flex items-center gap-2">
@@ -127,7 +127,7 @@ export default function Sidebar() {
       </div>
 
       {/* Logout */}
-      <div className="p-4 border-t border-white/10">
+      <div className="p-4 border-t border-white/10 flex-shrink-0">
         <button
           onClick={handleLogout}
           className="w-full px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all flex items-center justify-center gap-2"
