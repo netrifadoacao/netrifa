@@ -1,0 +1,29 @@
+[
+  {
+    "id": "1",
+    "nome": "Curso Básico",
+    "descricao": "Curso básico de introdução ao sistema",
+    "preco": 100.00,
+    "tipo": "digital",
+    "ativo": true,
+    "dataCriacao": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "2",
+    "nome": "Curso Avançado",
+    "descricao": "Curso avançado com técnicas avançadas",
+    "preco": 250.00,
+    "tipo": "digital",
+    "ativo": true,
+    "dataCriacao": "2024-01-05T00:00:00Z"
+  },
+  {
+    "id": "3",
+    "nome": "Pacote Premium",
+    "descricao": "Pacote completo com todos os materiais",
+    "preco": 500.00,
+    "tipo": "digital",
+    "ativo": true,
+    "dataCriacao": "2024-01-10T00:00:00Z"
+  }
+]

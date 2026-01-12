@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1",
+    "usuarioId": "2",
+    "produtoId": "1",
+    "valor": 100,
+    "status": "aprovado",
+    "dataCompra": "2024-01-20T00:00:00Z",
+    "dataAprovacao": "2024-01-20T00:00:00Z"
+  },
+  {
+    "id": "2",
+    "usuarioId": "3",
+    "produtoId": "1",
+    "valor": 100,
+    "status": "aprovado",
+    "dataCompra": "2024-02-05T00:00:00Z",
+    "dataAprovacao": "2024-02-05T00:00:00Z"
+  },
+  {
+    "id": "3",
+    "usuarioId": "2",
+    "produtoId": "2",
+    "valor": 250,
+    "status": "aprovado",
+    "dataCompra": "2024-02-10T00:00:00Z",
+    "dataAprovacao": "2026-01-12T01:51:31.828Z"
+  },
+  {
+    "id": "4",
+    "usuarioId": "2",
+    "produtoId": "1",
+    "valor": 100,
+    "status": "aprovado",
+    "dataCompra": "2026-01-12T01:53:24.633Z",
+    "dataAprovacao": "2026-01-12T01:53:24.633Z"
+  }
+]

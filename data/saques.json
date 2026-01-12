@@ -1,0 +1,15 @@
+[
+  {
+    "id": "1",
+    "usuarioId": "2",
+    "valor": 200,
+    "status": "pago",
+    "metodoPagamento": "pix",
+    "dadosPagamento": {
+      "pix": "joao@exemplo.com"
+    },
+    "dataSolicitacao": "2024-02-08T00:00:00Z",
+    "dataAprovacao": "2026-01-12T01:52:54.822Z",
+    "dataPagamento": "2026-01-12T01:53:02.514Z"
+  }
+]

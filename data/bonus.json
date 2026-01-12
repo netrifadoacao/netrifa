@@ -1,0 +1,41 @@
+[
+  {
+    "id": "1",
+    "usuarioId": "2",
+    "tipo": "direto",
+    "origemUsuarioId": "3",
+    "origemCompraId": "2",
+    "valor": 10,
+    "data": "2024-02-05T00:00:00Z"
+  },
+  {
+    "id": "2",
+    "usuarioId": "1",
+    "tipo": "rede",
+    "nivel": 2,
+    "origemUsuarioId": "3",
+    "origemCompraId": "2",
+    "valor": 5,
+    "data": "2024-02-05T00:00:00Z"
+  },
+  {
+    "id": "3",
+    "usuarioId": "1",
+    "tipo": "direto",
+    "nivel": null,
+    "origemUsuarioId": "2",
+    "origemCompraId": "3",
+    "valor": 25,
+    "data": "2026-01-12T01:51:31.831Z"
+  },
+  {
+    "id": "4",
+    "usuarioId": "1",
+    "tipo": "direto",
+    "nivel": null,
+    "origemUsuarioId": "2",
+    "origemCompraId": "4",
+    "valor": 10,
+    "data": "2026-01-12T01:53:24.634Z"
+  }
+]

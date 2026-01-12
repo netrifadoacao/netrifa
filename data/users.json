@@ -1,0 +1,74 @@
+[
+  {
+    "id": "1",
+    "nome": "Administrador",
+    "email": "admin@exemplo.com",
+    "telefone": "(11) 99999-9999",
+    "senha": "admin123",
+    "tipo": "admin",
+    "linkIndicacao": "admin",
+    "saldo": 35,
+    "dadosBancarios": {
+      "banco": "",
+      "agencia": "",
+      "conta": "",
+      "pix": ""
+    },
+    "patrocinadorId": null,
+    "dataCadastro": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "2",
+    "nome": "João Silva",
+    "email": "joao@exemplo.com",
+    "telefone": "(11) 88888-8888",
+    "senha": "123456",
+    "tipo": "usuario",
+    "linkIndicacao": "joao-silva",
+    "saldo": 300,
+    "dadosBancarios": {
+      "banco": "Banco do Brasil",
+      "agencia": "1234",
+      "conta": "56789-0",
+      "pix": "joao@exemplo.com"
+    },
+    "patrocinadorId": "1",
+    "dataCadastro": "2024-01-15T00:00:00Z"
+  },
+  {
+    "id": "3",
+    "nome": "Maria Santos",
+    "email": "maria@exemplo.com",
+    "telefone": "(11) 77777-7777",
+    "senha": "123456",
+    "tipo": "usuario",
+    "linkIndicacao": "maria-santos",
+    "saldo": 300,
+    "dadosBancarios": {
+      "banco": "",
+      "agencia": "",
+      "conta": "",
+      "pix": "maria@exemplo.com"
+    },
+    "patrocinadorId": "2",
+    "dataCadastro": "2024-02-01T00:00:00Z"
+  },
+  {
+    "id": "4",
+    "nome": "Moises",
+    "email": "moises@exemplo.com",
+    "telefone": "92984759201",
+    "senha": "123456",
+    "tipo": "usuario",
+    "linkIndicacao": "moises-1768182866732",
+    "saldo": 0,
+    "dadosBancarios": {
+      "banco": "",
+      "agencia": "",
+      "conta": "",
+      "pix": ""
+    },
+    "patrocinadorId": "2",
+    "dataCadastro": "2026-01-12T01:54:26.732Z"
+  }
+]
