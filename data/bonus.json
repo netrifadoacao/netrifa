@@ -37,5 +37,35 @@
     "origemCompraId": "4",
     "valor": 10,
     "data": "2026-01-12T01:53:24.634Z"
+  },
+  {
+    "id": "5",
+    "usuarioId": "1",
+    "tipo": "direto",
+    "nivel": null,
+    "origemUsuarioId": "2",
+    "origemCompraId": "5",
+    "valor": 25,
+    "data": "2026-01-25T21:15:07.196Z"
+  },
+  {
+    "id": "6",
+    "usuarioId": "1",
+    "tipo": "direto",
+    "nivel": null,
+    "origemUsuarioId": "2",
+    "origemCompraId": "6",
+    "valor": 25,
+    "data": "2026-01-25T21:35:21.973Z"
+  },
+  {
+    "id": "7",
+    "usuarioId": "1",
+    "tipo": "direto",
+    "nivel": null,
+    "origemUsuarioId": "2",
+    "origemCompraId": "7",
+    "valor": 25,
+    "data": "2026-01-25T22:30:43.344Z"
   }
 ]

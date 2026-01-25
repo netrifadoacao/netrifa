@@ -103,35 +103,35 @@ export default function AprovarPage() {
     <div className="py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Aprovar Compras</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="text-3xl font-bold text-white font-display">Aprovar Compras</h1>
+          <p className="mt-2 text-sm text-gray-400">
             Gerencie compras pendentes de aprovação
           </p>
         </div>
 
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
-          <ul className="divide-y divide-gray-200">
+        <div className="bg-white/5 backdrop-blur-md border border-white/10 shadow-lg overflow-hidden sm:rounded-xl">
+          <ul className="divide-y divide-white/10">
             {compras.length === 0 ? (
-              <li className="px-6 py-4 text-center text-gray-500">
+              <li className="px-6 py-4 text-center text-gray-400">
                 Nenhuma compra pendente no momento.
               </li>
             ) : (
               compras.map((compra) => (
-                <li key={compra.id} className="px-6 py-4">
+                <li key={compra.id} className="px-6 py-4 hover:bg-white/5 transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center">
                         <div>
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="text-sm font-medium text-white">
                             {compra.produto?.nome || 'Produto não encontrado'}
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-gray-400">
                             Comprador: {compra.usuario?.nome} ({compra.usuario?.email})
                           </p>
-                          <p className="text-sm text-gray-500">
-                            Valor: R$ {compra.valor.toFixed(2)}
+                          <p className="text-sm text-gray-400">
+                            Valor: <span className="text-primary-400 font-bold">R$ {compra.valor.toFixed(2)}</span>
                           </p>
-                          <p className="text-xs text-gray-400 mt-1">
+                          <p className="text-xs text-gray-500 mt-1">
                             Data: {formatDate(compra.dataCompra)}
                           </p>
                         </div>
@@ -140,14 +140,14 @@ export default function AprovarPage() {
                     <div className="ml-4 flex space-x-2">
                       <button
                         onClick={() => handleAprovar(compra.id)}
-                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
+                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)] transition-all"
                       >
                         <FiCheckCircle className="mr-2" />
                         Aprovar
                       </button>
                       <button
                         onClick={() => handleReprovar(compra.id)}
-                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
+                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-red-600 hover:bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)] transition-all"
                       >
                         <FiXCircle className="mr-2" />
                         Reprovar

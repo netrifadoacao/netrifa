@@ -54,36 +54,36 @@ export default function AdminHome() {
       name: 'Total Vendidos',
       value: data.totalVendidos,
       icon: FiShoppingBag,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100',
+      color: 'text-primary-400',
+      bgColor: 'bg-primary-500/20',
     },
     {
       name: 'Faturamento',
       value: `R$ ${data.faturamento.toFixed(2)}`,
       icon: FiDollarSign,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100',
+      color: 'text-amber-400',
+      bgColor: 'bg-amber-500/20',
     },
     {
       name: 'Usuários',
       value: data.quantidadeUsuarios,
       icon: FiUsers,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100',
+      color: 'text-cyan-400',
+      bgColor: 'bg-cyan-500/20',
     },
     {
       name: 'Produtos Ativos',
       value: data.produtosAtivos,
       icon: FiTrendingUp,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-100',
+      color: 'text-emerald-400',
+      bgColor: 'bg-emerald-500/20',
     },
     {
       name: 'Compras Pendentes',
       value: data.comprasPendentes,
       icon: FiClock,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-100',
+      color: 'text-secondary-400',
+      bgColor: 'bg-secondary-500/20',
     },
   ];
 
@@ -91,8 +91,8 @@ export default function AdminHome() {
     <div className="py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard Administrativo</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="text-3xl font-bold text-white font-display">Dashboard Administrativo</h1>
+          <p className="mt-2 text-sm text-gray-400">
             Visão geral do sistema
           </p>
         </div>
@@ -101,18 +101,18 @@ export default function AdminHome() {
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
-              <div key={stat.name} className="bg-white overflow-hidden shadow rounded-lg">
+              <div key={stat.name} className="bg-white/5 backdrop-blur-md overflow-hidden shadow-lg rounded-xl border border-white/10 transition-all duration-300 hover:bg-white/10 hover:shadow-[0_0_20px_rgba(14,165,233,0.1)]">
                 <div className="p-5">
                   <div className="flex items-center">
-                    <div className={`flex-shrink-0 ${stat.bgColor} rounded-md p-3`}>
+                    <div className={`flex-shrink-0 ${stat.bgColor} rounded-lg p-3 shadow-inner`}>
                       <Icon className={`h-6 w-6 ${stat.color}`} />
                     </div>
                     <div className="ml-5 w-0 flex-1">
                       <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">
+                        <dt className="text-sm font-medium text-gray-400 truncate">
                           {stat.name}
                         </dt>
-                        <dd className="text-lg font-semibold text-gray-900">{stat.value}</dd>
+                        <dd className="text-lg font-semibold text-white mt-1">{stat.value}</dd>
                       </dl>
                     </div>
                   </div>

@@ -105,18 +105,20 @@ export default function SaquePage() {
     <div className="py-6">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Solicitar Saque</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="text-3xl font-bold text-white font-display">Solicitar Saque</h1>
+          <p className="mt-2 text-sm text-gray-400">
             Solicite a retirada dos seus ganhos
           </p>
         </div>
 
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
+        <div className="bg-white/5 backdrop-blur-md border border-white/10 shadow-lg rounded-xl p-6 mb-6">
           <div className="flex items-center">
-            <FiDollarSign className="h-8 w-8 text-primary-600" />
+            <div className="p-3 rounded-lg bg-primary-500/20">
+              <FiDollarSign className="h-8 w-8 text-primary-400" />
+            </div>
             <div className="ml-4">
-              <p className="text-sm text-gray-600">Saldo Disponível</p>
-              <p className="text-3xl font-bold text-primary-600">R$ {saldo.toFixed(2)}</p>
+              <p className="text-sm text-gray-400">Saldo Disponível</p>
+              <p className="text-3xl font-bold text-primary-400">R$ {saldo.toFixed(2)}</p>
               <p className="text-xs text-gray-500 mt-1">
                 Valor mínimo: R$ {valorMinimo.toFixed(2)}
               </p>
@@ -124,10 +126,10 @@ export default function SaquePage() {
           </div>
         </div>
 
-        <div className="bg-white shadow rounded-lg">
+        <div className="bg-white/5 backdrop-blur-md border border-white/10 shadow-lg rounded-xl">
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
             <div>
-              <label htmlFor="valor" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="valor" className="block text-sm font-medium text-gray-300">
                 Valor do Saque
               </label>
               <input
@@ -137,7 +139,7 @@ export default function SaquePage() {
                 min={valorMinimo}
                 max={saldo}
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
                 placeholder={`Mínimo: R$ ${valorMinimo.toFixed(2)}`}
                 value={formData.valor}
                 onChange={(e) => setFormData({ ...formData, valor: e.target.value })}
@@ -145,13 +147,13 @@ export default function SaquePage() {
             </div>
 
             <div>
-              <label htmlFor="metodoPagamento" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="metodoPagamento" className="block text-sm font-medium text-gray-300">
                 Método de Pagamento
               </label>
               <select
                 id="metodoPagamento"
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors [&>option]:text-gray-900"
                 value={formData.metodoPagamento}
                 onChange={(e) => setFormData({ ...formData, metodoPagamento: e.target.value })}
               >
@@ -162,14 +164,14 @@ export default function SaquePage() {
 
             {formData.metodoPagamento === 'pix' ? (
               <div>
-                <label htmlFor="pix" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="pix" className="block text-sm font-medium text-gray-300">
                   Chave PIX
                 </label>
                 <input
                   type="text"
                   id="pix"
                   required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
                   placeholder="CPF, Email, Telefone ou Chave Aleatória"
                   value={formData.pix}
                   onChange={(e) => setFormData({ ...formData, pix: e.target.value })}
@@ -178,40 +180,40 @@ export default function SaquePage() {
             ) : (
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
                 <div>
-                  <label htmlFor="banco" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="banco" className="block text-sm font-medium text-gray-300">
                     Banco
                   </label>
                   <input
                     type="text"
                     id="banco"
                     required
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
                     value={formData.banco}
                     onChange={(e) => setFormData({ ...formData, banco: e.target.value })}
                   />
                 </div>
                 <div>
-                  <label htmlFor="agencia" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="agencia" className="block text-sm font-medium text-gray-300">
                     Agência
                   </label>
                   <input
                     type="text"
                     id="agencia"
                     required
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
                     value={formData.agencia}
                     onChange={(e) => setFormData({ ...formData, agencia: e.target.value })}
                   />
                 </div>
                 <div>
-                  <label htmlFor="conta" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="conta" className="block text-sm font-medium text-gray-300">
                     Conta
                   </label>
                   <input
                     type="text"
                     id="conta"
                     required
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
                     value={formData.conta}
                     onChange={(e) => setFormData({ ...formData, conta: e.target.value })}
                   />
@@ -223,14 +225,14 @@ export default function SaquePage() {
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                className="px-4 py-2 border border-white/20 shadow-sm text-sm font-medium rounded-lg text-gray-300 bg-transparent hover:bg-white/5 transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={loading || saldo < valorMinimo}
-                className="px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+                className="px-6 py-2 border border-transparent shadow-[0_0_15px_rgba(14,165,233,0.3)] text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-500 hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 transition-all"
               >
                 {loading ? 'Processando...' : 'Solicitar Saque'}
               </button>

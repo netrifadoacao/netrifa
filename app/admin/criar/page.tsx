@@ -98,39 +98,39 @@ export default function CriarPage() {
     <div className="py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Criar Produto</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="text-3xl font-bold text-white font-display">Criar Produto</h1>
+          <p className="mt-2 text-sm text-gray-400">
             Crie novos produtos para venda no sistema
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white shadow rounded-lg p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Novo Produto</h2>
+          <div className="bg-white/5 backdrop-blur-md border border-white/10 shadow-lg rounded-xl p-6">
+            <h2 className="text-lg font-medium text-white mb-4">Novo Produto</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="nome" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="nome" className="block text-sm font-medium text-gray-300">
                   Nome
                 </label>
                 <input
                   type="text"
                   id="nome"
                   required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
                   value={formData.nome}
                   onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                 />
               </div>
 
               <div>
-                <label htmlFor="descricao" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="descricao" className="block text-sm font-medium text-gray-300">
                   Descrição
                 </label>
                 <textarea
                   id="descricao"
                   rows={3}
                   required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
                   value={formData.descricao}
                   onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
                 />
@@ -138,7 +138,7 @@ export default function CriarPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="preco" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="preco" className="block text-sm font-medium text-gray-300">
                     Preço (R$)
                   </label>
                   <input
@@ -147,24 +147,24 @@ export default function CriarPage() {
                     step="0.01"
                     min="0"
                     required
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
                     value={formData.preco}
                     onChange={(e) => setFormData({ ...formData, preco: e.target.value })}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="tipo" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="tipo" className="block text-sm font-medium text-gray-300">
                     Tipo
                   </label>
                   <select
                     id="tipo"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
                     value={formData.tipo}
                     onChange={(e) => setFormData({ ...formData, tipo: e.target.value })}
                   >
-                    <option value="digital">Digital</option>
-                    <option value="fisico">Físico</option>
+                    <option value="digital" className="bg-rich-black text-white">Digital</option>
+                    <option value="fisico" className="bg-rich-black text-white">Físico</option>
                   </select>
                 </div>
               </div>
@@ -172,31 +172,33 @@ export default function CriarPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-[0_0_15px_rgba(14,165,233,0.3)] text-sm font-medium text-white bg-primary-600 hover:bg-primary-500 hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 transition-all"
               >
                 {loading ? 'Criando...' : 'Criar Produto'}
               </button>
             </form>
           </div>
 
-          <div className="bg-white shadow rounded-lg p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Produtos Cadastrados</h2>
+          <div className="bg-white/5 backdrop-blur-md border border-white/10 shadow-lg rounded-xl p-6">
+            <h2 className="text-lg font-medium text-white mb-4">Produtos Cadastrados</h2>
             <div className="space-y-4">
               {produtos.map((produto) => (
-                <div key={produto.id} className="border border-gray-200 rounded-lg p-4">
+                <div key={produto.id} className="border border-white/10 rounded-lg p-4 bg-white/5">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center">
-                        <FiShoppingBag className="h-5 w-5 text-primary-600" />
-                        <h3 className="ml-2 text-sm font-medium text-gray-900">{produto.nome}</h3>
-                        <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                          produto.ativo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        <FiShoppingBag className="h-5 w-5 text-primary-400" />
+                        <h3 className="ml-2 text-sm font-medium text-white">{produto.nome}</h3>
+                        <span className={`ml-2 px-2 py-1 text-xs rounded-full border ${
+                          produto.ativo 
+                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                            : 'bg-red-500/10 text-red-400 border-red-500/20'
                         }`}>
                           {produto.ativo ? 'Ativo' : 'Inativo'}
                         </span>
                       </div>
-                      <p className="mt-1 text-sm text-gray-500">{produto.descricao}</p>
-                      <p className="mt-1 text-sm font-semibold text-primary-600">
+                      <p className="mt-1 text-sm text-gray-400">{produto.descricao}</p>
+                      <p className="mt-1 text-sm font-semibold text-primary-400">
                         R$ {produto.preco.toFixed(2)}
                       </p>
                     </div>

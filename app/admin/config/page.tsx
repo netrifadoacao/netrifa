@@ -75,20 +75,20 @@ export default function ConfigPage() {
     <div className="py-6">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Configuração de Bônus</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="text-3xl font-bold text-white font-display">Configuração de Bônus</h1>
+          <p className="mt-2 text-sm text-gray-400">
             Configure os percentuais de bônus para cada nível da rede
           </p>
         </div>
 
-        <div className="bg-white shadow rounded-lg">
+        <div className="bg-white/5 backdrop-blur-md border border-white/10 shadow-lg rounded-xl overflow-hidden">
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
-            <div className="border-b border-gray-200 pb-4">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Percentuais de Bônus (%)</h2>
+            <div className="border-b border-white/10 pb-4">
+              <h2 className="text-lg font-medium text-white mb-4">Percentuais de Bônus (%)</h2>
               
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="indicacaoDireta" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="indicacaoDireta" className="block text-sm font-medium text-gray-300">
                     Indicação Direta (1º nível)
                   </label>
                   <input
@@ -98,14 +98,14 @@ export default function ConfigPage() {
                     min="0"
                     max="100"
                     required
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
                     value={formData.indicacaoDireta}
                     onChange={(e) => setFormData({ ...formData, indicacaoDireta: parseFloat(e.target.value) })}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="nivel1" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="nivel1" className="block text-sm font-medium text-gray-300">
                     1º Nível (2º nível da rede)
                   </label>
                   <input
@@ -115,14 +115,14 @@ export default function ConfigPage() {
                     min="0"
                     max="100"
                     required
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
                     value={formData.nivel1}
                     onChange={(e) => setFormData({ ...formData, nivel1: parseFloat(e.target.value) })}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="nivel2" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="nivel2" className="block text-sm font-medium text-gray-300">
                     2º Nível (3º nível da rede)
                   </label>
                   <input
@@ -132,14 +132,14 @@ export default function ConfigPage() {
                     min="0"
                     max="100"
                     required
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
                     value={formData.nivel2}
                     onChange={(e) => setFormData({ ...formData, nivel2: parseFloat(e.target.value) })}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="nivel3" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="nivel3" className="block text-sm font-medium text-gray-300">
                     3º Nível (4º nível da rede)
                   </label>
                   <input
@@ -149,14 +149,14 @@ export default function ConfigPage() {
                     min="0"
                     max="100"
                     required
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
                     value={formData.nivel3}
                     onChange={(e) => setFormData({ ...formData, nivel3: parseFloat(e.target.value) })}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="nivel4" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="nivel4" className="block text-sm font-medium text-gray-300">
                     4º Nível (5º nível da rede)
                   </label>
                   <input
@@ -166,14 +166,14 @@ export default function ConfigPage() {
                     min="0"
                     max="100"
                     required
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
                     value={formData.nivel4}
                     onChange={(e) => setFormData({ ...formData, nivel4: parseFloat(e.target.value) })}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="nivel5" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="nivel5" className="block text-sm font-medium text-gray-300">
                     5º Nível
                   </label>
                   <input
@@ -183,7 +183,7 @@ export default function ConfigPage() {
                     min="0"
                     max="100"
                     required
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
                     value={formData.nivel5}
                     onChange={(e) => setFormData({ ...formData, nivel5: parseFloat(e.target.value) })}
                   />
@@ -191,9 +191,9 @@ export default function ConfigPage() {
               </div>
             </div>
 
-            <div className="border-t border-gray-200 pt-4">
+            <div className="border-t border-white/10 pt-4">
               <div>
-                <label htmlFor="valorMinimoSaque" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="valorMinimoSaque" className="block text-sm font-medium text-gray-300">
                   Valor Mínimo de Saque (R$)
                 </label>
                 <input
@@ -202,7 +202,7 @@ export default function ConfigPage() {
                   step="0.01"
                   min="0"
                   required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
                   value={formData.valorMinimoSaque}
                   onChange={(e) => setFormData({ ...formData, valorMinimoSaque: parseFloat(e.target.value) })}
                 />
@@ -213,7 +213,7 @@ export default function ConfigPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+                className="inline-flex items-center px-6 py-3 border border-transparent shadow-[0_0_15px_rgba(14,165,233,0.3)] text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-500 hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 transition-all duration-300"
               >
                 <FiSave className="mr-2" />
                 {loading ? 'Salvando...' : 'Salvar Configurações'}

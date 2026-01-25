@@ -13,51 +13,47 @@ module.exports = {
       },
       colors: {
         primary: {
-          50: '#FCF9EE',
-          100: '#F6EFD5',
-          200: '#EBDDA3',
-          300: '#E0C86E',
-          400: '#D4AF37', // Gold Base
-          500: '#B89628',
-          600: '#96781C',
-          700: '#755C14',
-          800: '#5C4814',
-          900: '#4D3C14',
-          950: '#2E2208',
+          50: '#f0f9ff',
+          100: '#e0f2fe',
+          200: '#bae6fd',
+          300: '#7dd3fc',
+          400: '#38bdf8', // Neon Blue Base
+          500: '#0ea5e9',
+          600: '#0284c7',
+          700: '#0369a1',
+          800: '#075985',
+          900: '#0c4a6e',
+          950: '#082f49',
         },
-        accent: {
-          50: '#F5F7FA',
-          100: '#EAEFF5',
-          200: '#D0D9E6',
-          300: '#A6B6CF',
-          400: '#7390B3',
-          500: '#4F6D96',
-          600: '#3A5278',
-          700: '#2F4161',
-          800: '#28364F',
-          900: '#242F42', // Rich Blue/Slate
-          950: '#0F172A',
+        secondary: {
+          50: '#fff0f0',
+          100: '#ffdede',
+          200: '#ffc2c2',
+          300: '#ff9696',
+          400: '#ff5c5c',
+          500: '#ff2929', // Neon Red Base
+          600: '#ed0000',
+          700: '#c70000',
+          800: '#a30000',
+          900: '#850505',
+          950: '#4a0000',
         },
-        gold: {
-          light: '#F4E06D',
-          DEFAULT: '#D4AF37',
-          dark: '#AA6C39',
-          metallic: '#C5A028',
+        amber: {
+          400: '#fbbf24',
+          500: '#f59e0b',
         },
-        rich: {
-          black: '#050505',
-          gray: '#1A1A1A',
-        }
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gold-gradient': 'linear-gradient(135deg, #D4AF37 0%, #F4E06D 50%, #AA6C39 100%)',
-        'rich-gradient': 'linear-gradient(to bottom, #0F172A, #000000)',
+        'rich-black': '#020205', // Deep space black
+        'rich-gray': '#0a0a12', // Dark tech gray
+        'neon-red': '#FF0000',
+        'neon-blue': '#0088FF',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in',
         'slide-up': 'slideUp 0.5s ease-out',
-        'bounce-slow': 'bounce 3s infinite',
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'glow': 'glow 2s ease-in-out infinite alternate',
+        'glow-red': 'glowRed 2s ease-in-out infinite alternate',
+        'glow-amber': 'glowAmber 2s ease-in-out infinite alternate',
       },
       keyframes: {
         fadeIn: {
@@ -68,7 +64,22 @@ module.exports = {
           '0%': { transform: 'translateY(20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
+        glow: {
+          '0%': { boxShadow: '0 0 5px #0ea5e9, 0 0 10px #0ea5e9' },
+          '100%': { boxShadow: '0 0 20px #0ea5e9, 0 0 30px #0ea5e9' },
+        },
+        glowRed: {
+          '0%': { boxShadow: '0 0 5px #ff2929, 0 0 10px #ff2929' },
+          '100%': { boxShadow: '0 0 20px #ff2929, 0 0 30px #ff2929' },
+        },
+        glowAmber: {
+          '0%': { boxShadow: '0 0 5px #f59e0b, 0 0 10px #f59e0b' },
+          '100%': { boxShadow: '0 0 20px #f59e0b, 0 0 30px #f59e0b' },
+        }
       },
+      backgroundImage: {
+        'cyber-grid': "linear-gradient(to right, #1f2937 1px, transparent 1px), linear-gradient(to bottom, #1f2937 1px, transparent 1px)",
+      }
     },
   },
   plugins: [],

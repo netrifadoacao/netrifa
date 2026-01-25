@@ -11,8 +11,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'AS Doação - Sua Jornada rumo à Independência Financeira',
-  description: 'Descubra o segredo dos top afiliados. Produtos validados, alta conversão e tudo o que você precisa para viver de internet.',
+  title: 'AS Miranda - Inovação e Independência Financeira',
+  description: 'Descubra o futuro do mercado digital. Produtos de alta performance e um ecossistema exclusivo para você escalar seus resultados.',
 };
 
 export default function RootLayout({

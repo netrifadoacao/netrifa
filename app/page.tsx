@@ -77,55 +77,55 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-rich-black text-white selection:bg-primary-500 selection:text-white">
+    <div className="min-h-screen bg-rich-black text-white selection:bg-amber-500 selection:text-white">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-rich-black/80 backdrop-blur-lg border-b border-white/10">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <Link href="/" className="flex items-center space-x-2 group">
-              <div className="relative w-12 h-12 overflow-hidden rounded-lg border border-primary-500/30 shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+              <div className="relative w-12 h-12 overflow-hidden rounded-full border-2 border-primary-500 shadow-[0_0_15px_rgba(0,136,255,0.5)] group-hover:shadow-[0_0_25px_rgba(0,136,255,0.7)] transition-all duration-300">
                 <Image 
                   src="/logomarca-as.jpeg" 
-                  alt="AS Doação" 
+                  alt="AS Miranda" 
                   fill 
                   className="object-cover scale-150"
                 />
               </div>
-              <span className="font-display text-2xl font-black bg-gradient-to-r from-primary-300 via-primary-100 to-primary-400 bg-clip-text text-transparent">
-                AS Doação
+              <span className="font-display text-2xl font-black bg-gradient-to-r from-primary-400 via-white to-secondary-500 bg-clip-text text-transparent group-hover:animate-pulse">
+                AS Miranda
               </span>
             </Link>
 
             {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-8">
-              <Link href="#produtos" className="text-gray-300 hover:text-primary-400 font-medium transition-colors">
+            <div className="hidden md:flex items-center space-x-2">
+              <Link href="#produtos" className="px-4 py-2 text-gray-300 hover:text-white font-medium rounded-full hover:bg-white/5 transition-all duration-200 border border-transparent hover:border-white/10 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]">
                 Produtos
               </Link>
-              <Link href="#como-funciona" className="text-gray-300 hover:text-primary-400 font-medium transition-colors">
+              <Link href="#como-funciona" className="px-4 py-2 text-gray-300 hover:text-white font-medium rounded-full hover:bg-white/5 transition-all duration-200 border border-transparent hover:border-white/10 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]">
                 Como Funciona
               </Link>
-              <Link href="#beneficios" className="text-gray-300 hover:text-primary-400 font-medium transition-colors">
+              <Link href="#beneficios" className="px-4 py-2 text-gray-300 hover:text-white font-medium rounded-full hover:bg-white/5 transition-all duration-200 border border-transparent hover:border-white/10 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]">
                 Benefícios
               </Link>
               {user ? (
                 <Link
                   href={user.tipo === 'admin' ? '/admin' : '/escritorio'}
-                  className="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-primary-700 text-white font-semibold rounded-full hover:shadow-lg hover:shadow-primary-500/20 hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-primary-500/20"
+                  className="ml-4 px-6 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold rounded-full hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-white/10"
                 >
                   <span>Meu Escritório</span>
                   <FiArrowRight className="w-4 h-4" />
                 </Link>
               ) : (
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-3 ml-4">
                   <Link
                     href="/login"
-                    className="text-gray-300 hover:text-primary-400 font-medium transition-colors"
+                    className="px-6 py-2.5 text-gray-300 hover:text-white font-medium transition-all rounded-full hover:bg-white/5 border border-transparent hover:border-white/10"
                   >
                     Entrar
                   </Link>
                   <Link
                     href="/register"
-                    className="px-6 py-2.5 bg-gradient-to-r from-primary-400 to-primary-600 text-rich-black font-bold rounded-full hover:shadow-lg hover:shadow-primary-400/20 hover:scale-105 transition-all duration-200"
+                    className="px-6 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-bold rounded-full hover:shadow-[0_0_20px_rgba(255,41,41,0.4)] hover:scale-105 transition-all duration-200 border border-white/10"
                   >
                     Começar Agora
                   </Link>
@@ -144,20 +144,20 @@ export default function LandingPage() {
 
           {/* Mobile Menu */}
           {mobileMenuOpen && (
-            <div className="md:hidden py-4 space-y-4 border-t border-gray-200">
-              <Link href="#produtos" className="block text-gray-700 hover:text-primary-600 font-medium">
+            <div className="md:hidden py-4 space-y-4 border-t border-gray-200/10">
+              <Link href="#produtos" className="block text-gray-300 hover:text-white font-medium">
                 Produtos
               </Link>
-              <Link href="#como-funciona" className="block text-gray-700 hover:text-primary-600 font-medium">
+              <Link href="#como-funciona" className="block text-gray-300 hover:text-white font-medium">
                 Como Funciona
               </Link>
-              <Link href="#beneficios" className="block text-gray-700 hover:text-primary-600 font-medium">
+              <Link href="#beneficios" className="block text-gray-300 hover:text-white font-medium">
                 Benefícios
               </Link>
               {user ? (
                 <Link
                   href={user.tipo === 'admin' ? '/admin' : '/escritorio'}
-                  className="block px-6 py-2.5 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-semibold rounded-full text-center"
+                  className="block px-6 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold rounded-full text-center"
                 >
                   Meu Escritório
                 </Link>
@@ -165,13 +165,13 @@ export default function LandingPage() {
                 <div className="space-y-2">
                   <Link
                     href="/login"
-                    className="block px-6 py-2.5 text-center text-gray-700 hover:bg-gray-100 font-medium rounded-full"
+                    className="block px-6 py-2.5 text-center text-gray-300 hover:bg-white/5 font-medium rounded-full"
                   >
                     Entrar
                   </Link>
                   <Link
                     href="/register"
-                    className="block px-6 py-2.5 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-semibold rounded-full text-center"
+                    className="block px-6 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold rounded-full text-center"
                   >
                     Começar Agora
                   </Link>
@@ -184,29 +184,29 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-20 pb-32">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-30"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full mb-8 border border-white/10 hover:border-primary-500/50 transition-colors">
-              <FiZap className="w-4 h-4 text-primary-400" />
-              <span className="text-sm font-semibold text-primary-100">O Segredo dos Top Afiliados</span>
+            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full mb-8 border border-amber-500/30 hover:border-amber-500/60 shadow-[0_0_10px_rgba(245,158,11,0.1)] transition-all duration-300">
+              <FiZap className="w-4 h-4 text-amber-400" />
+              <span className="text-sm font-semibold text-gray-200">O Segredo dos Top Afiliados</span>
             </div>
             
-            <h1 className="font-display text-5xl md:text-7xl font-black mb-6 leading-tight animate-fade-in text-white">
+            <h1 className="font-display text-5xl md:text-7xl font-black mb-6 leading-tight animate-fade-in text-white drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]">
               Sua jornada rumo à
               <br />
-              <span className="bg-gradient-to-r from-primary-300 via-primary-100 to-primary-400 bg-clip-text text-transparent">Independência Financeira</span>
+              <span className="bg-gradient-to-r from-primary-400 via-white to-secondary-500 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(14,165,233,0.3)]">Independência Financeira</span>
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-400 mb-10 max-w-3xl mx-auto animate-slide-up">
-              Descubra produtos validados que vendem no piloto automático. Afilie-se, escale suas vendas e construa um negócio digital sólido com a <span className="font-semibold text-primary-400">AS Doação</span>.
+              Descubra produtos validados que vendem no piloto automático. Afilie-se, escale suas vendas e construa um negócio digital sólido com a <span className="font-semibold text-white">AS Miranda</span>.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
               {user ? (
                 <Link
                   href={user.tipo === 'admin' ? '/admin' : '/escritorio'}
-                  className="group px-8 py-4 bg-gradient-to-r from-primary-500 to-primary-700 text-white font-bold text-lg rounded-full hover:shadow-2xl hover:shadow-primary-500/20 hover:scale-105 transition-all duration-200 flex items-center space-x-3 border border-primary-500/20"
+                  className="group px-8 py-4 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-bold text-lg rounded-full hover:shadow-[0_0_30px_rgba(255,41,41,0.4)] hover:scale-105 transition-all duration-200 flex items-center space-x-3 border border-white/20"
                 >
                   <span>Acessar Meu Escritório</span>
                   <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -215,14 +215,14 @@ export default function LandingPage() {
                 <>
                   <Link
                     href="/register"
-                    className="group px-8 py-4 bg-gradient-to-r from-primary-400 to-primary-600 text-rich-black font-bold text-lg rounded-full hover:shadow-2xl hover:shadow-primary-400/20 hover:scale-105 transition-all duration-200 flex items-center space-x-3"
+                    className="group px-8 py-4 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-bold text-lg rounded-full hover:shadow-[0_0_30px_rgba(255,41,41,0.4)] hover:scale-105 transition-all duration-200 flex items-center space-x-3 border border-white/20"
                   >
                     <span>Começar Agora</span>
                     <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Link>
                   <Link
                     href="/login"
-                    className="px-8 py-4 bg-white/5 text-white font-bold text-lg rounded-full border-2 border-white/10 hover:border-primary-500 hover:text-primary-400 transition-all duration-200 backdrop-blur-sm"
+                    className="px-8 py-4 bg-white/5 text-white font-bold text-lg rounded-full border border-white/10 hover:border-amber-500/50 hover:text-amber-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all duration-200 backdrop-blur-sm"
                   >
                     Já tenho conta
                   </Link>
@@ -232,20 +232,20 @@ export default function LandingPage() {
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto border-t border-white/5 pt-12">
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-black text-primary-400 mb-2">10K+</div>
-                <div className="text-sm text-gray-500">Afiliados Ativos</div>
+              <div className="text-center group">
+                <div className="text-3xl md:text-4xl font-black text-white mb-2 group-hover:text-primary-400 transition-colors duration-300">10K+</div>
+                <div className="text-sm text-gray-500 group-hover:text-primary-400/70">Afiliados Ativos</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-black text-white mb-2">50+</div>
-                <div className="text-sm text-gray-500">Produtos Validados</div>
+              <div className="text-center group">
+                <div className="text-3xl md:text-4xl font-black text-white mb-2 group-hover:text-amber-400 transition-colors duration-300">50+</div>
+                <div className="text-sm text-gray-500 group-hover:text-amber-400/70">Produtos Validados</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-black text-primary-400 mb-2">R$ 2M+</div>
-                <div className="text-sm text-gray-500">Em Comissões</div>
+              <div className="text-center group">
+                <div className="text-3xl md:text-4xl font-black text-white mb-2 group-hover:text-secondary-400 transition-colors duration-300">R$ 2M+</div>
+                <div className="text-sm text-gray-500 group-hover:text-secondary-400/70">Em Comissões</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-black text-white mb-2">4.9★</div>
+              <div className="text-center group">
+                <div className="text-3xl md:text-4xl font-black text-white mb-2 group-hover:text-white transition-colors duration-300">4.9★</div>
                 <div className="text-sm text-gray-500">Conversão</div>
               </div>
             </div>
@@ -253,8 +253,8 @@ export default function LandingPage() {
         </div>
 
         {/* Decorative elements */}
-        <div className="absolute top-20 left-10 w-96 h-96 bg-primary-600/20 rounded-full blur-[100px] opacity-30 animate-pulse"></div>
-        <div className="absolute top-40 right-10 w-96 h-96 bg-primary-400/10 rounded-full blur-[100px] opacity-30 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-20 left-10 w-96 h-96 bg-primary-600/20 rounded-full blur-[100px] opacity-40 animate-pulse"></div>
+        <div className="absolute top-40 right-10 w-96 h-96 bg-secondary-600/20 rounded-full blur-[100px] opacity-40 animate-pulse" style={{ animationDelay: '1s' }}></div>
       </section>
 
       {/* Products Section */}
@@ -495,21 +495,21 @@ export default function LandingPage() {
           <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <h2 className="font-display text-4xl md:text-5xl font-black text-white mb-6">
-              Pronto para viver a <span className="text-primary-400">abundância</span>?
+              Pronto para alcançar sua <span className="text-primary-500 drop-shadow-[0_0_10px_rgba(255,0,0,0.5)]">Independência Financeira</span>?
             </h2>
             <p className="text-xl text-gray-300 mb-10">
-              Junte-se a elite que já descobriu o caminho para a verdadeira liberdade financeira com a AS Doação.
+              Junte-se aos top afiliados que já descobriram o segredo para vender todos os dias na internet.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/register"
-                className="px-8 py-4 bg-gradient-to-r from-primary-400 to-primary-600 text-rich-black font-bold text-lg rounded-full hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] hover:scale-105 transition-all duration-200"
+                className="px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-800 text-white font-bold text-lg rounded-full hover:shadow-[0_0_20px_rgba(255,0,0,0.4)] hover:scale-105 transition-all duration-200"
               >
                 Criar Conta Gratuita
               </Link>
               <Link
                 href="/login"
-                className="px-8 py-4 bg-white/5 backdrop-blur-sm text-white font-bold text-lg rounded-full border border-white/10 hover:bg-white/10 transition-all duration-200"
+                className="px-8 py-4 bg-white/5 backdrop-blur-sm text-white font-bold text-lg rounded-full border border-white/10 hover:bg-white/10 hover:border-primary-500 transition-all duration-200"
               >
                 Já tenho conta
               </Link>
@@ -524,7 +524,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="font-display text-2xl font-black text-white mb-4 flex items-center gap-2">
-                <span className="bg-gradient-to-r from-primary-300 via-primary-100 to-primary-400 bg-clip-text text-transparent">AS Doação</span>
+                <span className="bg-gradient-to-r from-primary-500 via-white to-secondary-500 bg-clip-text text-transparent">AS Miranda</span>
               </div>
               <p className="text-sm text-gray-500">
                 A plataforma definitiva para quem quer viver de internet.
@@ -565,7 +565,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-white/10 pt-8 text-center text-sm">
-            <p>&copy; {new Date().getFullYear()} AS Doação. Todos os direitos reservados.</p>
+            <p>&copy; {new Date().getFullYear()} AS Miranda. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>

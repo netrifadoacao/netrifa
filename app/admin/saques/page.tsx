@@ -105,15 +105,15 @@ export default function SaquesPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pendente':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
       case 'aprovado':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-primary-500/10 text-primary-400 border border-primary-500/20';
       case 'pago':
-        return 'bg-green-100 text-green-800';
+        return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
       case 'recusado':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-500/10 text-red-400 border border-red-500/20';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-500/10 text-gray-400 border border-gray-500/20';
     }
   };
 
@@ -141,51 +141,51 @@ export default function SaquesPage() {
     <div className="py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Saques Solicitados</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="text-3xl font-bold text-white font-display">Saques Solicitados</h1>
+          <p className="mt-2 text-sm text-gray-400">
             Gerencie saques solicitados pelos usuários
           </p>
         </div>
 
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
-          <ul className="divide-y divide-gray-200">
+        <div className="bg-white/5 backdrop-blur-md border border-white/10 shadow-lg overflow-hidden sm:rounded-xl">
+          <ul className="divide-y divide-white/10">
             {saques.length === 0 ? (
-              <li className="px-6 py-4 text-center text-gray-500">
+              <li className="px-6 py-4 text-center text-gray-400">
                 Nenhum saque solicitado no momento.
               </li>
             ) : (
               saques.map((saque) => (
-                <li key={saque.id} className="px-6 py-4">
+                <li key={saque.id} className="px-6 py-4 hover:bg-white/5 transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center">
-                        <FiDollarSign className="h-5 w-5 text-primary-600" />
+                        <FiDollarSign className="h-5 w-5 text-primary-400" />
                         <div className="ml-3">
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="text-sm font-medium text-white">
                             {saque.usuario?.nome} ({saque.usuario?.email})
                           </p>
-                          <p className="text-sm text-gray-500">
-                            Valor: <span className="font-semibold text-primary-600">R$ {saque.valor.toFixed(2)}</span>
+                          <p className="text-sm text-gray-400">
+                            Valor: <span className="font-semibold text-primary-400">R$ {saque.valor.toFixed(2)}</span>
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-gray-400">
                             Método: {saque.metodoPagamento === 'pix' ? 'PIX' : 'Transferência Bancária'}
                           </p>
                           {saque.metodoPagamento === 'pix' && saque.dadosPagamento?.pix && (
-                            <p className="text-sm text-gray-500">PIX: {saque.dadosPagamento.pix}</p>
+                            <p className="text-sm text-gray-400">PIX: {saque.dadosPagamento.pix}</p>
                           )}
                           {saque.metodoPagamento === 'banco' && (
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-400">
                               {saque.dadosPagamento?.banco} - Ag: {saque.dadosPagamento?.agencia} - CC: {saque.dadosPagamento?.conta}
                             </p>
                           )}
-                          <p className="text-xs text-gray-400 mt-1">
+                          <p className="text-xs text-gray-500 mt-1">
                             Solicitação: {formatDate(saque.dataSolicitacao)}
                           </p>
                           {saque.dataAprovacao && (
-                            <p className="text-xs text-gray-400">Aprovação: {formatDate(saque.dataAprovacao)}</p>
+                            <p className="text-xs text-gray-500">Aprovação: {formatDate(saque.dataAprovacao)}</p>
                           )}
                           {saque.dataPagamento && (
-                            <p className="text-xs text-gray-400">Pagamento: {formatDate(saque.dataPagamento)}</p>
+                            <p className="text-xs text-gray-500">Pagamento: {formatDate(saque.dataPagamento)}</p>
                           )}
                         </div>
                       </div>
@@ -198,14 +198,14 @@ export default function SaquesPage() {
                         <>
                           <button
                             onClick={() => handleAprovar(saque.id)}
-                            className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                            className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-500 shadow-[0_0_10px_rgba(14,165,233,0.3)] transition-all"
                           >
                             <FiCheckCircle className="mr-1" />
                             Aprovar
                           </button>
                           <button
                             onClick={() => handleRecusar(saque.id)}
-                            className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
+                            className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-red-600 hover:bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)] transition-all"
                           >
                             <FiXCircle className="mr-1" />
                             Recusar
@@ -215,7 +215,7 @@ export default function SaquesPage() {
                       {saque.status === 'aprovado' && (
                         <button
                           onClick={() => handlePagar(saque.id)}
-                          className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
+                          className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)] transition-all"
                         >
                           <FiDollarSign className="mr-1" />
                           Marcar como Pago

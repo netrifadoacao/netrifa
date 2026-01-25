@@ -3,6 +3,7 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { FiHome, FiUser, FiUsers, FiDollarSign, FiFileText, FiLogOut, FiShoppingBag, FiCheckCircle, FiXCircle, FiSettings } from 'react-icons/fi';
 
 interface LayoutProps {
@@ -44,13 +45,25 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
   const menuItems = tipo === 'admin' ? menuItemsAdmin : menuItemsUsuario;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-md">
+    <div className="min-h-screen bg-rich-black text-gray-100 relative selection:bg-primary-500/30">
+      {/* Background Effects */}
+      <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-20 pointer-events-none"></div>
+      <div className="fixed inset-0 bg-gradient-to-br from-primary-900/20 via-transparent to-secondary-900/20 pointer-events-none"></div>
+
+      <nav className="bg-white/5 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold text-primary-600">
+              <div className="flex-shrink-0 flex items-center gap-3 group cursor-pointer" onClick={() => router.push(tipo === 'admin' ? '/admin' : '/escritorio')}>
+                <div className="relative w-10 h-10 overflow-hidden rounded-full border-2 border-primary-500 shadow-[0_0_15px_rgba(0,136,255,0.5)] group-hover:shadow-[0_0_25px_rgba(0,136,255,0.7)] transition-all duration-300">
+                  <Image 
+                    src="/logomarca-as.jpeg" 
+                    alt="AS Miranda" 
+                    fill 
+                    className="object-cover scale-150"
+                  />
+                </div>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-primary-400 via-white to-secondary-500 bg-clip-text text-transparent hidden sm:block">
                   {tipo === 'admin' ? 'Painel Administrativo' : 'Escritório Virtual'}
                 </h1>
               </div>
@@ -62,10 +75,10 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
+                      className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200 ${
                         isActive
-                          ? 'border-primary-500 text-gray-900'
-                          : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                          ? 'border-primary-500 text-primary-400'
+                          : 'border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-200'
                       }`}
                     >
                       <Icon className="mr-2" />
@@ -76,26 +89,26 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-700">
-                {user.nome}
+              <div className="text-sm text-gray-300 flex items-center gap-2">
+                <span className="hidden sm:inline">{user.nome}</span>
                 {tipo === 'usuario' && (
-                  <span className="ml-2 text-primary-600 font-semibold">
-                    Saldo: R$ {user.saldo.toFixed(2)}
+                  <span className="ml-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 font-semibold text-xs shadow-[0_0_10px_rgba(14,165,233,0.1)]">
+                    R$ {user.saldo.toFixed(2)}
                   </span>
                 )}
               </div>
               <button
                 onClick={handleLogout}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
+                className="inline-flex items-center px-4 py-2 border border-secondary-500/30 text-sm font-medium rounded-full text-white bg-secondary-600/80 hover:bg-secondary-600 shadow-[0_0_10px_rgba(255,41,41,0.2)] transition-all duration-200 hover:shadow-[0_0_15px_rgba(255,41,41,0.4)] backdrop-blur-sm group"
               >
-                <FiLogOut className="mr-2" />
-                Sair
+                <FiLogOut className="mr-2 group-hover:-translate-x-1 transition-transform" />
+                <span className="hidden sm:inline">Sair</span>
               </button>
             </div>
           </div>
         </div>
       </nav>
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 relative z-10">
         {children}
       </main>
     </div>

@@ -51,18 +51,18 @@ export default function RedePage() {
     if (!items || items.length === 0) return null;
 
     return (
-      <div className="ml-8 mt-4 border-l-2 border-gray-300 pl-4">
+      <div className="ml-8 mt-4 border-l-2 border-white/10 pl-4">
         {items.map((item) => (
           <div key={item.id} className="mb-4">
-            <div className="bg-white rounded-lg shadow p-4">
+            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-lg shadow-lg p-4 hover:bg-white/10 transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-gray-900">{item.nome}</p>
-                  <p className="text-sm text-gray-500">{item.email}</p>
-                  <p className="text-xs text-primary-600 mt-1">Nível {item.nivel}</p>
+                  <p className="font-semibold text-white">{item.nome}</p>
+                  <p className="text-sm text-gray-400">{item.email}</p>
+                  <p className="text-xs text-primary-400 mt-1">Nível {item.nivel}</p>
                 </div>
                 {item.indicados && item.indicados.length > 0 && (
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-400">
                     {item.indicados.length} indicado(s)
                   </span>
                 )}
@@ -87,24 +87,24 @@ export default function RedePage() {
     <div className="py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Minha Rede</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="text-3xl font-bold text-white font-display">Minha Rede</h1>
+          <p className="mt-2 text-sm text-gray-400">
             Visualize sua estrutura de indicações até o 5º nível
           </p>
         </div>
 
-        <div className="mb-6 bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Meu Link de Indicação</h2>
+        <div className="mb-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-lg p-6">
+          <h2 className="text-lg font-medium text-white mb-4">Meu Link de Indicação</h2>
           <div className="flex items-center space-x-2">
             <input
               type="text"
               readOnly
               value={linkIndicacao}
-              className="flex-1 block border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+              className="flex-1 block border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
             />
             <button
               onClick={copyLink}
-              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
+              className="inline-flex items-center px-4 py-2 border border-transparent shadow-[0_0_15px_rgba(14,165,233,0.3)] text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-500 hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] transition-all"
             >
               <FiCopy className="mr-2" />
               Copiar
@@ -112,13 +112,13 @@ export default function RedePage() {
           </div>
         </div>
 
-        <div className="bg-gray-50 rounded-lg p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-            <FiUsers className="mr-2" />
+        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
+          <h2 className="text-lg font-medium text-white mb-4 flex items-center">
+            <FiUsers className="mr-2 text-primary-400" />
             Estrutura da Rede
           </h2>
           {rede.length === 0 ? (
-            <p className="text-gray-500">Você ainda não tem indicados na sua rede.</p>
+            <p className="text-gray-400">Você ainda não tem indicados na sua rede.</p>
           ) : (
             <div>{renderRede(rede)}</div>
           )}
