@@ -11,8 +11,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'Together - Transforme sua vida com produtos digitais',
-  description: 'Plataforma de produtos digitais com modelo de renda recorrente. Junte-se a milhares de pessoas que estão transformando suas vidas.',
+  title: 'AS Doação - Sua Jornada rumo à Independência Financeira',
+  description: 'Descubra o segredo dos top afiliados. Produtos validados, alta conversão e tudo o que você precisa para viver de internet.',
 };
 
 export default function RootLayout({

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
+import Image from 'next/image';
 import { FiShoppingBag, FiArrowRight, FiStar, FiUsers, FiTrendingUp, FiZap, FiCheckCircle, FiMenu, FiX } from 'react-icons/fi';
 
 interface Produto {
@@ -76,35 +77,40 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-rich-black text-white selection:bg-primary-500 selection:text-white">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200/50">
+      <header className="sticky top-0 z-50 bg-rich-black/80 backdrop-blur-lg border-b border-white/10">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <Link href="/" className="flex items-center space-x-2 group">
-              <div className="relative">
-                <span className="font-display text-3xl font-black bg-gradient-to-r from-primary-600 via-accent-600 to-primary-600 bg-clip-text text-transparent animate-pulse">
-                  together
-                </span>
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-accent-500 rounded-full animate-ping"></div>
+              <div className="relative w-12 h-12 overflow-hidden rounded-lg border border-primary-500/30 shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+                <Image 
+                  src="/logomarca-as.jpeg" 
+                  alt="AS Doação" 
+                  fill 
+                  className="object-cover scale-150"
+                />
               </div>
+              <span className="font-display text-2xl font-black bg-gradient-to-r from-primary-300 via-primary-100 to-primary-400 bg-clip-text text-transparent">
+                AS Doação
+              </span>
             </Link>
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-8">
-              <Link href="#produtos" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">
+              <Link href="#produtos" className="text-gray-300 hover:text-primary-400 font-medium transition-colors">
                 Produtos
               </Link>
-              <Link href="#como-funciona" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">
+              <Link href="#como-funciona" className="text-gray-300 hover:text-primary-400 font-medium transition-colors">
                 Como Funciona
               </Link>
-              <Link href="#beneficios" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">
+              <Link href="#beneficios" className="text-gray-300 hover:text-primary-400 font-medium transition-colors">
                 Benefícios
               </Link>
               {user ? (
                 <Link
                   href={user.tipo === 'admin' ? '/admin' : '/escritorio'}
-                  className="px-6 py-2.5 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-semibold rounded-full hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center space-x-2"
+                  className="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-primary-700 text-white font-semibold rounded-full hover:shadow-lg hover:shadow-primary-500/20 hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-primary-500/20"
                 >
                   <span>Meu Escritório</span>
                   <FiArrowRight className="w-4 h-4" />
@@ -113,13 +119,13 @@ export default function LandingPage() {
                 <div className="flex items-center space-x-4">
                   <Link
                     href="/login"
-                    className="text-gray-700 hover:text-primary-600 font-medium transition-colors"
+                    className="text-gray-300 hover:text-primary-400 font-medium transition-colors"
                   >
                     Entrar
                   </Link>
                   <Link
                     href="/register"
-                    className="px-6 py-2.5 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-semibold rounded-full hover:shadow-lg hover:scale-105 transition-all duration-200"
+                    className="px-6 py-2.5 bg-gradient-to-r from-primary-400 to-primary-600 text-rich-black font-bold rounded-full hover:shadow-lg hover:shadow-primary-400/20 hover:scale-105 transition-all duration-200"
                   >
                     Começar Agora
                   </Link>
@@ -130,7 +136,7 @@ export default function LandingPage() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100"
+              className="md:hidden p-2 rounded-lg text-gray-300 hover:bg-white/5"
             >
               {mobileMenuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
             </button>
@@ -178,28 +184,29 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-20 pb-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full mb-8 border border-gray-200/50">
-              <FiZap className="w-4 h-4 text-accent-600" />
-              <span className="text-sm font-semibold text-gray-700">Transforme sua vida hoje</span>
+            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full mb-8 border border-white/10 hover:border-primary-500/50 transition-colors">
+              <FiZap className="w-4 h-4 text-primary-400" />
+              <span className="text-sm font-semibold text-primary-100">O Segredo dos Top Afiliados</span>
             </div>
             
-            <h1 className="font-display text-5xl md:text-7xl font-black mb-6 bg-gradient-to-r from-primary-600 via-accent-600 to-primary-600 bg-clip-text text-transparent leading-tight animate-fade-in">
-              Junte-se à revolução
+            <h1 className="font-display text-5xl md:text-7xl font-black mb-6 leading-tight animate-fade-in text-white">
+              Sua jornada rumo à
               <br />
-              <span className="text-gray-900">digital</span>
+              <span className="bg-gradient-to-r from-primary-300 via-primary-100 to-primary-400 bg-clip-text text-transparent">Independência Financeira</span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto animate-slide-up">
-              Produtos digitais exclusivos que mudam vidas. Venda, ganhe e construa sua renda recorrente com a comunidade <span className="font-semibold text-primary-600">together</span>.
+            <p className="text-xl md:text-2xl text-gray-400 mb-10 max-w-3xl mx-auto animate-slide-up">
+              Descubra produtos validados que vendem no piloto automático. Afilie-se, escale suas vendas e construa um negócio digital sólido com a <span className="font-semibold text-primary-400">AS Doação</span>.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
               {user ? (
                 <Link
                   href={user.tipo === 'admin' ? '/admin' : '/escritorio'}
-                  className="group px-8 py-4 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-bold text-lg rounded-full hover:shadow-2xl hover:scale-105 transition-all duration-200 flex items-center space-x-3"
+                  className="group px-8 py-4 bg-gradient-to-r from-primary-500 to-primary-700 text-white font-bold text-lg rounded-full hover:shadow-2xl hover:shadow-primary-500/20 hover:scale-105 transition-all duration-200 flex items-center space-x-3 border border-primary-500/20"
                 >
                   <span>Acessar Meu Escritório</span>
                   <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -208,14 +215,14 @@ export default function LandingPage() {
                 <>
                   <Link
                     href="/register"
-                    className="group px-8 py-4 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-bold text-lg rounded-full hover:shadow-2xl hover:scale-105 transition-all duration-200 flex items-center space-x-3"
+                    className="group px-8 py-4 bg-gradient-to-r from-primary-400 to-primary-600 text-rich-black font-bold text-lg rounded-full hover:shadow-2xl hover:shadow-primary-400/20 hover:scale-105 transition-all duration-200 flex items-center space-x-3"
                   >
-                    <span>Começar Gratuitamente</span>
+                    <span>Começar Agora</span>
                     <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Link>
                   <Link
                     href="/login"
-                    className="px-8 py-4 bg-white text-gray-700 font-bold text-lg rounded-full border-2 border-gray-200 hover:border-primary-600 hover:text-primary-600 transition-all duration-200"
+                    className="px-8 py-4 bg-white/5 text-white font-bold text-lg rounded-full border-2 border-white/10 hover:border-primary-500 hover:text-primary-400 transition-all duration-200 backdrop-blur-sm"
                   >
                     Já tenho conta
                   </Link>
@@ -224,48 +231,48 @@ export default function LandingPage() {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto border-t border-white/5 pt-12">
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-black text-primary-600 mb-2">10K+</div>
-                <div className="text-sm text-gray-600">Usuários Ativos</div>
+                <div className="text-3xl md:text-4xl font-black text-primary-400 mb-2">10K+</div>
+                <div className="text-sm text-gray-500">Afiliados Ativos</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-black text-accent-600 mb-2">50+</div>
-                <div className="text-sm text-gray-600">Produtos</div>
+                <div className="text-3xl md:text-4xl font-black text-white mb-2">50+</div>
+                <div className="text-sm text-gray-500">Produtos Validados</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-black text-primary-600 mb-2">R$ 2M+</div>
-                <div className="text-sm text-gray-600">Ganhos Gerados</div>
+                <div className="text-3xl md:text-4xl font-black text-primary-400 mb-2">R$ 2M+</div>
+                <div className="text-sm text-gray-500">Em Comissões</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-black text-accent-600 mb-2">4.9★</div>
-                <div className="text-sm text-gray-600">Avaliação</div>
+                <div className="text-3xl md:text-4xl font-black text-white mb-2">4.9★</div>
+                <div className="text-sm text-gray-500">Conversão</div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Decorative elements */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-bounce-slow"></div>
-        <div className="absolute top-40 right-10 w-72 h-72 bg-accent-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-bounce-slow" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-bounce-slow" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-20 left-10 w-96 h-96 bg-primary-600/20 rounded-full blur-[100px] opacity-30 animate-pulse"></div>
+        <div className="absolute top-40 right-10 w-96 h-96 bg-primary-400/10 rounded-full blur-[100px] opacity-30 animate-pulse" style={{ animationDelay: '1s' }}></div>
       </section>
 
       {/* Products Section */}
-      <section id="produtos" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="produtos" className="py-20 bg-rich-black relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-rich-black via-primary-900/5 to-rich-black"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="font-display text-4xl md:text-5xl font-black text-gray-900 mb-4">
-              Produtos em <span className="bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">Destaque</span>
+            <h2 className="font-display text-4xl md:text-5xl font-black text-white mb-4">
+              Produtos de <span className="bg-gradient-to-r from-primary-300 via-primary-100 to-primary-400 bg-clip-text text-transparent">Alta Conversão</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Descubra produtos digitais cuidadosamente selecionados para transformar sua vida e sua carreira
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              Produtos validados e prontos para vender. Escolha os campeões de vendas e comece a lucrar agora mesmo.
             </p>
           </div>
 
           {loading ? (
             <div className="flex justify-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
             </div>
           ) : produtos.length === 0 ? (
             <div className="text-center py-20">
@@ -276,31 +283,31 @@ export default function LandingPage() {
               {produtos.map((produto) => (
                 <div
                   key={produto.id}
-                  className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-primary-200 transform hover:-translate-y-2"
+                  className="group relative bg-white/5 rounded-2xl shadow-lg hover:shadow-2xl hover:shadow-primary-500/10 transition-all duration-300 overflow-hidden border border-white/10 hover:border-primary-500/50 transform hover:-translate-y-2 backdrop-blur-sm"
                 >
                   <div className="absolute top-4 right-4 z-10">
-                    <span className="px-3 py-1 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-xs font-bold rounded-full">
+                    <span className="px-3 py-1 bg-gradient-to-r from-primary-500 to-primary-700 text-white text-xs font-bold rounded-full border border-primary-400/20">
                       {produto.tipo === 'digital' ? 'DIGITAL' : 'FÍSICO'}
                     </span>
                   </div>
                   
                   <div className="p-8">
-                    <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-100 to-accent-100 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                      <FiShoppingBag className="w-8 h-8 text-primary-600" />
+                    <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-500/20 to-primary-900/20 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300 border border-primary-500/20">
+                      <FiShoppingBag className="w-8 h-8 text-primary-400" />
                     </div>
                     
-                    <h3 className="font-display text-2xl font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors">
+                    <h3 className="font-display text-2xl font-bold text-white mb-3 group-hover:text-primary-400 transition-colors">
                       {produto.nome}
                     </h3>
                     
-                    <p className="text-gray-600 mb-6 line-clamp-3">
+                    <p className="text-gray-400 mb-6 line-clamp-3">
                       {produto.descricao}
                     </p>
                     
                     <div className="flex items-center justify-between mb-6">
                       <div>
                         <div className="text-sm text-gray-500">Investimento</div>
-                        <div className="font-display text-3xl font-black text-primary-600">
+                        <div className="font-display text-3xl font-black text-primary-400">
                           R$ {produto.preco.toFixed(2)}
                         </div>
                       </div>
@@ -309,13 +316,13 @@ export default function LandingPage() {
                     <div className="flex gap-3">
                       <button
                         onClick={() => setSelectedProduct(produto)}
-                        className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-colors"
+                        className="flex-1 px-4 py-3 bg-white/5 text-gray-300 font-semibold rounded-xl hover:bg-white/10 hover:text-white transition-colors border border-white/10"
                       >
                         Ver Detalhes
                       </button>
                       <button
                         onClick={() => handleComprar(produto)}
-                        className="flex-1 px-4 py-3 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200"
+                        className="flex-1 px-4 py-3 bg-gradient-to-r from-primary-500 to-primary-700 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-primary-500/20 hover:scale-105 transition-all duration-200 border border-primary-500/20"
                       >
                         Comprar
                       </button>
@@ -330,7 +337,7 @@ export default function LandingPage() {
             <div className="text-center mt-12">
               <Link
                 href="/register"
-                className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-bold text-lg rounded-full hover:shadow-xl hover:scale-105 transition-all duration-200"
+                className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-primary-400 to-primary-600 text-rich-black font-bold text-lg rounded-full hover:shadow-xl hover:shadow-primary-400/20 hover:scale-105 transition-all duration-200"
               >
                 <span>Ver Todos os Produtos</span>
                 <FiArrowRight className="w-5 h-5" />
@@ -341,54 +348,55 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works Section */}
-      <section id="como-funciona" className="py-20 bg-gradient-to-br from-primary-50 to-accent-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="como-funciona" className="py-20 bg-rich-gray relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary-900/20 via-rich-black to-rich-black"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="font-display text-4xl md:text-5xl font-black text-gray-900 mb-4">
-              Como <span className="bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">Funciona</span>
+            <h2 className="font-display text-4xl md:text-5xl font-black text-white mb-4">
+              Como <span className="bg-gradient-to-r from-primary-300 via-primary-100 to-primary-400 bg-clip-text text-transparent">Funciona</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Três passos simples para começar a transformar sua vida
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              O caminho comprovado para escalar suas vendas online
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="absolute -top-4 left-8 w-12 h-12 bg-gradient-to-r from-primary-600 to-accent-600 rounded-full flex items-center justify-center text-white font-black text-xl">
+            <div className="relative bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 hover:border-primary-500/30 transition-all duration-300 group">
+              <div className="absolute -top-4 left-8 w-12 h-12 bg-gradient-to-r from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-rich-black font-black text-xl shadow-lg shadow-primary-500/20">
                 1
               </div>
               <div className="mt-6 mb-4">
-                <FiUsers className="w-12 h-12 text-primary-600" />
+                <FiUsers className="w-12 h-12 text-primary-400 group-hover:scale-110 transition-transform duration-300" />
               </div>
-              <h3 className="font-display text-2xl font-bold text-gray-900 mb-3">Cadastre-se</h3>
-              <p className="text-gray-600">
-                Crie sua conta gratuitamente e tenha acesso imediato à plataforma. Sem custos ocultos ou surpresas.
+              <h3 className="font-display text-2xl font-bold text-white mb-3">Cadastre-se</h3>
+              <p className="text-gray-400">
+                Crie sua conta gratuitamente e acesse os produtos mais cobiçados do mercado digital.
               </p>
             </div>
 
-            <div className="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="absolute -top-4 left-8 w-12 h-12 bg-gradient-to-r from-primary-600 to-accent-600 rounded-full flex items-center justify-center text-white font-black text-xl">
+            <div className="relative bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 hover:border-primary-500/30 transition-all duration-300 group">
+              <div className="absolute -top-4 left-8 w-12 h-12 bg-gradient-to-r from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-rich-black font-black text-xl shadow-lg shadow-primary-500/20">
                 2
               </div>
               <div className="mt-6 mb-4">
-                <FiShoppingBag className="w-12 h-12 text-primary-600" />
+                <FiShoppingBag className="w-12 h-12 text-primary-400 group-hover:scale-110 transition-transform duration-300" />
               </div>
-              <h3 className="font-display text-2xl font-bold text-gray-900 mb-3">Escolha Produtos</h3>
-              <p className="text-gray-600">
-                Explore nossa seleção de produtos digitais premium e escolha os que fazem sentido para você.
+              <h3 className="font-display text-2xl font-bold text-white mb-3">Escolha seu Produto</h3>
+              <p className="text-gray-400">
+                Selecione produtos validados com funis de alta conversão. Material de apoio pronto para você rodar tráfego.
               </p>
             </div>
 
-            <div className="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="absolute -top-4 left-8 w-12 h-12 bg-gradient-to-r from-primary-600 to-accent-600 rounded-full flex items-center justify-center text-white font-black text-xl">
+            <div className="relative bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 hover:border-primary-500/30 transition-all duration-300 group">
+              <div className="absolute -top-4 left-8 w-12 h-12 bg-gradient-to-r from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-rich-black font-black text-xl shadow-lg shadow-primary-500/20">
                 3
               </div>
               <div className="mt-6 mb-4">
-                <FiTrendingUp className="w-12 h-12 text-primary-600" />
+                <FiTrendingUp className="w-12 h-12 text-primary-400 group-hover:scale-110 transition-transform duration-300" />
               </div>
-              <h3 className="font-display text-2xl font-bold text-gray-900 mb-3">Ganhe e Venda</h3>
-              <p className="text-gray-600">
-                Ganhe bônus e comissões ao indicar outros usuários. Quanto mais você compartilha, mais você ganha!
+              <h3 className="font-display text-2xl font-bold text-white mb-3">Venda e Escale</h3>
+              <p className="text-gray-400">
+                Receba comissões gordas, otimize suas campanhas e escale seu negócio digital para o próximo nível.
               </p>
             </div>
           </div>
@@ -396,31 +404,32 @@ export default function LandingPage() {
       </section>
 
       {/* Benefits Section */}
-      <section id="beneficios" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="beneficios" className="py-20 bg-rich-black relative">
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary-900/10 to-transparent"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="font-display text-4xl md:text-5xl font-black text-gray-900 mb-6">
-                Por que escolher <span className="bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">together</span>?
+              <h2 className="font-display text-4xl md:text-5xl font-black text-white mb-6">
+                Por que escolher a <span className="bg-gradient-to-r from-primary-300 via-primary-100 to-primary-400 bg-clip-text text-transparent">AS Doação</span>?
               </h2>
-              <p className="text-xl text-gray-600 mb-8">
-                Mais do que uma plataforma, somos uma comunidade que acredita no poder da transformação digital.
+              <p className="text-xl text-gray-400 mb-8">
+                Mais do que uma plataforma, somos o veículo para a sua prosperidade financeira e realização pessoal.
               </p>
 
               <div className="space-y-6">
                 {[
-                  { icon: FiCheckCircle, title: 'Renda Recorrente', desc: 'Ganhos automáticos e transparentes' },
-                  { icon: FiStar, title: 'Produtos Premium', desc: 'Conteúdo selecionado e de alta qualidade' },
-                  { icon: FiZap, title: 'Suporte 24/7', desc: 'Estamos sempre aqui para ajudar' },
-                  { icon: FiTrendingUp, title: 'Crescimento Contínuo', desc: 'Acompanhe seu progresso em tempo real' },
+                  { icon: FiCheckCircle, title: 'Renda Exponencial', desc: 'Sistema desenhado para alavancar seus ganhos' },
+                  { icon: FiStar, title: 'Produtos de Elite', desc: 'Conteúdo que gera valor real e imediato' },
+                  { icon: FiZap, title: 'Suporte Premium', desc: 'Atendimento exclusivo para membros' },
+                  { icon: FiTrendingUp, title: 'Gestão de Riqueza', desc: 'Ferramentas completas para controlar seu império' },
                 ].map((benefit, idx) => (
                   <div key={idx} className="flex items-start space-x-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-primary-100 to-accent-100 rounded-xl flex items-center justify-center">
-                      <benefit.icon className="w-6 h-6 text-primary-600" />
+                    <div className="flex-shrink-0 w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center border border-white/10">
+                      <benefit.icon className="w-6 h-6 text-primary-400" />
                     </div>
                     <div>
-                      <h3 className="font-display text-xl font-bold text-gray-900 mb-1">{benefit.title}</h3>
-                      <p className="text-gray-600">{benefit.desc}</p>
+                      <h3 className="font-display text-xl font-bold text-white mb-1">{benefit.title}</h3>
+                      <p className="text-gray-400">{benefit.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -430,9 +439,9 @@ export default function LandingPage() {
                 <div className="mt-10">
                   <Link
                     href="/register"
-                    className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-bold text-lg rounded-full hover:shadow-xl hover:scale-105 transition-all duration-200"
+                    className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-primary-400 to-primary-600 text-rich-black font-bold text-lg rounded-full hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:scale-105 transition-all duration-200"
                   >
-                    <span>Começar Agora</span>
+                    <span>Começar Minha Jornada</span>
                     <FiArrowRight className="w-5 h-5" />
                   </Link>
                 </div>
@@ -440,35 +449,35 @@ export default function LandingPage() {
             </div>
 
             <div className="relative">
-              <div className="relative bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl p-8 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                <div className="bg-white rounded-2xl p-8">
+              <div className="relative bg-gradient-to-br from-primary-500/20 to-primary-900/20 rounded-3xl p-8 shadow-2xl backdrop-blur-md border border-white/10 transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                <div className="bg-rich-gray/90 rounded-2xl p-8 border border-white/5">
                   <div className="flex items-center space-x-4 mb-6">
-                    <div className="w-16 h-16 bg-gradient-to-br from-primary-100 to-accent-100 rounded-full flex items-center justify-center">
-                      <FiUsers className="w-8 h-8 text-primary-600" />
+                    <div className="w-16 h-16 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center shadow-lg">
+                      <FiUsers className="w-8 h-8 text-rich-black" />
                     </div>
                     <div>
-                      <div className="font-display text-2xl font-black text-gray-900">Escritório Virtual</div>
-                      <div className="text-sm text-gray-500">Sua central de comando</div>
+                      <div className="font-display text-2xl font-black text-white">Escritório Virtual</div>
+                      <div className="text-sm text-primary-400">Sua central de comando</div>
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                      <span className="text-gray-700">Saldo Disponível</span>
-                      <span className="font-bold text-primary-600">R$ 0,00</span>
+                    <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                      <span className="text-gray-400">Saldo Disponível</span>
+                      <span className="font-bold text-primary-400">R$ 15.450,00</span>
                     </div>
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                      <span className="text-gray-700">Indicações Diretas</span>
-                      <span className="font-bold text-gray-900">0</span>
+                    <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                      <span className="text-gray-400">Indicações Diretas</span>
+                      <span className="font-bold text-white">12</span>
                     </div>
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                      <span className="text-gray-700">Rede Total</span>
-                      <span className="font-bold text-gray-900">0 pessoas</span>
+                    <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                      <span className="text-gray-400">Rede Total</span>
+                      <span className="font-bold text-white">1.240 pessoas</span>
                     </div>
                   </div>
                   {user && (
                     <Link
                       href={user.tipo === 'admin' ? '/admin' : '/escritorio'}
-                      className="mt-6 block w-full text-center px-6 py-3 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
+                      className="mt-6 block w-full text-center px-6 py-3 bg-gradient-to-r from-primary-400 to-primary-600 text-rich-black font-semibold rounded-xl hover:shadow-lg transition-all"
                     >
                       Acessar Agora
                     </Link>
@@ -482,24 +491,25 @@ export default function LandingPage() {
 
       {/* CTA Section */}
       {!user && (
-        <section className="py-20 bg-gradient-to-r from-primary-600 via-accent-600 to-primary-600">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <section className="py-20 bg-gradient-to-r from-primary-900 via-rich-black to-primary-900 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <h2 className="font-display text-4xl md:text-5xl font-black text-white mb-6">
-              Pronto para transformar sua vida?
+              Pronto para viver a <span className="text-primary-400">abundância</span>?
             </h2>
-            <p className="text-xl text-white/90 mb-10">
-              Junte-se a milhares de pessoas que já estão construindo seu futuro digital
+            <p className="text-xl text-gray-300 mb-10">
+              Junte-se a elite que já descobriu o caminho para a verdadeira liberdade financeira com a AS Doação.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/register"
-                className="px-8 py-4 bg-white text-primary-600 font-bold text-lg rounded-full hover:shadow-2xl hover:scale-105 transition-all duration-200"
+                className="px-8 py-4 bg-gradient-to-r from-primary-400 to-primary-600 text-rich-black font-bold text-lg rounded-full hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] hover:scale-105 transition-all duration-200"
               >
                 Criar Conta Gratuita
               </Link>
               <Link
                 href="/login"
-                className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-bold text-lg rounded-full border-2 border-white/30 hover:bg-white/20 transition-all duration-200"
+                className="px-8 py-4 bg-white/5 backdrop-blur-sm text-white font-bold text-lg rounded-full border border-white/10 hover:bg-white/10 transition-all duration-200"
               >
                 Já tenho conta
               </Link>
@@ -509,29 +519,31 @@ export default function LandingPage() {
       )}
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300 py-12">
+      <footer className="bg-rich-black text-gray-400 py-12 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
-              <div className="font-display text-2xl font-black text-white mb-4">together</div>
-              <p className="text-sm">
-                Transformando vidas através da revolução digital.
+              <div className="font-display text-2xl font-black text-white mb-4 flex items-center gap-2">
+                <span className="bg-gradient-to-r from-primary-300 via-primary-100 to-primary-400 bg-clip-text text-transparent">AS Doação</span>
+              </div>
+              <p className="text-sm text-gray-500">
+                A plataforma definitiva para quem quer viver de internet.
               </p>
             </div>
             <div>
               <h3 className="text-white font-semibold mb-4">Produtos</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="#produtos" className="hover:text-white transition-colors">Todos os Produtos</Link></li>
-                <li><Link href="#produtos" className="hover:text-white transition-colors">Categorias</Link></li>
-                <li><Link href="#produtos" className="hover:text-white transition-colors">Novidades</Link></li>
+                <li><Link href="#produtos" className="hover:text-primary-400 transition-colors">Todos os Produtos</Link></li>
+                <li><Link href="#produtos" className="hover:text-primary-400 transition-colors">Categorias</Link></li>
+                <li><Link href="#produtos" className="hover:text-primary-400 transition-colors">Novidades</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="text-white font-semibold mb-4">Sobre</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="#como-funciona" className="hover:text-white transition-colors">Como Funciona</Link></li>
-                <li><Link href="#beneficios" className="hover:text-white transition-colors">Benefícios</Link></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contato</a></li>
+                <li><Link href="#como-funciona" className="hover:text-primary-400 transition-colors">Como Funciona</Link></li>
+                <li><Link href="#beneficios" className="hover:text-primary-400 transition-colors">Benefícios</Link></li>
+                <li><a href="#" className="hover:text-primary-400 transition-colors">Contato</a></li>
               </ul>
             </div>
             <div>
@@ -539,21 +551,21 @@ export default function LandingPage() {
               <ul className="space-y-2 text-sm">
                 {user ? (
                   <li>
-                    <Link href={user.tipo === 'admin' ? '/admin' : '/escritorio'} className="hover:text-white transition-colors">
+                    <Link href={user.tipo === 'admin' ? '/admin' : '/escritorio'} className="hover:text-primary-400 transition-colors">
                       Meu Escritório
                     </Link>
                   </li>
                 ) : (
                   <>
-                    <li><Link href="/login" className="hover:text-white transition-colors">Entrar</Link></li>
-                    <li><Link href="/register" className="hover:text-white transition-colors">Criar Conta</Link></li>
+                    <li><Link href="/login" className="hover:text-primary-400 transition-colors">Entrar</Link></li>
+                    <li><Link href="/register" className="hover:text-primary-400 transition-colors">Criar Conta</Link></li>
                   </>
                 )}
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 pt-8 text-center text-sm">
-            <p>&copy; {new Date().getFullYear()} Together. Todos os direitos reservados.</p>
+          <div className="border-t border-white/10 pt-8 text-center text-sm">
+            <p>&copy; {new Date().getFullYear()} AS Doação. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>
