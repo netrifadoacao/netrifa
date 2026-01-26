@@ -1,111 +1,115 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createClient } from '@/utils/supabase/client';
+import { User as SupabaseUser } from '@supabase/supabase-js';
 
-interface User {
+interface UserProfile {
   id: string;
-  nome: string;
   email: string;
-  telefone: string;
-  tipo: 'admin' | 'usuario';
-  linkIndicacao: string;
-  saldo: number;
-  dadosBancarios: {
-    banco: string;
-    agencia: string;
-    conta: string;
-    pix: string;
-  };
+  full_name?: string;
+  role?: 'admin' | 'member';
+  referral_code?: string;
+  wallet_balance?: number;
+  sponsor_id?: string;
 }
 
 interface AuthContextType {
-  user: User | null;
-  token: string | null;
+  user: SupabaseUser | null;
+  profile: UserProfile | null;
   login: (email: string, senha: string) => Promise<void>;
   register: (data: any) => Promise<void>;
-  logout: () => void;
-  updateUser: (user: User) => void;
+  logout: () => Promise<void>;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedUser = localStorage.getItem('user');
-      const storedToken = localStorage.getItem('token');
-      if (storedUser && storedToken) {
-        setUser(JSON.parse(storedUser));
-        setToken(storedToken);
+    const fetchSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        await fetchProfile(session.user.id);
+      } else {
+        setProfile(null);
       }
-    }
-  }, []);
+      setLoading(false);
+    };
 
-  const login = async (email: string, senha: string) => {
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, senha }),
+    fetchSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        // Apenas busca o perfil se ainda não tiver ou se o usuário mudou
+        if (!profile || profile.id !== session.user.id) {
+           await fetchProfile(session.user.id);
+        }
+      } else {
+        setProfile(null);
+      }
+      setLoading(false);
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Erro ao fazer login');
-    }
+    return () => subscription.unsubscribe();
+  }, []);
 
-    const data = await response.json();
-    setUser(data.user);
-    setToken(data.token);
-    
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('user', JSON.stringify(data.user));
-      localStorage.setItem('token', data.token);
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      if (error) {
+        console.error('Erro ao buscar perfil:', error);
+      } else {
+        setProfile(data);
+      }
+    } catch (err) {
+      console.error('Exceção ao buscar perfil:', err);
     }
+  };
+
+  const login = async (email: string, senha: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password: senha,
+    });
+    if (error) throw error;
   };
 
   const register = async (data: any) => {
-    const response = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+    const { error } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.senha,
+      options: {
+        data: {
+          full_name: data.nome,
+          sponsor_referral_code: data.patrocinadorLink,
+          phone: data.telefone
+        }
+      }
     });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Erro ao cadastrar');
-    }
-
-    const result = await response.json();
-    setUser(result.user);
-    setToken(result.token);
-    
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('user', JSON.stringify(result.user));
-      localStorage.setItem('token', result.token);
-    }
+    if (error) throw error;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
-    setToken(null);
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-    }
-  };
-
-  const updateUser = (updatedUser: User) => {
-    setUser(updatedUser);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-    }
+    setProfile(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, profile, login, register, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
