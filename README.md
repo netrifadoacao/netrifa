@@ -37,9 +37,19 @@ O projeto utiliza o **Supabase** como Backend-as-a-Service (BaaS). Toda a lógic
     ```bash
     npx supabase db push
     ```
-7.  Deploy das Edge Functions:
+7.  Configuração de Secrets e Deploy das Edge Functions:
+    Antes de fazer o deploy, configure as variáveis de ambiente (Secrets) no Supabase:
     ```bash
-    npx supabase functions deploy
+    npx supabase secrets set MP_ACCESS_TOKEN=seu_token_de_acesso_mp 
+    npx supabase secrets set SUPABASE_URL=sua_url_supabase 
+    npx supabase secrets set SUPABASE_ANON_KEY=sua_chave_anonima 
+    npx supabase secrets set SUPABASE_SERVICE_ROLE_KEY=sua_chave_service_role 
+    ```
+
+    Em seguida, faça o deploy das funções:
+    ```bash
+    npx supabase functions deploy create-checkout 
+    npx supabase functions deploy mp-webhook
     ```
 
 ## 📂 Estrutura do Projeto
