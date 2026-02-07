@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { FiShoppingBag, FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import { createClient } from '@/utils/supabase/client';
 
 interface Produto {
   id: string;
@@ -15,7 +16,7 @@ interface Produto {
 }
 
 export default function CriarPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const router = useRouter();
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(false);
@@ -27,18 +28,19 @@ export default function CriarPage() {
   });
 
   useEffect(() => {
-    if (!user || user.tipo !== 'admin') {
+    if (!user || profile?.role !== 'admin') {
       router.push('/login');
       return;
     }
     fetchProdutos();
-  }, [user, router]);
+  }, [user, profile, router]);
 
   const fetchProdutos = async () => {
     try {
-      const response = await fetch('/api/produtos');
-      const data = await response.json();
-      setProdutos(data);
+      const supabase = createClient();
+      const { data, error } = await supabase.from('products').select('id, name, description, price, active');
+      if (error) throw error;
+      setProdutos((data ?? []).map((p) => ({ id: p.id, nome: p.name, descricao: p.description ?? '', preco: p.price, tipo: 'digital', ativo: p.active })));
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
     }
@@ -47,24 +49,15 @@ export default function CriarPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      const response = await fetch('/api/produtos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nome: formData.nome,
-          descricao: formData.descricao,
-          preco: parseFloat(formData.preco),
-          tipo: formData.tipo,
-        }),
+      const supabase = createClient();
+      const { error } = await supabase.from('products').insert({
+        name: formData.nome,
+        description: formData.descricao,
+        price: parseFloat(formData.preco),
+        active: true,
       });
-
-      if (!response.ok) {
-        alert('Erro ao criar produto');
-        return;
-      }
-
+      if (error) throw error;
       alert('Produto criado com sucesso!');
       setFormData({ nome: '', descricao: '', preco: '', tipo: 'digital' });
       fetchProdutos();
@@ -77,17 +70,9 @@ export default function CriarPage() {
 
   const handleToggleAtivo = async (produtoId: string, ativo: boolean) => {
     try {
-      const response = await fetch(`/api/produtos/${produtoId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ativo: !ativo }),
-      });
-
-      if (!response.ok) {
-        alert('Erro ao atualizar produto');
-        return;
-      }
-
+      const supabase = createClient();
+      const { error } = await supabase.from('products').update({ active: !ativo }).eq('id', produtoId);
+      if (error) throw error;
       fetchProdutos();
     } catch (error) {
       alert('Erro ao atualizar produto');

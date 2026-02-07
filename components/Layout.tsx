@@ -1,10 +1,11 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FiHome, FiUser, FiUsers, FiDollarSign, FiFileText, FiLogOut, FiShoppingBag, FiCheckCircle, FiXCircle, FiSettings } from 'react-icons/fi';
+import { FiHome, FiUser, FiUsers, FiDollarSign, FiFileText, FiLogOut, FiShoppingBag, FiCheckCircle, FiSettings } from 'react-icons/fi';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,13 +13,21 @@ interface LayoutProps {
 }
 
 export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
-  const { user, logout } = useAuth();
+  const { user, profile, logout, loading: authLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
-  if (!user) {
-    router.push('/login');
-    return null;
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) router.push('/login');
+  }, [authLoading, user, router]);
+
+  if (authLoading || !user) {
+    return (
+      <div className="min-h-screen bg-rich-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary-500 border-t-transparent" />
+      </div>
+    );
   }
 
   const handleLogout = () => {
@@ -36,10 +45,11 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
 
   const menuItemsAdmin = [
     { href: '/admin', icon: FiHome, label: 'Home' },
+    { href: '/admin/rede', icon: FiUsers, label: 'Rede' },
     { href: '/admin/aprovar', icon: FiCheckCircle, label: 'Aprovar' },
-    { href: '/admin/criar', icon: FiShoppingBag, label: 'Criar Produto' },
-    { href: '/admin/saques', icon: FiDollarSign, label: 'Saques Solicitados' },
-    { href: '/admin/config', icon: FiSettings, label: 'Configuração de Bônus' },
+    { href: '/admin/criar', icon: FiShoppingBag, label: 'Produtos' },
+    { href: '/admin/saques', icon: FiDollarSign, label: 'Saques' },
+    { href: '/admin/config', icon: FiSettings, label: 'Bônus' },
   ];
 
   const menuItems = tipo === 'admin' ? menuItemsAdmin : menuItemsUsuario;
@@ -60,6 +70,7 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
                     src="/logomarca-as.jpeg" 
                     alt="AS Miranda" 
                     fill 
+                    sizes="40px"
                     className="object-cover scale-150"
                   />
                 </div>
@@ -67,7 +78,7 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
                   {tipo === 'admin' ? 'Painel Administrativo' : 'Escritório Virtual'}
                 </h1>
               </div>
-              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+              <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-1 lg:space-x-2 flex-shrink-0">
                 {menuItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = pathname === item.href;
@@ -75,13 +86,13 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200 ${
+                      className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-sm font-medium whitespace-nowrap transition-colors duration-200 ${
                         isActive
-                          ? 'border-primary-500 text-primary-400'
-                          : 'border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-200'
+                          ? 'border-b-2 border-primary-500 text-primary-400 bg-primary-500/10'
+                          : 'border-transparent text-gray-400 hover:text-gray-200 hover:bg-white/5'
                       }`}
                     >
-                      <Icon className="mr-2" />
+                      <Icon className="w-4 h-4 flex-shrink-0" />
                       {item.label}
                     </Link>
                   );
@@ -90,19 +101,19 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-300 flex items-center gap-2">
-                <span className="hidden sm:inline">{user.nome}</span>
+                <span className="hidden sm:inline">{profile?.full_name ?? user?.email ?? ''}</span>
                 {tipo === 'usuario' && (
                   <span className="ml-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 font-semibold text-xs shadow-[0_0_10px_rgba(14,165,233,0.1)]">
-                    R$ {user.saldo.toFixed(2)}
+                    R$ {(Number(profile?.wallet_balance) || 0).toFixed(2)}
                   </span>
                 )}
               </div>
               <button
                 onClick={handleLogout}
-                className="inline-flex items-center px-4 py-2 border border-secondary-500/30 text-sm font-medium rounded-full text-white bg-secondary-600/80 hover:bg-secondary-600 shadow-[0_0_10px_rgba(255,41,41,0.2)] transition-all duration-200 hover:shadow-[0_0_15px_rgba(255,41,41,0.4)] backdrop-blur-sm group"
+                className="inline-flex items-center gap-2 px-3 py-2 border border-secondary-500/30 text-sm font-medium rounded-full text-white bg-secondary-600/80 hover:bg-secondary-600 shadow-[0_0_10px_rgba(255,41,41,0.2)] transition-all duration-200 hover:shadow-[0_0_15px_rgba(255,41,41,0.4)] backdrop-blur-sm group"
               >
-                <FiLogOut className="mr-2 group-hover:-translate-x-1 transition-transform" />
-                <span className="hidden sm:inline">Sair</span>
+                <FiLogOut className="w-4 h-4 flex-shrink-0 group-hover:-translate-x-1 transition-transform" />
+                <span className="hidden sm:inline whitespace-nowrap">Sair</span>
               </button>
             </div>
           </div>

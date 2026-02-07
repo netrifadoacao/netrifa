@@ -32,7 +32,7 @@ export default function RegisterPage() {
         senha,
         patrocinadorLink,
       });
-      router.push('/');
+      router.replace('/escritorio');
     } catch (err: any) {
       setError(err.message || 'Erro ao cadastrar');
     } finally {
@@ -52,6 +52,7 @@ export default function RegisterPage() {
                 src="/logomarca-as.jpeg" 
                 alt="AS Miranda" 
                 fill 
+                sizes="80px"
                 className="object-cover"
               />
             </div>

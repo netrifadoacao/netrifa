@@ -1,34 +1,69 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 
 import Image from 'next/image';
 
+function clearAuthStorage() {
+  if (typeof window === 'undefined') return;
+  const keysToRemove: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && (key.startsWith('sb-') || key.startsWith('supabase.'))) keysToRemove.push(key);
+  }
+  keysToRemove.forEach((k) => localStorage.removeItem(k));
+  for (let i = 0; i < sessionStorage.length; i++) {
+    const key = sessionStorage.key(i);
+    if (key && (key.startsWith('sb-') || key.startsWith('supabase.'))) sessionStorage.removeItem(key);
+  }
+}
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { loginAndGetRole, logout } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const patrocinadorLink = searchParams.get('ref');
+
+  useEffect(() => {
+    clearAuthStorage();
+    logout();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
-    try {
-      await login(email, senha);
-      router.push('/');
-    } catch (err: any) {
-      setError(err.message || 'Erro ao fazer login');
-    } finally {
+    const done = () => {
       setLoading(false);
+    };
+    try {
+      const role = await Promise.race([
+        loginAndGetRole(email, senha),
+        new Promise<'admin' | 'member' | null>((_, reject) =>
+          setTimeout(() => reject(new Error('timeout')), 10000)
+        ),
+      ]);
+      if (role === 'admin') {
+        router.replace('/admin');
+      } else {
+        router.replace('/escritorio');
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message === 'timeout') {
+        setError('Demorou demais. Tente novamente.');
+        router.replace('/');
+      } else {
+        setError(err instanceof Error ? err.message : 'Erro ao fazer login');
+      }
+    } finally {
+      done();
     }
   };
 
@@ -44,6 +79,7 @@ export default function LoginPage() {
                 src="/logomarca-as.jpeg" 
                 alt="AS Miranda" 
                 fill 
+                sizes="80px"
                 className="object-cover"
               />
             </div>

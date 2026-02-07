@@ -6,6 +6,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FiShoppingBag, FiArrowRight, FiStar, FiUsers, FiTrendingUp, FiZap, FiCheckCircle, FiMenu, FiX } from 'react-icons/fi';
+import { createClient } from '@/utils/supabase/client';
+import { functions } from '@/lib/supabase-functions';
 
 interface Produto {
   id: string;
@@ -18,22 +20,35 @@ interface Produto {
 
 export default function LandingPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Produto | null>(null);
   const [buying, setBuying] = useState(false);
+  const isAdmin = profile?.role === 'admin';
 
   useEffect(() => {
     fetchProdutos();
   }, []);
 
+  useEffect(() => {
+    if (authLoading) return;
+    if (user && profile) {
+      if (profile.role === 'admin') {
+        router.replace('/admin');
+      } else {
+        router.replace('/escritorio');
+      }
+    }
+  }, [authLoading, user, profile, router]);
+
   const fetchProdutos = async () => {
     try {
-      const response = await fetch('/api/produtos');
-      const data = await response.json();
-      setProdutos(data.slice(0, 6)); // Limitar a 6 produtos na landing
+      const supabase = createClient();
+      const { data, error } = await supabase.from('products').select('id, name, description, price, active').eq('active', true);
+      if (error) throw error;
+      setProdutos((data ?? []).map((p) => ({ id: p.id, nome: p.name, descricao: p.description ?? '', preco: p.price, tipo: 'digital', ativo: p.active })).slice(0, 6));
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
     } finally {
@@ -46,35 +61,25 @@ export default function LandingPage() {
       router.push('/login');
       return;
     }
-    
     setBuying(true);
     try {
-      const response = await fetch('/api/compras', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          usuarioId: user.id,
-          produtoId: produto.id,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        alert(error.error || 'Erro ao processar compra');
-        return;
-      }
-
-      alert('Compra realizada com sucesso! 🎉');
+      const { url } = await functions.createCheckout(produto.id);
       setSelectedProduct(null);
-      if (user.tipo !== 'admin') {
-        window.location.href = '/escritorio';
-      }
-    } catch (error) {
-      alert('Erro ao processar compra');
+      window.location.href = url;
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Erro ao iniciar checkout');
     } finally {
       setBuying(false);
     }
   };
+
+  if (user && !profile && !authLoading) {
+    return (
+      <div className="min-h-screen bg-rich-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary-500 border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-rich-black text-white selection:bg-amber-500 selection:text-white">
@@ -88,6 +93,7 @@ export default function LandingPage() {
                   src="/logomarca-as.jpeg" 
                   alt="AS Miranda" 
                   fill 
+                  sizes="48px"
                   className="object-cover scale-150"
                 />
               </div>
@@ -109,7 +115,7 @@ export default function LandingPage() {
               </Link>
               {user ? (
                 <Link
-                  href={user.tipo === 'admin' ? '/admin' : '/escritorio'}
+                  href={isAdmin ? '/admin' : '/escritorio'}
                   className="ml-4 px-6 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold rounded-full hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-white/10"
                 >
                   <span>Meu Escritório</span>
@@ -156,7 +162,7 @@ export default function LandingPage() {
               </Link>
               {user ? (
                 <Link
-                  href={user.tipo === 'admin' ? '/admin' : '/escritorio'}
+                  href={isAdmin ? '/admin' : '/escritorio'}
                   className="block px-6 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold rounded-full text-center"
                 >
                   Meu Escritório
@@ -205,7 +211,7 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
               {user ? (
                 <Link
-                  href={user.tipo === 'admin' ? '/admin' : '/escritorio'}
+                  href={isAdmin ? '/admin' : '/escritorio'}
                   className="group px-8 py-4 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-bold text-lg rounded-full hover:shadow-[0_0_30px_rgba(255,41,41,0.4)] hover:scale-105 transition-all duration-200 flex items-center space-x-3 border border-white/20"
                 >
                   <span>Acessar Meu Escritório</span>
@@ -476,7 +482,7 @@ export default function LandingPage() {
                   </div>
                   {user && (
                     <Link
-                      href={user.tipo === 'admin' ? '/admin' : '/escritorio'}
+                      href={isAdmin ? '/admin' : '/escritorio'}
                       className="mt-6 block w-full text-center px-6 py-3 bg-gradient-to-r from-primary-400 to-primary-600 text-rich-black font-semibold rounded-xl hover:shadow-lg transition-all"
                     >
                       Acessar Agora
@@ -551,7 +557,7 @@ export default function LandingPage() {
               <ul className="space-y-2 text-sm">
                 {user ? (
                   <li>
-                    <Link href={user.tipo === 'admin' ? '/admin' : '/escritorio'} className="hover:text-primary-400 transition-colors">
+                    <Link href={isAdmin ? '/admin' : '/escritorio'} className="hover:text-primary-400 transition-colors">
                       Meu Escritório
                     </Link>
                   </li>

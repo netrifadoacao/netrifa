@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { FiShoppingBag, FiEye } from 'react-icons/fi';
+import { createClient } from '@/utils/supabase/client';
+import { functions } from '@/lib/supabase-functions';
 
 interface Produto {
   id: string;
@@ -15,7 +17,7 @@ interface Produto {
 }
 
 export default function EscritorioHome() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const router = useRouter();
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,18 +25,19 @@ export default function EscritorioHome() {
   const [buying, setBuying] = useState(false);
 
   useEffect(() => {
-    if (!user || user.tipo === 'admin') {
+    if (!user || profile?.role === 'admin') {
       router.push('/login');
       return;
     }
     fetchProdutos();
-  }, [user, router]);
+  }, [user, profile, router]);
 
   const fetchProdutos = async () => {
     try {
-      const response = await fetch('/api/produtos');
-      const data = await response.json();
-      setProdutos(data);
+      const supabase = createClient();
+      const { data, error } = await supabase.from('products').select('id, name, description, price, active').eq('active', true);
+      if (error) throw error;
+      setProdutos((data ?? []).map((p) => ({ id: p.id, nome: p.name, descricao: p.description ?? '', preco: p.price, tipo: 'digital', ativo: p.active })));
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
     } finally {
@@ -44,32 +47,13 @@ export default function EscritorioHome() {
 
   const handleComprar = async (produto: Produto) => {
     if (!user) return;
-    
     setBuying(true);
     try {
-      const response = await fetch('/api/compras', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          usuarioId: user.id,
-          produtoId: produto.id,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        alert(error.error || 'Erro ao processar compra');
-        return;
-      }
-
-      alert('Compra realizada com sucesso! Pagamento aprovado automaticamente.');
+      const { url } = await functions.createCheckout(produto.id);
       setSelectedProduct(null);
-      // Recarregar dados do usuário
-      const userResponse = await fetch(`/api/usuarios/${user.id}`);
-      const updatedUser = await userResponse.json();
-      window.location.reload();
-    } catch (error) {
-      alert('Erro ao processar compra');
+      window.location.href = url;
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Erro ao iniciar checkout');
     } finally {
       setBuying(false);
     }
