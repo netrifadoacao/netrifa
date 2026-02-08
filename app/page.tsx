@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
@@ -42,6 +42,15 @@ export default function LandingPage() {
       }
     }
   }, [authLoading, user, profile, router]);
+
+  const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const onScroll = () => setMobileMenuOpen(false);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [mobileMenuOpen]);
 
   const fetchProdutos = async () => {
     try {
@@ -185,6 +194,14 @@ export default function LandingPage() {
           )}
         </nav>
       </header>
+
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 top-20 z-40 md:hidden bg-black/30"
+          aria-hidden
+          onClick={closeMobileMenu}
+        />
+      )}
 
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-20 pb-32">
