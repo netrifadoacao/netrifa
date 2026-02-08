@@ -1,9 +1,10 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { corsHeaders } from '../_shared/cors.ts'
+import { getCorsHeaders } from '../_shared/cors.ts'
 import { requireUser, createSupabaseAdmin } from '../_shared/supabase.ts'
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  const cors = getCorsHeaders(req)
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
   try {
     const user = await requireUser(req)
     const url = new URL(req.url)
@@ -26,7 +27,7 @@ serve(async (req) => {
         role: p.role ?? null,
         avatar_url: p.avatar_url ?? null,
       }))
-      return new Response(JSON.stringify({ profiles: list }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      return new Response(JSON.stringify({ profiles: list }), { headers: { ...cors, 'Content-Type': 'application/json' } })
     }
     const build = (sid: string | null, nivel: number): unknown[] => {
       if (nivel > 5) return []
@@ -40,10 +41,10 @@ serve(async (req) => {
       }))
     }
     const rede = build(userId, 1)
-    return new Response(JSON.stringify({ rede, niveis: 5 }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    return new Response(JSON.stringify({ rede, niveis: 5 }), { headers: { ...cors, 'Content-Type': 'application/json' } })
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : 'Erro'
     const status = message === 'Unauthorized' ? 401 : message === 'Forbidden' ? 403 : 500
-    return new Response(JSON.stringify({ error: message }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status })
+    return new Response(JSON.stringify({ error: message }), { headers: { ...cors, 'Content-Type': 'application/json' }, status })
   }
 })

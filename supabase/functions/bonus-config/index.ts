@@ -1,9 +1,10 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { corsHeaders } from '../_shared/cors.ts'
+import { getCorsHeaders } from '../_shared/cors.ts'
 import { requireUser, requireAdmin, createSupabaseAdmin } from '../_shared/supabase.ts'
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  const cors = getCorsHeaders(req)
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
   try {
     const supabase = createSupabaseAdmin()
 
@@ -17,7 +18,7 @@ serve(async (req) => {
         else config[`nivel${r.level - 1}`] = Number(r.percentage)
       })
       config.valorMinimoSaque = 50
-      return new Response(JSON.stringify(config), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      return new Response(JSON.stringify(config), { headers: { ...cors, 'Content-Type': 'application/json' } })
     }
 
     if (req.method === 'PUT' || req.method === 'PATCH') {
@@ -33,13 +34,13 @@ serve(async (req) => {
       for (const row of levels) {
         await supabase.from('bonus_config').upsert(row, { onConflict: 'level' })
       }
-      return new Response(JSON.stringify(body), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      return new Response(JSON.stringify(body), { headers: { ...cors, 'Content-Type': 'application/json' } })
     }
 
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: corsHeaders })
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: cors })
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : 'Erro'
     const status = message === 'Unauthorized' ? 401 : message === 'Forbidden' ? 403 : 500
-    return new Response(JSON.stringify({ error: message }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status })
+    return new Response(JSON.stringify({ error: message }), { headers: { ...cors, 'Content-Type': 'application/json' }, status })
   }
 })

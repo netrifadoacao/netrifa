@@ -36,7 +36,26 @@ function getFirstName(p: Profile): string {
   return '?';
 }
 
-function AvatarCard({ profile: p, size = 64, childCount }: { profile: Profile; size?: number; childCount?: number }) {
+function countDescendants(node: TreeProfileNode, maxDepth: number, depth = 0): number {
+  if (depth >= maxDepth) return 0;
+  let n = node.children.length;
+  for (const child of node.children) {
+    n += countDescendants(child, maxDepth, depth + 1);
+  }
+  return n;
+}
+
+function AvatarCard({
+  profile: p,
+  size = 64,
+  childCount = 0,
+  totalDescendants = 0,
+}: {
+  profile: Profile;
+  size?: number;
+  childCount?: number;
+  totalDescendants?: number;
+}) {
   const isAdmin = p.role === 'admin';
   const initials = getInitials(p);
   const displayName = isAdmin ? 'Admin' : getFirstName(p);
@@ -59,7 +78,12 @@ function AvatarCard({ profile: p, size = 64, childCount }: { profile: Profile; s
           </span>
         </div>
       </div>
-      {(childCount ?? 0) > 0 && (
+      {totalDescendants > 0 && (
+        <span className="absolute -bottom-1 -left-1 min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-semibold border-2 border-rich-black z-10">
+          {totalDescendants}
+        </span>
+      )}
+      {childCount > 0 && (
         <span className="absolute -bottom-1 -right-1 min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full bg-primary-500 text-white text-xs font-semibold border-2 border-rich-black z-10">
           {childCount}
         </span>
@@ -70,11 +94,32 @@ function AvatarCard({ profile: p, size = 64, childCount }: { profile: Profile; s
 
 function OrgTreeNodes({ node, size = 64 }: { node: TreeProfileNode; size?: number }) {
   const childSize = Math.max(44, size - 10);
+  const totalDescendants = countDescendants(node, 5);
   if (node.children.length === 0) {
-    return <TreeNode label={<AvatarCard profile={node.profile} size={size} />} />;
+    return (
+      <TreeNode
+        label={
+          <AvatarCard
+            profile={node.profile}
+            size={size}
+            childCount={0}
+            totalDescendants={totalDescendants}
+          />
+        }
+      />
+    );
   }
   return (
-    <TreeNode label={<AvatarCard profile={node.profile} size={size} childCount={node.children.length} />}>
+    <TreeNode
+      label={
+        <AvatarCard
+          profile={node.profile}
+          size={size}
+          childCount={node.children.length}
+          totalDescendants={totalDescendants}
+        />
+      }
+    >
       {node.children.map((child) => (
         <OrgTreeNodes key={child.profile.id} node={child} size={childSize} />
       ))}
@@ -85,21 +130,31 @@ function OrgTreeNodes({ node, size = 64 }: { node: TreeProfileNode; size?: numbe
 export default function AvatarTreeChart({ roots }: { roots: TreeProfileNode[] }) {
   return (
     <div className="flex justify-center min-w-max pb-8 [&_.org-chart]:!bg-transparent">
-      {roots.map((root) => (
-        <Tree
-          key={root.profile.id}
-          label={<AvatarCard profile={root.profile} size={64} childCount={root.children.length} />}
-          lineWidth="2px"
-          lineColor="rgba(255,255,255,0.4)"
-          lineBorderRadius="4px"
-          nodePadding="32px"
-          lineHeight="24px"
-        >
-          {root.children.map((child) => (
-            <OrgTreeNodes key={child.profile.id} node={child} size={54} />
-          ))}
-        </Tree>
-      ))}
+      {roots.map((root) => {
+        const totalDescendants = countDescendants(root, 5);
+        return (
+          <Tree
+            key={root.profile.id}
+            label={
+              <AvatarCard
+                profile={root.profile}
+                size={64}
+                childCount={root.children.length}
+                totalDescendants={totalDescendants}
+              />
+            }
+            lineWidth="2px"
+            lineColor="rgba(255,255,255,0.4)"
+            lineBorderRadius="4px"
+            nodePadding="32px"
+            lineHeight="24px"
+          >
+            {root.children.map((child) => (
+              <OrgTreeNodes key={child.profile.id} node={child} size={54} />
+            ))}
+          </Tree>
+        );
+      })}
     </div>
   );
 }

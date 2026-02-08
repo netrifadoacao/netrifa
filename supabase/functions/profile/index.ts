@@ -1,9 +1,10 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { corsHeaders } from '../_shared/cors.ts'
+import { getCorsHeaders } from '../_shared/cors.ts'
 import { requireUser, createSupabaseAdmin } from '../_shared/supabase.ts'
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  const cors = getCorsHeaders(req)
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
   try {
     const user = await requireUser(req)
     const url = new URL(req.url)
@@ -21,7 +22,7 @@ serve(async (req) => {
       const supabase = createSupabaseAdmin()
       const { data, error } = await supabase.from('profiles').update(updates).eq('id', user.id).select().single()
       if (error) throw error
-      return new Response(JSON.stringify({ id: data.id, email: data.email, full_name: data.full_name, phone: data.phone }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      return new Response(JSON.stringify({ id: data.id, email: data.email, full_name: data.full_name, phone: data.phone }), { headers: { ...cors, 'Content-Type': 'application/json' } })
     }
 
     if (userId !== user.id) {
@@ -44,10 +45,10 @@ serve(async (req) => {
       sponsor_id: data.sponsor_id,
       phone: data.phone
     }
-    return new Response(JSON.stringify(out), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    return new Response(JSON.stringify(out), { headers: { ...cors, 'Content-Type': 'application/json' } })
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : 'Erro'
     const status = message === 'Unauthorized' ? 401 : message === 'Forbidden' ? 403 : 404
-    return new Response(JSON.stringify({ error: message }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status })
+    return new Response(JSON.stringify({ error: message }), { headers: { ...cors, 'Content-Type': 'application/json' }, status })
   }
 })

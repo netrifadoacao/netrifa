@@ -1,9 +1,10 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { corsHeaders } from '../_shared/cors.ts'
+import { getCorsHeaders } from '../_shared/cors.ts'
 import { requireUser, createSupabaseAdmin } from '../_shared/supabase.ts'
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  const cors = getCorsHeaders(req)
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
   try {
     const user = await requireUser(req)
     const url = new URL(req.url)
@@ -30,10 +31,10 @@ serve(async (req) => {
       origemCompraId: t.origin_order_id,
       origemUsuario: null
     }))
-    return new Response(JSON.stringify(list), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    return new Response(JSON.stringify(list), { headers: { ...cors, 'Content-Type': 'application/json' } })
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : 'Erro'
     const status = message === 'Unauthorized' ? 401 : message === 'Forbidden' ? 403 : 500
-    return new Response(JSON.stringify({ error: message }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status })
+    return new Response(JSON.stringify({ error: message }), { headers: { ...cors, 'Content-Type': 'application/json' }, status })
   }
 })

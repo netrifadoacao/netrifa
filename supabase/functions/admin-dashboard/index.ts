@@ -1,5 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { corsHeaders } from '../_shared/cors.ts'
+import { getCorsHeaders } from '../_shared/cors.ts'
 import { requireAdmin, createSupabaseAdmin } from '../_shared/supabase.ts'
 
 const DAYS = 14
@@ -27,7 +27,8 @@ function byDay(arr: { created_at?: string }[], days: number) {
 }
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  const cors = getCorsHeaders(req)
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
   try {
     await requireAdmin(req)
     const supabase = createSupabaseAdmin()
@@ -87,10 +88,10 @@ serve(async (req) => {
       membersByDay,
       withdrawalsByDay,
       topProducts,
-    }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }), { headers: { ...cors, 'Content-Type': 'application/json' } })
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : 'Erro'
     const status = message === 'Unauthorized' ? 401 : message === 'Forbidden' ? 403 : 500
-    return new Response(JSON.stringify({ error: message }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status })
+    return new Response(JSON.stringify({ error: message }), { headers: { ...cors, 'Content-Type': 'application/json' }, status })
   }
 })

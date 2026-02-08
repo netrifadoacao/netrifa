@@ -1,9 +1,10 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { corsHeaders } from '../_shared/cors.ts'
+import { getCorsHeaders } from '../_shared/cors.ts'
 import { requireUser, requireAdmin, createSupabaseAdmin } from '../_shared/supabase.ts'
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  const cors = getCorsHeaders(req)
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
   try {
     const url = new URL(req.url)
     const supabaseAdmin = createSupabaseAdmin()
@@ -35,7 +36,7 @@ serve(async (req) => {
           usuario: u ? { nome: u.full_name, email: u.email } : null
         })
       }
-      return new Response(JSON.stringify(withUser), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      return new Response(JSON.stringify(withUser), { headers: { ...cors, 'Content-Type': 'application/json' } })
     }
 
     if (req.method === 'POST') {
@@ -63,7 +64,7 @@ serve(async (req) => {
         valor: novoSaque.amount,
         status: 'pendente',
         dataSolicitacao: novoSaque.created_at
-      }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      }), { headers: { ...cors, 'Content-Type': 'application/json' } })
     }
 
     if (req.method === 'PUT' || req.method === 'PATCH') {
@@ -84,13 +85,13 @@ serve(async (req) => {
         await supabaseAdmin.from('profiles').update({ wallet_balance: saldo + Number(saque.amount) }).eq('id', saque.user_id)
       } else throw new Error('action required: approve, pay, reject')
       const { data: updated } = await supabaseAdmin.from('withdrawals').select('*').eq('id', saqueId).single()
-      return new Response(JSON.stringify(updated), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      return new Response(JSON.stringify(updated), { headers: { ...cors, 'Content-Type': 'application/json' } })
     }
 
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: corsHeaders })
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: cors })
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : 'Erro'
     const status = message === 'Unauthorized' ? 401 : message === 'Forbidden' ? 403 : 500
-    return new Response(JSON.stringify({ error: message }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status })
+    return new Response(JSON.stringify({ error: message }), { headers: { ...cors, 'Content-Type': 'application/json' }, status })
   }
 })
