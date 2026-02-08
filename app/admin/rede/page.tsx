@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef, useLayoutEffect } from 'react';
+import { Tree, TreeNode } from 'react-organizational-chart';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { useFunctions } from '@/lib/supabase-functions';
@@ -34,13 +35,13 @@ function getFirstName(p: Profile): string {
   return '?';
 }
 
-interface TreeNode {
+interface TreeProfileNode {
   profile: Profile;
-  children: TreeNode[];
+  children: TreeProfileNode[];
   depth: number;
 }
 
-function buildTree(profiles: Profile[], parentId: string | null): TreeNode[] {
+function buildTree(profiles: Profile[], parentId: string | null): TreeProfileNode[] {
   return profiles
     .filter((p) => (parentId == null ? !p.sponsor_id : p.sponsor_id === parentId))
     .map((p) => ({
@@ -84,7 +85,7 @@ function NodeCard({ profile: p, isAdmin }: { profile: Profile; isAdmin: boolean 
   );
 }
 
-function OrganogramNode({ node, depth = 0 }: { node: TreeNode; depth?: number }) {
+function OrganogramNode({ node, depth = 0 }: { node: TreeProfileNode; depth?: number }) {
   const hasChildren = node.children.length > 0;
   const p = node.profile;
   const isAdmin = p.role === 'admin';
@@ -108,71 +109,48 @@ function OrganogramNode({ node, depth = 0 }: { node: TreeNode; depth?: number })
   );
 }
 
-function AvatarNode({
-  node,
-  depth = 0,
-  defaultExpanded = true,
-  size = 64,
-}: {
-  node: TreeNode;
-  depth?: number;
-  defaultExpanded?: boolean;
-  size?: number;
-}) {
-  const [expanded, setExpanded] = useState(defaultExpanded);
-  const hasChildren = node.children.length > 0;
-  const p = node.profile;
+function AvatarCard({ profile: p, size = 64, childCount }: { profile: Profile; size?: number; childCount?: number }) {
   const isAdmin = p.role === 'admin';
   const initials = getInitials(p);
   const displayName = isAdmin ? 'Admin' : getFirstName(p);
   const fontSize = size <= 44 ? 'text-[8px]' : size <= 52 ? 'text-[9px]' : 'text-[10px]';
-  const childSize = Math.max(44, size - 10);
-
   return (
-    <div className="flex flex-col items-center">
-      <button
-        type="button"
-        onClick={() => hasChildren && setExpanded((e) => !e)}
-        className={`relative group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-rich-black rounded-full transition-transform ${hasChildren ? 'cursor-pointer hover:scale-105' : 'cursor-default'}`}
-      >
-        <div
-          style={{ width: size, height: size }}
-          className={`rounded-full overflow-hidden relative flex items-center justify-center border-2 flex-shrink-0 ${
-            isAdmin
-              ? 'bg-amber-500/20 border-amber-500/50'
-              : 'bg-primary-500/20 border-primary-500/40'
-          }`}
-        >
-          {p.avatar_url ? (
-            <img src={p.avatar_url} alt={p.full_name || ''} className="absolute inset-0 object-cover w-full h-full" />
-          ) : (
-            <span className="text-primary-300 font-bold" style={{ fontSize: size * 0.35 }}>{initials}</span>
-          )}
-          <div className="absolute inset-x-0 bottom-0 py-1 bg-gradient-to-t from-black/85 to-transparent flex items-center justify-center">
-            <span className={`${fontSize} font-medium text-white truncate max-w-[85%] px-1`} style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }} title={p.full_name || p.email}>
-              {displayName}
-            </span>
-          </div>
-        </div>
-        {hasChildren && (
-          <span className="absolute -bottom-1 -right-1 min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full bg-primary-500 text-white text-xs font-semibold border-2 border-rich-black">
-            {node.children.length}
-          </span>
-        )}
-      </button>
-      {hasChildren && expanded && (
-        <>
-          <div className="w-0.5 h-6 bg-white/20 flex-shrink-0" />
-          <div className="flex border-t-2 border-white/20 pt-6 gap-8">
-            {node.children.map((child) => (
-              <div key={child.profile.id} className="flex flex-col items-center">
-                <AvatarNode node={child} depth={depth + 1} defaultExpanded={true} size={childSize} />
-              </div>
-            ))}
-          </div>
-        </>
+    <div
+      className={`relative inline-flex flex-col items-center rounded-full overflow-hidden border-2 flex-shrink-0 ${
+        isAdmin ? 'bg-amber-500/20 border-amber-500/50' : 'bg-primary-500/20 border-primary-500/40'
+      }`}
+      style={{ width: size, height: size }}
+    >
+      {p.avatar_url ? (
+        <img src={p.avatar_url} alt={p.full_name || ''} className="absolute inset-0 object-cover w-full h-full" />
+      ) : (
+        <span className="text-primary-300 font-bold flex items-center justify-center w-full h-full" style={{ fontSize: size * 0.35 }}>{initials}</span>
+      )}
+      <div className="absolute inset-x-0 bottom-0 py-1 bg-gradient-to-t from-black/85 to-transparent flex items-center justify-center w-full">
+        <span className={`${fontSize} font-medium text-white truncate max-w-[85%] px-1`} style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }} title={p.full_name || p.email}>
+          {displayName}
+        </span>
+      </div>
+      {(childCount ?? 0) > 0 && (
+        <span className="absolute -bottom-1 -right-1 min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full bg-primary-500 text-white text-xs font-semibold border-2 border-rich-black">
+          {childCount}
+        </span>
       )}
     </div>
+  );
+}
+
+function OrgTreeNodes({ node, size = 64 }: { node: TreeProfileNode; size?: number }) {
+  const childSize = Math.max(44, size - 10);
+  if (node.children.length === 0) {
+    return <TreeNode label={<AvatarCard profile={node.profile} size={size} />} />;
+  }
+  return (
+    <TreeNode label={<AvatarCard profile={node.profile} size={size} childCount={node.children.length} />}>
+      {node.children.map((child) => (
+        <OrgTreeNodes key={child.profile.id} node={child} size={childSize} />
+      ))}
+    </TreeNode>
   );
 }
 
@@ -181,7 +159,7 @@ function TopicNode({
   depth,
   defaultExpanded,
 }: {
-  node: TreeNode;
+  node: TreeProfileNode;
   depth: number;
   defaultExpanded?: boolean;
 }) {
@@ -404,7 +382,7 @@ export default function AdminRedePage() {
     profile: profiles.find((p) => p.role === 'admin') || profiles[0],
     children: buildTree(profiles, profiles.find((p) => p.role === 'admin')?.id ?? profiles[0]?.id ?? ''),
     depth: 0,
-  }] as TreeNode[] : [];
+  }] as TreeProfileNode[] : [];
 
   return (
     <div className="py-6">
@@ -516,9 +494,21 @@ export default function AdminRedePage() {
                 ))}
               </div>
             ) : viewMode === 'avatar' ? (
-              <div className="flex justify-center min-w-max pb-8">
-                {displayRoots.map((node) => (
-                  <AvatarNode key={node.profile.id} node={node} defaultExpanded={true} />
+              <div className="flex justify-center min-w-max pb-8 [&_.org-chart]:!bg-transparent">
+                {displayRoots.map((root) => (
+                  <Tree
+                    key={root.profile.id}
+                    label={<AvatarCard profile={root.profile} size={64} childCount={root.children.length} />}
+                    lineWidth="2px"
+                    lineColor="rgba(255,255,255,0.4)"
+                    lineBorderRadius="4px"
+                    nodePadding="32px"
+                    lineHeight="24px"
+                  >
+                    {root.children.map((child) => (
+                      <OrgTreeNodes key={child.profile.id} node={child} size={54} />
+                    ))}
+                  </Tree>
                 ))}
               </div>
             ) : (
