@@ -132,7 +132,7 @@ export default function LandingPage() {
                 <div className="flex items-center space-x-3 ml-4">
                   <Link
                     href="/login"
-                    className="px-6 py-2.5 text-gray-300 hover:text-white font-medium transition-all rounded-full hover:bg-white/5 border border-transparent hover:border-white/10"
+                    className="px-6 py-2.5 bg-primary-600 text-white font-medium transition-all rounded-full hover:bg-primary-500 border border-primary-500/50 hover:shadow-[0_0_15px_rgba(14,165,233,0.3)]"
                   >
                     Entrar
                   </Link>
@@ -154,54 +154,70 @@ export default function LandingPage() {
               {mobileMenuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
             </button>
           </div>
-
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden py-4 space-y-4 border-t border-gray-200/10">
-              <Link href="#produtos" className="block text-gray-300 hover:text-white font-medium">
-                Produtos
-              </Link>
-              <Link href="#como-funciona" className="block text-gray-300 hover:text-white font-medium">
-                Como Funciona
-              </Link>
-              <Link href="#beneficios" className="block text-gray-300 hover:text-white font-medium">
-                Benefícios
-              </Link>
-              {user ? (
-                <Link
-                  href={isAdmin ? '/admin' : '/escritorio'}
-                  className="block px-6 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold rounded-full text-center"
-                >
-                  Meu Escritório
-                </Link>
-              ) : (
-                <div className="space-y-2">
-                  <Link
-                    href="/login"
-                    className="block px-6 py-2.5 text-center text-gray-300 hover:bg-white/5 font-medium rounded-full"
-                  >
-                    Entrar
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="block px-6 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold rounded-full text-center"
-                  >
-                    Começar Agora
-                  </Link>
-                </div>
-              )}
-            </div>
-          )}
         </nav>
       </header>
 
-      {mobileMenuOpen && (
+      <div className={`md:hidden fixed inset-0 z-40 ${mobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
         <div
-          className="fixed inset-0 top-20 z-40 md:hidden bg-black/30"
+          className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0'}`}
           aria-hidden
           onClick={closeMobileMenu}
         />
-      )}
+        <aside
+          className={`fixed top-0 right-0 bottom-0 w-72 max-w-[85vw] bg-rich-black border-l border-white/10 shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-out ${
+            mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+          aria-modal
+          aria-label="Menu"
+        >
+          <div className="flex items-center justify-between p-4 border-b border-white/10">
+            <span className="font-display text-lg font-bold text-white">Menu</span>
+            <button
+              onClick={closeMobileMenu}
+              className="p-2 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white"
+            >
+              <FiX className="w-6 h-6" />
+            </button>
+          </div>
+          <nav className="p-4 space-y-1 flex-1 overflow-y-auto">
+            <Link href="#produtos" onClick={closeMobileMenu} className="block py-3 px-4 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-xl transition-colors">
+              Produtos
+            </Link>
+            <Link href="#como-funciona" onClick={closeMobileMenu} className="block py-3 px-4 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-xl transition-colors">
+              Como Funciona
+            </Link>
+            <Link href="#beneficios" onClick={closeMobileMenu} className="block py-3 px-4 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-xl transition-colors">
+              Benefícios
+            </Link>
+            {user ? (
+              <Link
+                href={isAdmin ? '/admin' : '/escritorio'}
+                onClick={closeMobileMenu}
+                className="block mt-4 py-3 px-4 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold rounded-xl text-center hover:opacity-90 transition-opacity"
+              >
+                Meu Escritório
+              </Link>
+            ) : (
+              <div className="mt-4 space-y-2">
+                <Link
+                  href="/login"
+                  onClick={closeMobileMenu}
+                  className="block py-3 px-4 text-center bg-primary-600 text-white font-medium rounded-xl border border-primary-500/50 hover:bg-primary-500 transition-colors"
+                >
+                  Entrar
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={closeMobileMenu}
+                  className="block py-3 px-4 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold rounded-xl text-center hover:opacity-90 transition-opacity"
+                >
+                  Começar Agora
+                </Link>
+              </div>
+            )}
+          </nav>
+        </aside>
+      </div>
 
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-20 pb-32">
@@ -243,7 +259,7 @@ export default function LandingPage() {
                   </Link>
                   <Link
                     href="/login"
-                    className="px-8 py-4 bg-white/5 text-white font-bold text-lg rounded-full border border-white/10 hover:border-amber-500/50 hover:text-amber-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all duration-200 backdrop-blur-sm"
+                    className="px-8 py-4 bg-primary-600 text-white font-bold text-lg rounded-full border border-primary-500/50 hover:bg-primary-500 hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] transition-all duration-200"
                   >
                     Já tenho conta
                   </Link>
@@ -530,7 +546,7 @@ export default function LandingPage() {
               </Link>
               <Link
                 href="/login"
-                className="px-8 py-4 bg-white/5 backdrop-blur-sm text-white font-bold text-lg rounded-full border border-white/10 hover:bg-white/10 hover:border-primary-500 transition-all duration-200"
+                className="px-8 py-4 bg-primary-600 text-white font-bold text-lg rounded-full border border-primary-500/50 hover:bg-primary-500 hover:shadow-[0_0_20px_rgba(14,165,233,0.3)] transition-all duration-200"
               >
                 Já tenho conta
               </Link>
