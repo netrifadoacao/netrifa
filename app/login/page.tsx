@@ -71,9 +71,9 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-rich-black relative overflow-hidden">
       <div className="absolute inset-0 bg-cyber-grid opacity-15"></div>
       
-      <div className="max-w-md w-full space-y-8 relative z-10 bg-steel-900/80 backdrop-blur-xl p-8 rounded-2xl border border-steel-700 shadow-2xl">
+      <div className="max-w-md w-full space-y-8 relative z-10 glass-strong p-8 rounded-2xl border border-white/10 shadow-glass">
         <div className="text-center">
-          <div className="relative w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border border-steel-600 ring-1 ring-white/5">
+          <div className="relative w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border border-white/20 ring-1 ring-white/10 shadow-gleam-silver">
               <Image 
                 src="/logomarca-as.jpeg" 
                 alt="AS Miranda" 
@@ -98,7 +98,7 @@ export default function LoginPage() {
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="rounded-lg bg-steel-800 border border-steel-600 p-4">
+            <div className="rounded-lg bg-white/5 border border-white/10 p-4">
               <div className="text-sm text-steel-300">{error}</div>
             </div>
           )}
@@ -113,7 +113,7 @@ export default function LoginPage() {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none relative block w-full px-3 py-3 border border-steel-600 placeholder-steel-500 text-white bg-steel-900/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-steel-500 focus:border-transparent sm:text-sm transition-all"
+                className="appearance-none relative block w-full px-3 py-3 border border-white/15 placeholder-steel-500 text-white bg-white/5 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400/40 sm:text-sm transition-all"
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -129,7 +129,7 @@ export default function LoginPage() {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none relative block w-full px-3 py-3 border border-steel-600 placeholder-steel-500 text-white bg-steel-900/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-steel-500 focus:border-transparent sm:text-sm transition-all"
+                className="appearance-none relative block w-full px-3 py-3 border border-white/15 placeholder-steel-500 text-white bg-white/5 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400/40 sm:text-sm transition-all"
                 placeholder="••••••••"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
@@ -141,7 +141,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-steel-600 text-sm font-bold rounded-xl text-white bg-steel-700 hover:bg-steel-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-steel-500 disabled:opacity-50 transition-all duration-200"
+              className="group relative w-full flex justify-center py-3 px-4 text-sm font-bold rounded-xl btn-gold-metallic focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-400 disabled:opacity-50 transition-all duration-200"
             >
               {loading ? 'Entrando...' : 'Entrar'}
             </button>

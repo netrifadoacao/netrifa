@@ -64,7 +64,7 @@ function AvatarCard({
     <div className="relative inline-flex flex-shrink-0" style={{ width: size, height: size }}>
       <div
         className={`absolute inset-0 rounded-full overflow-hidden border-2 ${
-          isAdmin ? 'bg-steel-700 border-steel-500' : 'bg-steel-800 border-steel-600'
+          isAdmin ? 'bg-gold-900/80 border-gold-500' : 'bg-steel-800 border-steel-600'
         }`}
       >
         {p.avatar_url ? (
@@ -79,12 +79,12 @@ function AvatarCard({
         </div>
       </div>
       {totalDescendants > 0 && (
-        <span className="absolute -bottom-1 -left-1 min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full bg-steel-700 text-white text-xs font-semibold border-2 border-rich-black z-10">
+        <span className="absolute -bottom-1 -left-1 min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full bg-gold-700/90 text-gold-100 text-xs font-semibold border-2 border-rich-black z-10">
           {totalDescendants}
         </span>
       )}
       {childCount > 0 && (
-        <span className="absolute -bottom-1 -right-1 min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full bg-steel-600 text-white text-xs font-semibold border-2 border-rich-black z-10">
+        <span className="absolute -bottom-1 -right-1 min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full bg-steel-600 text-steel-100 text-xs font-semibold border-2 border-rich-black z-10">
           {childCount}
         </span>
       )}
@@ -144,7 +144,7 @@ export default function AvatarTreeChart({ roots }: { roots: TreeProfileNode[] })
               />
             }
             lineWidth="2px"
-            lineColor="rgba(255,255,255,0.4)"
+            lineColor="rgba(212,175,55,0.4)"
             lineBorderRadius="4px"
             nodePadding="32px"
             lineHeight="24px"

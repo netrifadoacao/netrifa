@@ -83,11 +83,11 @@ export default function EscritorioHome() {
           {produtos.map((produto) => (
             <div
               key={produto.id}
-              className="bg-white/5 backdrop-blur-md overflow-hidden shadow-lg rounded-xl border border-white/10 transition-all duration-300 hover:bg-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.08)] group"
+              className="glass overflow-hidden rounded-xl border border-white/10 transition-all duration-300 hover:shadow-glass-gold group"
             >
               <div className="p-6">
                 <div className="flex items-center">
-                  <div className="p-3 rounded-lg bg-steel-800 group-hover:bg-steel-700 transition-colors">
+                  <div className="p-3 rounded-lg bg-white/5 border border-white/10 group-hover:shadow-gleam-silver transition-all">
                     <FiShoppingBag className="h-8 w-8 text-steel-300" />
                   </div>
                   <div className="ml-4">
@@ -109,7 +109,7 @@ export default function EscritorioHome() {
                   <button
                     onClick={() => handleComprar(produto)}
                     disabled={buying}
-                    className="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-steel-700 hover:bg-steel-600 hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 inline-flex justify-center items-center px-4 py-2 text-sm font-medium rounded-lg btn-gold-metallic transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {buying ? 'Processando...' : 'Comprar'}
                   </button>
@@ -128,27 +128,27 @@ export default function EscritorioHome() {
 
       {selectedProduct && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-          <div className="relative mx-auto p-6 border border-white/10 shadow-2xl rounded-2xl bg-rich-black/95 backdrop-blur-xl max-w-md w-full">
+          <div className="relative mx-auto p-6 glass-strong rounded-2xl border border-white/10 max-w-md w-full">
             <div className="mt-2">
               <h3 className="text-xl font-bold text-white mb-4 font-display">{selectedProduct.nome}</h3>
               <p className="text-sm text-gray-300 mb-6 leading-relaxed">{selectedProduct.descricao}</p>
-              <div className="bg-steel-800 rounded-lg p-4 mb-6 border border-steel-600">
+              <div className="bg-white/5 rounded-lg p-4 mb-6 border border-white/10">
                 <p className="text-sm text-steel-400 mb-1">Preço</p>
-                <p className="text-3xl font-bold text-steel-300">
+                <p className="text-3xl font-bold text-gold-300">
                   R$ {selectedProduct.preco.toFixed(2)}
                 </p>
               </div>
               <div className="flex space-x-3">
                 <button
                   onClick={() => setSelectedProduct(null)}
-                  className="flex-1 px-4 py-3 border border-white/20 text-sm font-medium rounded-lg text-gray-300 bg-transparent hover:bg-white/5 transition-colors"
+                  className="flex-1 px-4 py-3 text-sm font-medium rounded-lg btn-silver-metallic transition-colors"
                 >
                   Fechar
                 </button>
                 <button
                   onClick={() => handleComprar(selectedProduct)}
                   disabled={buying}
-                  className="flex-1 px-4 py-3 border border-steel-600 text-sm font-medium rounded-lg text-white bg-steel-700 hover:bg-steel-600 transition-all disabled:opacity-50"
+                  className="flex-1 px-4 py-3 text-sm font-medium rounded-lg btn-gold-metallic transition-all disabled:opacity-50"
                 >
                   {buying ? 'Processando...' : 'Confirmar Compra'}
                 </button>

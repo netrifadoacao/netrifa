@@ -205,7 +205,7 @@ export default function SaquePage() {
               <button
                 type="submit"
                 disabled={loading || saldo < valorMinimo}
-                className="px-6 py-2 border border-transparent  text-sm font-medium rounded-lg text-white bg-steel-700 hover:bg-steel-600  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-steel-500 disabled:opacity-50 transition-all"
+                className="px-6 py-2 text-sm font-medium rounded-lg btn-gold-metallic focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-400 disabled:opacity-50 transition-all"
               >
                 {loading ? 'Processando...' : 'Solicitar Saque'}
               </button>

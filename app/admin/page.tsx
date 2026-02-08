@@ -20,7 +20,7 @@ import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, R
 
 function StatSkeleton() {
   return (
-    <div className="bg-white/5 backdrop-blur-md overflow-hidden shadow-lg rounded-xl border border-white/10 p-5 animate-pulse">
+    <div className="glass overflow-hidden rounded-xl border border-white/10 p-5 animate-pulse">
       <div className="flex items-center">
         <div className="flex-shrink-0 bg-white/10 rounded-lg w-12 h-12" />
         <div className="ml-5 flex-1 space-y-2">
@@ -173,7 +173,7 @@ export default function AdminHome() {
   const stats = [
     { name: 'Total Vendidos', value: data?.totalVendidos ?? 0, icon: FiShoppingBag, color: 'text-steel-300', bgColor: 'bg-steel-800', href: null },
     { name: 'Faturamento', value: `R$ ${(data?.faturamento ?? 0).toFixed(2)}`, icon: FiDollarSign, color: 'text-steel-300', bgColor: 'bg-steel-800', href: null },
-    { name: 'Usuários', value: data?.quantidadeUsuarios ?? 0, icon: FiUsers, color: 'text-cyan-400', bgColor: 'bg-cyan-500/20', href: null },
+    { name: 'Usuários', value: data?.quantidadeUsuarios ?? 0, icon: FiUsers, color: 'text-gold-400', bgColor: 'bg-gold-500/20', href: null },
     { name: 'Produtos Ativos', value: data?.produtosAtivos ?? 0, icon: FiTrendingUp, color: 'text-steel-400', bgColor: 'bg-steel-500/20', href: '/admin/criar' },
     { name: 'Compras Pendentes', value: data?.comprasPendentes ?? 0, icon: FiClock, color: 'text-steel-300', bgColor: 'bg-steel-800', href: '/admin/aprovar' },
   ];
@@ -185,7 +185,7 @@ export default function AdminHome() {
     { label: 'Config. bônus', href: '/admin/config', icon: FiSettings, desc: 'Percentuais por nível' },
   ];
 
-  const chartClass = 'rounded-xl border border-white/10 bg-white/5 p-4';
+  const chartClass = 'glass rounded-xl border border-white/10 p-4';
   const tooltipClass = 'bg-rich-black/95 border border-white/10 rounded-lg px-3 py-2 text-sm text-white';
 
   return (
@@ -216,7 +216,7 @@ export default function AdminHome() {
             return (
               <div
                 key={stat.name}
-                className="bg-white/5 backdrop-blur-md overflow-hidden shadow-lg rounded-xl border border-white/10 transition-all duration-300 hover:bg-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.08)]"
+                className="glass overflow-hidden rounded-xl border border-white/10 transition-all duration-300 hover:shadow-glass-gold"
               >
                 <div className="p-5">
                   {stat.href ? <Link href={stat.href} className="block">{content}</Link> : content}
@@ -236,7 +236,7 @@ export default function AdminHome() {
                   <XAxis dataKey="data" tick={{ fill: '#9ca3af', fontSize: 11 }} />
                   <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} allowDecimals={false} />
                   <Tooltip contentStyle={{ backgroundColor: 'rgba(10,10,15,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }} labelStyle={{ color: '#e5e7eb' }} />
-                  <Bar dataKey="quantidade" fill="#71717a" radius={[4, 4, 0, 0]} name="Cadastros" />
+                  <Bar dataKey="quantidade" fill="#D4AF37" radius={[4, 4, 0, 0]} name="Cadastros" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -250,7 +250,7 @@ export default function AdminHome() {
                   <XAxis dataKey="data" tick={{ fill: '#9ca3af', fontSize: 11 }} />
                   <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} allowDecimals={false} />
                   <Tooltip contentStyle={{ backgroundColor: 'rgba(10,10,15,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }} labelStyle={{ color: '#e5e7eb' }} />
-                  <Line type="monotone" dataKey="quantidade" stroke="#71717a" strokeWidth={2} dot={{ fill: '#71717a', strokeWidth: 0 }} activeDot={{ r: 4 }} name="Saques" />
+                  <Line type="monotone" dataKey="quantidade" stroke="#D4AF37" strokeWidth={2} dot={{ fill: '#D4AF37', strokeWidth: 0 }} activeDot={{ r: 4 }} name="Saques" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -266,7 +266,7 @@ export default function AdminHome() {
                 <XAxis type="number" tick={{ fill: '#9ca3af', fontSize: 11 }} allowDecimals={false} />
                 <YAxis type="category" dataKey="nome" tick={{ fill: '#9ca3af', fontSize: 11 }} width={76} />
                 <Tooltip contentStyle={{ backgroundColor: 'rgba(10,10,15,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }} />
-                <Bar dataKey="vendas" fill="#52525b" radius={[0, 4, 4, 0]} name="Vendas" />
+                <Bar dataKey="vendas" fill="#71717a" radius={[0, 4, 4, 0]} name="Vendas" />
               </BarChart>
             </ResponsiveContainer>
           </div>

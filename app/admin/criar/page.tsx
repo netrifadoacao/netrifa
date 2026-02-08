@@ -154,7 +154,7 @@ export default function CriarPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center py-2 px-4 border border-steel-600 rounded-lg text-sm font-medium text-white bg-steel-700 hover:bg-steel-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-steel-500 disabled:opacity-50 transition-all"
+                className="w-full flex justify-center py-2 px-4 rounded-lg text-sm font-medium btn-gold-metallic focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-400 disabled:opacity-50 transition-all"
               >
                 {loading ? 'Criando...' : 'Criar Produto'}
               </button>
