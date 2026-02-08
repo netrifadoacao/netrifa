@@ -83,12 +83,12 @@ export default function EscritorioHome() {
           {produtos.map((produto) => (
             <div
               key={produto.id}
-              className="glass overflow-hidden rounded-xl border border-white/10 transition-all duration-300 hover:shadow-glass-gold group"
+              className="card-gold overflow-hidden rounded-xl transition-all duration-300 group"
             >
               <div className="p-6">
                 <div className="flex items-center">
-                  <div className="p-3 rounded-lg bg-white/5 border border-white/10 group-hover:shadow-gleam-silver transition-all">
-                    <FiShoppingBag className="h-8 w-8 text-steel-300" />
+                  <div className="p-3 rounded-lg bg-gold-900/40 border border-gold-600/30 group-hover:shadow-gleam-silver transition-all">
+                    <FiShoppingBag className="h-8 w-8 text-gold-300" />
                   </div>
                   <div className="ml-4">
                     <h3 className="text-lg font-medium text-white">{produto.nome}</h3>
@@ -128,7 +128,7 @@ export default function EscritorioHome() {
 
       {selectedProduct && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-          <div className="relative mx-auto p-6 glass-strong rounded-2xl border border-white/10 max-w-md w-full">
+          <div className="relative mx-auto p-6 card-gold rounded-2xl max-w-md w-full">
             <div className="mt-2">
               <h3 className="text-xl font-bold text-white mb-4 font-display">{selectedProduct.nome}</h3>
               <p className="text-sm text-gray-300 mb-6 leading-relaxed">{selectedProduct.descricao}</p>

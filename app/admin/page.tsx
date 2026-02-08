@@ -20,7 +20,7 @@ import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, R
 
 function StatSkeleton() {
   return (
-    <div className="glass overflow-hidden rounded-xl border border-white/10 p-5 animate-pulse">
+    <div className="card-gold overflow-hidden rounded-xl p-5 animate-pulse">
       <div className="flex items-center">
         <div className="flex-shrink-0 bg-white/10 rounded-lg w-12 h-12" />
         <div className="ml-5 flex-1 space-y-2">
@@ -36,7 +36,7 @@ const SKELETON_BAR_HEIGHTS = [45, 62, 38, 71, 55, 48, 65, 42, 58, 52, 68, 44, 61
 
 function ChartSkeleton() {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-4 animate-pulse">
+    <div className="rounded-xl card-gold p-4 animate-pulse">
       <div className="h-4 w-48 bg-white/10 rounded mb-4" />
       <div className="h-64 flex items-end gap-1">
         {SKELETON_BAR_HEIGHTS.map((h, i) => (
@@ -64,7 +64,7 @@ function DashboardSkeleton() {
           <ChartSkeleton />
           <ChartSkeleton />
         </div>
-        <div className="rounded-xl border border-white/10 bg-white/5 p-4 mb-10 animate-pulse">
+        <div className="rounded-xl card-gold p-4 mb-10 animate-pulse">
           <div className="h-4 w-48 bg-white/10 rounded mb-4" />
           <div className="h-72 flex flex-col gap-2">
             {[70, 55, 85, 45, 65, 40].map((w, i) => (
@@ -76,7 +76,7 @@ function DashboardSkeleton() {
           <div className="h-6 w-40 bg-white/10 rounded mb-4 animate-pulse" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 animate-pulse">
+              <div key={i} className="flex items-center gap-4 p-4 rounded-xl card-gold animate-pulse">
                 <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/10" />
                 <div className="flex-1 space-y-2">
                   <div className="h-4 w-24 bg-white/10 rounded" />
@@ -185,7 +185,7 @@ export default function AdminHome() {
     { label: 'Config. bônus', href: '/admin/config', icon: FiSettings, desc: 'Percentuais por nível' },
   ];
 
-  const chartClass = 'glass rounded-xl border border-white/10 p-4';
+  const chartClass = 'card-gold rounded-xl p-4';
   const tooltipClass = 'bg-rich-black/95 border border-white/10 rounded-lg px-3 py-2 text-sm text-white';
 
   return (
@@ -202,10 +202,10 @@ export default function AdminHome() {
             const Icon = stat.icon;
             const content = (
               <div className="flex items-center">
-                <div className={`flex-shrink-0 ${stat.bgColor} rounded-lg p-3 shadow-inner`}>
-                  <Icon className={`h-6 w-6 ${stat.color}`} />
+                <div className="flex-shrink-0 flex items-center justify-center w-14 h-14">
+                  <Icon className="h-10 w-10 text-gold-600 transition-all duration-300 [filter:drop-shadow(0_1px_0_rgba(255,255,255,0.2))_drop-shadow(0_2px_4px_rgba(0,0,0,0.4))] group-hover:text-gold-500 group-hover:[filter:drop-shadow(0_1px_0_rgba(255,255,255,0.35))_drop-shadow(0_2px_4px_rgba(0,0,0,0.3))]" />
                 </div>
-                <div className="ml-5 min-w-0 flex-1">
+                <div className="ml-4 min-w-0 flex-1">
                   <dl>
                     <dt className="text-sm font-medium text-gray-400 truncate">{stat.name}</dt>
                     <dd className="text-lg font-semibold text-white mt-1 truncate">{stat.value}</dd>
@@ -216,7 +216,7 @@ export default function AdminHome() {
             return (
               <div
                 key={stat.name}
-                className="glass overflow-hidden rounded-xl border border-white/10 transition-all duration-300 hover:shadow-glass-gold"
+                className="card-gold group overflow-hidden rounded-xl transition-all duration-300"
               >
                 <div className="p-5">
                   {stat.href ? <Link href={stat.href} className="block">{content}</Link> : content}
@@ -281,10 +281,10 @@ export default function AdminHome() {
                 <Link
                   key={action.href}
                   href={action.href}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-steel-600 transition-all group"
+                  className="card-gold flex items-center gap-4 p-4 rounded-xl transition-all group"
                 >
-                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-steel-800 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Icon className="w-6 h-6 text-steel-300" />
+                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gold-900/50 border border-gold-600/40 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Icon className="w-6 h-6 text-gold-300" />
                   </div>
                   <div className="min-w-0">
                     <p className="font-medium text-white truncate">{action.label}</p>

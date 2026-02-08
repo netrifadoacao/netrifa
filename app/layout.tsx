@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, Poppins, Cinzel } from 'next/font/google';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { createClient } from '@/utils/supabase/server';
@@ -42,6 +43,7 @@ export default async function RootLayout({
     <html lang="pt-BR">
       <body className={`${inter.variable} ${poppins.variable} ${cinzel.variable} font-sans`}>
         <AuthProvider initialUser={initialUser} initialProfile={initialProfile}>{children}</AuthProvider>
+        <SpeedInsights />
       </body>
     </html>
   );

@@ -190,10 +190,15 @@ export function AuthProvider({
   };
 
   const logout = async () => {
+    try {
+      await fetch(`${typeof window !== 'undefined' ? window.location.origin : ''}/auth/logout`, { method: 'POST' });
+    } catch (_) {}
+    try {
+      await supabase.auth.signOut();
+    } catch (_) {}
     setUser(null);
     setProfile(null);
     setSession(null);
-    await supabase.auth.signOut();
     if (typeof window !== 'undefined') {
       const keys: string[] = [];
       for (let i = 0; i < localStorage.length; i++) {
@@ -201,6 +206,12 @@ export function AuthProvider({
         if (k && (k.startsWith('sb-') || k.includes('supabase'))) keys.push(k);
       }
       keys.forEach((k) => localStorage.removeItem(k));
+      document.cookie.split(';').forEach((c) => {
+        const name = c.trim().split('=')[0];
+        if (name.startsWith('sb-')) {
+          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+        }
+      });
     }
   };
 
