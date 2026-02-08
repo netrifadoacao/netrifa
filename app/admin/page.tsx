@@ -98,6 +98,8 @@ interface DashboardData {
   comprasPendentes: number;
 }
 
+const defaultPendingUsers = 0;
+
 interface ChartPoint {
   data: string;
   quantidade: number;
@@ -122,6 +124,7 @@ export default function AdminHome() {
   const router = useRouter();
   const pathname = usePathname();
   const [data, setData] = useState<DashboardData | null>(null);
+  const [pendingUsersCount, setPendingUsersCount] = useState(defaultPendingUsers);
   const [membersByDay, setMembersByDay] = useState<ChartPoint[]>([]);
   const [withdrawalsByDay, setWithdrawalsByDay] = useState<ChartPoint[]>([]);
   const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
@@ -146,7 +149,10 @@ export default function AdminHome() {
   const fetchDashboard = async () => {
     try {
       setError(null);
-      const res = await functions.adminDashboard();
+      const [res, pendingRes] = await Promise.all([
+        functions.adminDashboard(),
+        functions.approveUsers.list().catch(() => ({ users: [] })),
+      ]);
       setData({
         totalVendidos: res.totalVendidos,
         faturamento: res.faturamento,
@@ -154,6 +160,7 @@ export default function AdminHome() {
         produtosAtivos: res.produtosAtivos,
         comprasPendentes: res.comprasPendentes,
       });
+      setPendingUsersCount(pendingRes?.users?.length ?? 0);
       setMembersByDay(res.membersByDay ?? []);
       setWithdrawalsByDay(res.withdrawalsByDay ?? []);
       setTopProducts(res.topProducts ?? []);
@@ -174,6 +181,7 @@ export default function AdminHome() {
     { name: 'Faturamento', value: `R$ ${(data?.faturamento ?? 0).toFixed(2)}`, icon: FiDollarSign, color: 'text-steel-300', bgColor: 'bg-steel-800', href: null },
     { name: 'Usuários', value: data?.quantidadeUsuarios ?? 0, icon: FiUsers, color: 'text-gold-400', bgColor: 'bg-gold-500/20', href: null },
     { name: 'Produtos Ativos', value: data?.produtosAtivos ?? 0, icon: FiTrendingUp, color: 'text-steel-400', bgColor: 'bg-steel-500/20', href: '/admin/criar' },
+    { name: 'Pendentes de aprovação', value: pendingUsersCount, icon: FiUserPlus, color: 'text-steel-400', bgColor: 'bg-steel-500/20', href: '/admin/usuarios' },
   ];
 
   const quickActions = [

@@ -9,7 +9,8 @@
     "lint": "next lint",
     "seed:remote": "node scripts/seed-remote.js",
     "seed:extra": "node scripts/seed-extra-remote.js",
-    "seed:demo": "node scripts/seed-demo-remote.js"
+    "seed:demo": "node scripts/seed-demo-remote.js",
+    "backfill:sponsor": "node scripts/backfill-default-sponsor.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",
