@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { FiFileText, FiTrendingUp } from 'react-icons/fi';
-import { functions } from '@/lib/supabase-functions';
+import { useFunctions } from '@/lib/supabase-functions';
 
 interface Bonus {
   id: string;
@@ -18,19 +18,23 @@ interface Bonus {
 
 export default function ExtratosPage() {
   const { user, profile, loading: authLoading } = useAuth();
+  const functions = useFunctions();
   const router = useRouter();
+  const pathname = usePathname();
   const [bonus, setBonus] = useState<Bonus[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalGanhos, setTotalGanhos] = useState(0);
 
   useEffect(() => {
+    if (pathname !== '/escritorio/extratos') return;
     if (authLoading) return;
     if (!user || profile?.role === 'admin') {
       router.push('/login');
       return;
     }
+    setLoading(true);
     fetchBonus();
-  }, [authLoading, user, profile, router]);
+  }, [pathname, authLoading, user, profile, router]);
 
   const fetchBonus = async () => {
     if (!user) return;

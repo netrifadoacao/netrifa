@@ -1,8 +1,8 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { User as SupabaseUser } from '@supabase/supabase-js';
+import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
 interface UserProfile {
   id: string;
@@ -18,6 +18,7 @@ interface UserProfile {
 interface AuthContextType {
   user: SupabaseUser | null;
   profile: UserProfile | null;
+  session: Session | null;
   login: (email: string, senha: string) => Promise<{ session: { user: { id: string } } } | null>;
   loginAndGetRole: (email: string, senha: string) => Promise<'admin' | 'member' | null>;
   register: (data: any) => Promise<void>;
@@ -29,20 +30,51 @@ interface AuthContextType {
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
+const LOADING_TIMEOUT_MS = 2500;
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<SupabaseUser | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+type InitialUser = { id: string; email?: string } | null;
+type InitialProfile = UserProfile | null;
+
+export function AuthProvider({
+  children,
+  initialUser = null,
+  initialProfile = null,
+}: {
+  children: React.ReactNode;
+  initialUser?: InitialUser;
+  initialProfile?: InitialProfile;
+}) {
+  const [user, setUser] = useState<SupabaseUser | null>(initialUser as SupabaseUser | null);
+  const [profile, setProfile] = useState<UserProfile | null>(initialProfile ?? null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(!initialUser);
+  const resolved = useRef(false);
   const supabase = createClient();
 
   useEffect(() => {
+    if (resolved.current) return;
+    const t = setTimeout(() => {
+      resolved.current = true;
+      setLoading(false);
+    }, LOADING_TIMEOUT_MS);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
     const fetchSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await fetchProfile(session.user.id);
+      const { data: { session: s } } = await supabase.auth.getSession();
+      resolved.current = true;
+      setSession(s ?? null);
+      setUser(s?.user ?? null);
+      if (s?.user) {
+        const sameUser = initialUser?.id === s.user.id && initialProfile != null;
+        if (sameUser) {
+          setProfile(initialProfile);
+        } else {
+          await fetchProfile(s.user.id);
+        }
       } else {
         setProfile(null);
       }
@@ -51,16 +83,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     fetchSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await fetchProfile(session.user.id);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, s) => {
+      setSession(s ?? null);
+      setUser(s?.user ?? null);
+      if (s?.user) {
+        await fetchProfile(s.user.id);
       } else {
         setProfile(null);
       }
-      if (event !== 'INITIAL_SESSION') {
-        setLoading(false);
-      }
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -165,7 +196,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, login, loginAndGetRole, register, logout, refreshProfile: async () => { if (user?.id) await fetchProfile(user.id); }, loading }}>
+    <AuthContext.Provider value={{ user, profile, session, login, loginAndGetRole, register, logout, refreshProfile: async () => { if (user?.id) await fetchProfile(user.id); }, loading }}>
       {children}
     </AuthContext.Provider>
   );

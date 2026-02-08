@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { FiShoppingBag, FiEye } from 'react-icons/fi';
-import { createClient } from '@/utils/supabase/client';
-import { functions } from '@/lib/supabase-functions';
+import { useFunctions } from '@/lib/supabase-functions';
 
 interface Produto {
   id: string;
@@ -18,26 +17,28 @@ interface Produto {
 
 export default function EscritorioHome() {
   const { user, profile, loading: authLoading } = useAuth();
+  const functions = useFunctions();
   const router = useRouter();
+  const pathname = usePathname();
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Produto | null>(null);
   const [buying, setBuying] = useState(false);
 
   useEffect(() => {
+    if (pathname !== '/escritorio') return;
     if (authLoading) return;
     if (!user || profile?.role === 'admin') {
       router.push('/login');
       return;
     }
+    setLoading(true);
     fetchProdutos();
-  }, [authLoading, user, profile, router]);
+  }, [pathname, authLoading, user, profile, router]);
 
   const fetchProdutos = async () => {
     try {
-      const supabase = createClient();
-      const { data, error } = await supabase.from('products').select('id, name, description, price, active').eq('active', true);
-      if (error) throw error;
+      const data = await functions.products.list();
       setProdutos((data ?? []).map((p) => ({ id: p.id, nome: p.name, descricao: p.description ?? '', preco: p.price, tipo: 'digital', ativo: p.active })));
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);

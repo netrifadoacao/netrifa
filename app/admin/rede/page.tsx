@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useCallback, useRef, useLayoutEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
-import { createClient } from '@/utils/supabase/client';
+import { useRouter, usePathname } from 'next/navigation';
+import { useFunctions } from '@/lib/supabase-functions';
 import { FiChevronDown, FiChevronRight, FiUser, FiMail, FiGitBranch, FiList, FiCircle, FiPlus, FiMinus } from 'react-icons/fi';
 
 interface Profile {
@@ -51,6 +51,7 @@ function buildTree(profiles: Profile[], parentId: string | null): TreeNode[] {
 }
 
 function NodeCard({ profile: p, isAdmin }: { profile: Profile; isAdmin: boolean }) {
+  const initials = getInitials(p);
   return (
     <div
       className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 min-w-[220px] ${
@@ -59,8 +60,12 @@ function NodeCard({ profile: p, isAdmin }: { profile: Profile; isAdmin: boolean 
           : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-primary-500/20'
       }`}
     >
-      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary-500/20 flex items-center justify-center">
-        <FiUser className="w-5 h-5 text-primary-400" />
+      <div className={`flex-shrink-0 w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border-2 ${isAdmin ? 'border-amber-500/50 bg-amber-500/20' : 'border-primary-500/40 bg-primary-500/20'}`}>
+        {p.avatar_url ? (
+          <img src={p.avatar_url} alt={p.full_name || ''} className="w-full h-full object-cover" />
+        ) : (
+          <span className="text-primary-300 font-bold text-sm">{initials}</span>
+        )}
       </div>
       <div className="min-w-0 flex-1">
         <p className="font-semibold text-white truncate">
@@ -103,7 +108,6 @@ function OrganogramNode({ node, depth = 0 }: { node: TreeNode; depth?: number })
   );
 }
 
-
 function AvatarNode({
   node,
   depth = 0,
@@ -125,7 +129,7 @@ function AvatarNode({
   const childSize = Math.max(44, size - 10);
 
   return (
-    <div className="relative flex flex-col items-center">
+    <div className="flex flex-col items-center">
       <button
         type="button"
         onClick={() => hasChildren && setExpanded((e) => !e)}
@@ -185,6 +189,7 @@ function TopicNode({
   const hasChildren = node.children.length > 0;
   const p = node.profile;
   const isAdmin = p.role === 'admin';
+  const initials = getInitials(p);
 
   return (
     <div className="flex flex-col">
@@ -203,8 +208,12 @@ function TopicNode({
         >
           {hasChildren ? expanded ? <FiChevronDown className="w-4 h-4" /> : <FiChevronRight className="w-4 h-4" /> : <span className="w-4" />}
         </button>
-        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary-500/20 flex items-center justify-center">
-          <FiUser className="w-5 h-5 text-primary-400" />
+        <div className={`flex-shrink-0 w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border-2 ${isAdmin ? 'border-amber-500/50 bg-amber-500/20' : 'border-primary-500/40 bg-primary-500/20'}`}>
+          {p.avatar_url ? (
+            <img src={p.avatar_url} alt={p.full_name || ''} className="w-full h-full object-cover" />
+          ) : (
+            <span className="text-primary-300 font-bold text-sm">{initials}</span>
+          )}
         </div>
         <div className="min-w-0 flex-1">
           <p className="font-semibold text-white truncate">
@@ -241,11 +250,13 @@ type ViewMode = 'organogram' | 'topic' | 'avatar';
 const MIN_ZOOM = 0.25;
 const MAX_ZOOM = 2;
 const ZOOM_STEP = 0.15;
-const DEFAULT_ZOOM = 0.5;
+const DEFAULT_ZOOM = 0.75;
 
 export default function AdminRedePage() {
   const { user, profile, loading: authLoading } = useAuth();
+  const functions = useFunctions();
   const router = useRouter();
+  const pathname = usePathname();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -336,26 +347,35 @@ export default function AdminRedePage() {
     };
   }, [isDragging, handleTouchMove, handleTouchEnd]);
 
+  const fetchStarted = useRef(false);
   useEffect(() => {
+    if (pathname !== '/admin/rede') return;
     if (authLoading) return;
     if (!user || profile?.role !== 'admin') {
       setLoading(false);
       router.push('/login');
       return;
     }
-    fetchProfiles();
-  }, [authLoading, user, profile, router]);
+    if (fetchStarted.current) return;
+    fetchStarted.current = true;
+    setLoading(true);
+    fetchProfiles().finally(() => { fetchStarted.current = false; });
+  }, [pathname, authLoading, user, profile, router]);
 
   const fetchProfiles = async () => {
     try {
       setError(null);
-      const supabase = createClient();
-      const { data, error: e } = await supabase
-        .from('profiles')
-        .select('id, full_name, email, sponsor_id, referral_code, role, avatar_url')
-        .order('created_at', { ascending: true });
-      if (e) throw e;
-      setProfiles(data ?? []);
+      const res = await functions.network(undefined, { flat: true });
+      const list = res.profiles ?? [];
+      setProfiles(list.map((p) => ({
+        id: p.id,
+        full_name: p.full_name,
+        email: p.email,
+        sponsor_id: p.sponsor_id,
+        referral_code: p.referral_code ?? null,
+        role: p.role ?? null,
+        avatar_url: p.avatar_url ?? null,
+      })));
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erro ao carregar rede');
     } finally {

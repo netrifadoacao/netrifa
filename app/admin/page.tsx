@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { createClient } from '@/utils/supabase/client';
+import { useFunctions } from '@/lib/supabase-functions';
 import {
   FiShoppingBag,
   FiUsers,
@@ -117,103 +117,47 @@ const defaultData: DashboardData = {
   comprasPendentes: 0,
 };
 
-function formatDay(date: Date) {
-  return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
-}
-
 export default function AdminHome() {
   const { user, profile, loading: authLoading } = useAuth();
+  const functions = useFunctions();
   const router = useRouter();
+  const pathname = usePathname();
   const [data, setData] = useState<DashboardData | null>(null);
   const [membersByDay, setMembersByDay] = useState<ChartPoint[]>([]);
   const [withdrawalsByDay, setWithdrawalsByDay] = useState<ChartPoint[]>([]);
   const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const fetchStarted = useRef(false);
 
   useEffect(() => {
+    if (pathname !== '/admin') return;
     if (authLoading) return;
     if (!user || profile?.role !== 'admin') {
       setLoading(false);
       router.push('/login');
       return;
     }
-    fetchDashboard();
-  }, [authLoading, user, profile, router]);
+    if (fetchStarted.current) return;
+    fetchStarted.current = true;
+    setLoading(true);
+    fetchDashboard().finally(() => { fetchStarted.current = false; });
+  }, [pathname, authLoading, user, profile, router]);
 
   const fetchDashboard = async () => {
     try {
       setError(null);
-      const supabase = createClient();
-      const days = 14;
-      const from = new Date();
-      from.setDate(from.getDate() - days);
-      const fromIso = from.toISOString();
-
-      const [profilesRes, ordersRes, productsRes, withdrawalsRes] = await Promise.all([
-        supabase.from('profiles').select('id, created_at').gte('created_at', fromIso),
-        supabase.from('orders').select('id, amount, status, product_id, created_at'),
-        supabase.from('products').select('id, name, active'),
-        supabase.from('withdrawals').select('id, created_at').gte('created_at', fromIso),
-      ]);
-
-      if (profilesRes.error) throw profilesRes.error;
-      if (ordersRes.error) throw ordersRes.error;
-      if (productsRes.error) throw productsRes.error;
-      if (withdrawalsRes.error) throw withdrawalsRes.error;
-
-      const orders = ordersRes.data ?? [];
-      const paid = orders.filter((o) => o.status === 'paid');
-      const pending = orders.filter((o) => o.status === 'pending');
-      const totalVendidos = paid.length;
-      const faturamento = paid.reduce((s, o) => s + Number(o.amount), 0);
-      const quantidadeUsuarios = (profilesRes.data ?? []).length;
-      const { count: totalUsers } = await supabase.from('profiles').select('id', { count: 'exact', head: true });
-      const produtosAtivos = (productsRes.data ?? []).filter((p) => p.active).length;
-      const comprasPendentes = pending.length;
-
+      const res = await functions.adminDashboard();
       setData({
-        totalVendidos,
-        faturamento,
-        quantidadeUsuarios: totalUsers ?? 0,
-        produtosAtivos,
-        comprasPendentes,
+        totalVendidos: res.totalVendidos,
+        faturamento: res.faturamento,
+        quantidadeUsuarios: res.quantidadeUsuarios,
+        produtosAtivos: res.produtosAtivos,
+        comprasPendentes: res.comprasPendentes,
       });
-
-      const byDay = (arr: { created_at?: string }[]) => {
-        const map = new Map<string, number>();
-        for (let i = 0; i < days; i++) {
-          const d = new Date();
-          d.setDate(d.getDate() - (days - 1 - i));
-          map.set(d.toISOString().slice(0, 10), 0);
-        }
-        arr.forEach((r) => {
-          if (!r.created_at) return;
-          const key = r.created_at.slice(0, 10);
-          if (!map.has(key)) map.set(key, 0);
-          map.set(key, map.get(key)! + 1);
-        });
-        return Array.from(map.entries())
-          .sort((a, b) => a[0].localeCompare(b[0]))
-          .map(([data, quantidade]) => ({ data: formatDay(new Date(data)), quantidade }));
-      };
-      setMembersByDay(byDay(profilesRes.data ?? []));
-      setWithdrawalsByDay(byDay(withdrawalsRes.data ?? []));
-
-      const productCount: Record<string, number> = {};
-      paid.forEach((o) => {
-        const id = o.product_id ?? 'sem-produto';
-        productCount[id] = (productCount[id] ?? 0) + 1;
-      });
-      const products = productsRes.data ?? [];
-      const top: TopProduct[] = Object.entries(productCount)
-        .map(([id, vendas]) => ({
-          nome: id === 'sem-produto' ? 'Sem produto' : products.find((p) => p.id === id)?.name ?? id.slice(0, 8),
-          vendas,
-        }))
-        .sort((a, b) => b.vendas - a.vendas)
-        .slice(0, 8);
-      setTopProducts(top);
+      setMembersByDay(res.membersByDay ?? []);
+      setWithdrawalsByDay(res.withdrawalsByDay ?? []);
+      setTopProducts(res.topProducts ?? []);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erro ao carregar');
       setData(defaultData);

@@ -6,8 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FiShoppingBag, FiArrowRight, FiStar, FiUsers, FiTrendingUp, FiZap, FiCheckCircle, FiMenu, FiX } from 'react-icons/fi';
-import { createClient } from '@/utils/supabase/client';
-import { functions } from '@/lib/supabase-functions';
+import { useFunctions } from '@/lib/supabase-functions';
 
 interface Produto {
   id: string;
@@ -21,6 +20,7 @@ interface Produto {
 export default function LandingPage() {
   const router = useRouter();
   const { user, profile, loading: authLoading } = useAuth();
+  const functions = useFunctions();
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -45,9 +45,7 @@ export default function LandingPage() {
 
   const fetchProdutos = async () => {
     try {
-      const supabase = createClient();
-      const { data, error } = await supabase.from('products').select('id, name, description, price, active').eq('active', true);
-      if (error) throw error;
+      const data = await functions.products.list();
       setProdutos((data ?? []).map((p) => ({ id: p.id, nome: p.name, descricao: p.description ?? '', preco: p.price, tipo: 'digital', ativo: p.active })).slice(0, 6));
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);

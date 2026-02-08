@@ -8,13 +8,26 @@ serve(async (req) => {
     const user = await requireUser(req)
     const url = new URL(req.url)
     const userId = url.searchParams.get('id') ?? url.searchParams.get('userId') ?? user.id
-    if (userId !== user.id) {
-      const admin = createSupabaseAdmin()
-      const { data: profile } = await admin.from('profiles').select('role').eq('id', user.id).single()
-      if (profile?.role !== 'admin') throw new Error('Forbidden')
-    }
+    const flat = url.searchParams.get('flat') === 'true' || url.searchParams.get('flat') === '1'
+    const admin = createSupabaseAdmin()
+    const { data: myProfile } = await admin.from('profiles').select('role').eq('id', user.id).single()
+    const isAdmin = myProfile?.role === 'admin'
+    if (userId !== user.id && !isAdmin) throw new Error('Forbidden')
     const supabase = createSupabaseAdmin()
-    const { data: profiles } = await supabase.from('profiles').select('id, full_name, email, sponsor_id')
+    const { data: profiles, error: profilesError } = await supabase.from('profiles').select('id, full_name, email, sponsor_id, referral_code, role, avatar_url').order('created_at', { ascending: true })
+    if (profilesError) throw profilesError
+    if (flat && isAdmin) {
+      const list = (profiles ?? []).map((p: { id: string; full_name: string | null; email: string; sponsor_id: string | null; referral_code?: string; role?: string; avatar_url?: string | null }) => ({
+        id: p.id,
+        full_name: p.full_name,
+        email: p.email,
+        sponsor_id: p.sponsor_id,
+        referral_code: p.referral_code ?? null,
+        role: p.role ?? null,
+        avatar_url: p.avatar_url ?? null,
+      }))
+      return new Response(JSON.stringify({ profiles: list }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
     const build = (sid: string | null, nivel: number): unknown[] => {
       if (nivel > 5) return []
       const indicados = (profiles ?? []).filter((p: { sponsor_id: string | null }) => p.sponsor_id === sid)

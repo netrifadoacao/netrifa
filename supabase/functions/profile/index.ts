@@ -8,6 +8,22 @@ serve(async (req) => {
     const user = await requireUser(req)
     const url = new URL(req.url)
     const userId = url.searchParams.get('id') ?? url.searchParams.get('userId') ?? user.id
+
+    if (req.method === 'PATCH' || req.method === 'PUT') {
+      if (userId !== user.id) throw new Error('Forbidden')
+      const body = await req.json().catch(() => ({}))
+      const updates: Record<string, unknown> = {}
+      if (typeof body.full_name !== 'undefined') updates.full_name = body.full_name
+      if (typeof body.nome !== 'undefined') updates.full_name = body.nome
+      if (typeof body.phone !== 'undefined') updates.phone = body.phone
+      if (typeof body.telefone !== 'undefined') updates.phone = body.telefone
+      if (Object.keys(updates).length === 0) throw new Error('Nenhum campo para atualizar')
+      const supabase = createSupabaseAdmin()
+      const { data, error } = await supabase.from('profiles').update(updates).eq('id', user.id).select().single()
+      if (error) throw error
+      return new Response(JSON.stringify({ id: data.id, email: data.email, full_name: data.full_name, phone: data.phone }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+
     if (userId !== user.id) {
       const admin = createSupabaseAdmin()
       const { data: profile } = await admin.from('profiles').select('role').eq('id', user.id).single()

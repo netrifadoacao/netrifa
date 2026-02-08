@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { FiCheckCircle, FiXCircle } from 'react-icons/fi';
-import { functions } from '@/lib/supabase-functions';
+import { useFunctions } from '@/lib/supabase-functions';
 
 interface Compra {
   id: string;
@@ -19,18 +19,22 @@ interface Compra {
 
 export default function AprovarPage() {
   const { user, profile, loading: authLoading } = useAuth();
+  const functions = useFunctions();
   const router = useRouter();
+  const pathname = usePathname();
   const [compras, setCompras] = useState<Compra[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (pathname !== '/admin/aprovar') return;
     if (authLoading) return;
     if (!user || profile?.role !== 'admin') {
       router.push('/login');
       return;
     }
+    setLoading(true);
     fetchCompras();
-  }, [authLoading, user, profile, router]);
+  }, [pathname, authLoading, user, profile, router]);
 
   const fetchCompras = async () => {
     try {

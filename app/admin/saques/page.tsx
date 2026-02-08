@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { FiCheckCircle, FiXCircle, FiDollarSign } from 'react-icons/fi';
-import { functions } from '@/lib/supabase-functions';
+import { useFunctions } from '@/lib/supabase-functions';
 
 interface Saque {
   id: string;
@@ -21,18 +21,22 @@ interface Saque {
 
 export default function SaquesPage() {
   const { user, profile, loading: authLoading } = useAuth();
+  const functions = useFunctions();
   const router = useRouter();
+  const pathname = usePathname();
   const [saques, setSaques] = useState<Saque[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (pathname !== '/admin/saques') return;
     if (authLoading) return;
     if (!user || profile?.role !== 'admin') {
       router.push('/login');
       return;
     }
+    setLoading(true);
     fetchSaques();
-  }, [authLoading, user, profile, router]);
+  }, [pathname, authLoading, user, profile, router]);
 
   const fetchSaques = async () => {
     try {

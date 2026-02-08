@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { FiUsers, FiCopy } from 'react-icons/fi';
-import { functions } from '@/lib/supabase-functions';
+import { useFunctions } from '@/lib/supabase-functions';
 
 interface RedeItem {
   id: string;
@@ -16,26 +16,30 @@ interface RedeItem {
 
 export default function RedePage() {
   const { user, profile, loading: authLoading } = useAuth();
+  const functions = useFunctions();
   const router = useRouter();
+  const pathname = usePathname();
   const [rede, setRede] = useState<RedeItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [linkIndicacao, setLinkIndicacao] = useState('');
 
   useEffect(() => {
+    if (pathname !== '/escritorio/rede') return;
     if (authLoading) return;
     if (!user || profile?.role === 'admin') {
       router.push('/login');
       return;
     }
     if (profile?.referral_code) setLinkIndicacao(`${window.location.origin}/register?ref=${profile.referral_code}`);
+    setLoading(true);
     fetchRede();
-  }, [authLoading, user, profile, router]);
+  }, [pathname, authLoading, user, profile, router]);
 
   const fetchRede = async () => {
     if (!user) return;
     try {
       const data = await functions.network(user.id);
-      setRede(data.rede || []);
+      setRede((data.rede || []) as RedeItem[]);
     } catch (error) {
       console.error('Erro ao buscar rede:', error);
     } finally {

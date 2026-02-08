@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/utils/supabase/client';
+import { useFunctions } from '@/lib/supabase-functions';
 
 export default function DadosPage() {
   const { user, profile, refreshProfile, loading: authLoading } = useAuth();
+  const functions = useFunctions();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -40,12 +41,7 @@ export default function DadosPage() {
     if (!user) return;
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { error } = await supabase.from('profiles').update({
-        full_name: formData.nome,
-        phone: formData.telefone || null,
-      }).eq('id', user.id);
-      if (error) throw error;
+      await functions.profileUpdate({ nome: formData.nome, telefone: formData.telefone || undefined });
       await refreshProfile();
       alert('Dados atualizados com sucesso!');
     } catch (error) {

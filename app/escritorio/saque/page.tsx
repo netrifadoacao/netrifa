@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { FiDollarSign } from 'react-icons/fi';
-import { functions } from '@/lib/supabase-functions';
+import { useFunctions } from '@/lib/supabase-functions';
 
 export default function SaquePage() {
   const { user, profile, loading: authLoading } = useAuth();
+  const functions = useFunctions();
   const router = useRouter();
+  const pathname = usePathname();
   const [saldo, setSaldo] = useState(0);
   const [valorMinimo, setValorMinimo] = useState(50);
   const [formData, setFormData] = useState({
@@ -22,6 +24,7 @@ export default function SaquePage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (pathname !== '/escritorio/saque') return;
     if (authLoading) return;
     if (!user || profile?.role === 'admin') {
       router.push('/login');
@@ -29,7 +32,7 @@ export default function SaquePage() {
     }
     setSaldo(Number(profile?.wallet_balance ?? 0));
     fetchConfig();
-  }, [authLoading, user, profile, router]);
+  }, [pathname, authLoading, user, profile, router]);
 
   const fetchConfig = async () => {
     try {

@@ -19,10 +19,22 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
 
   useEffect(() => {
     if (authLoading) return;
-    if (!user) router.push('/login');
+    if (!user) {
+      router.replace('/login');
+      return;
+    }
   }, [authLoading, user, router]);
 
-  if (authLoading || !user) {
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-rich-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary-500 border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    if (typeof window !== 'undefined') window.location.href = '/login';
     return (
       <div className="min-h-screen bg-rich-black flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary-500 border-t-transparent" />
@@ -119,7 +131,7 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
           </div>
         </div>
       </nav>
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 relative z-10">
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 relative z-10" key={pathname}>
         {children}
       </main>
     </div>

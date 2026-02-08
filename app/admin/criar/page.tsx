@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { FiShoppingBag, FiCheckCircle, FiXCircle } from 'react-icons/fi';
-import { createClient } from '@/utils/supabase/client';
+import { useFunctions } from '@/lib/supabase-functions';
 
 interface Produto {
   id: string;
@@ -17,7 +17,9 @@ interface Produto {
 
 export default function CriarPage() {
   const { user, profile, loading: authLoading } = useAuth();
+  const functions = useFunctions();
   const router = useRouter();
+  const pathname = usePathname();
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -28,19 +30,18 @@ export default function CriarPage() {
   });
 
   useEffect(() => {
+    if (pathname !== '/admin/criar') return;
     if (authLoading) return;
     if (!user || profile?.role !== 'admin') {
       router.push('/login');
       return;
     }
     fetchProdutos();
-  }, [authLoading, user, profile, router]);
+  }, [pathname, authLoading, user, profile, router]);
 
   const fetchProdutos = async () => {
     try {
-      const supabase = createClient();
-      const { data, error } = await supabase.from('products').select('id, name, description, price, active');
-      if (error) throw error;
+      const data = await functions.products.list({ all: true });
       setProdutos((data ?? []).map((p) => ({ id: p.id, nome: p.name, descricao: p.description ?? '', preco: p.price, tipo: 'digital', ativo: p.active })));
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
@@ -51,14 +52,11 @@ export default function CriarPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { error } = await supabase.from('products').insert({
-        name: formData.nome,
-        description: formData.descricao,
-        price: parseFloat(formData.preco),
-        active: true,
+      await functions.products.create({
+        nome: formData.nome,
+        descricao: formData.descricao,
+        preco: parseFloat(formData.preco),
       });
-      if (error) throw error;
       alert('Produto criado com sucesso!');
       setFormData({ nome: '', descricao: '', preco: '', tipo: 'digital' });
       fetchProdutos();
@@ -71,9 +69,7 @@ export default function CriarPage() {
 
   const handleToggleAtivo = async (produtoId: string, ativo: boolean) => {
     try {
-      const supabase = createClient();
-      const { error } = await supabase.from('products').update({ active: !ativo }).eq('id', produtoId);
-      if (error) throw error;
+      await functions.products.update(produtoId, { ativo: !ativo });
       fetchProdutos();
     } catch (error) {
       alert('Erro ao atualizar produto');

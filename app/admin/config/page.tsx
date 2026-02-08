@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { FiSettings, FiSave } from 'react-icons/fi';
-import { functions } from '@/lib/supabase-functions';
+import { useFunctions } from '@/lib/supabase-functions';
 
 interface ConfigBonus {
   indicacaoDireta: number;
@@ -18,7 +18,9 @@ interface ConfigBonus {
 
 export default function ConfigPage() {
   const { user, profile, loading: authLoading } = useAuth();
+  const functions = useFunctions();
   const router = useRouter();
+  const pathname = usePathname();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<ConfigBonus>({
     indicacaoDireta: 10,
@@ -31,13 +33,14 @@ export default function ConfigPage() {
   });
 
   useEffect(() => {
+    if (pathname !== '/admin/config') return;
     if (authLoading) return;
     if (!user || profile?.role !== 'admin') {
       router.push('/login');
       return;
     }
     fetchConfig();
-  }, [authLoading, user, profile, router]);
+  }, [pathname, authLoading, user, profile, router]);
 
   const fetchConfig = async () => {
     try {
@@ -52,7 +55,7 @@ export default function ConfigPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await functions.bonusConfig.update(formData);
+      await functions.bonusConfig.update(formData as unknown as Record<string, number>);
       alert('Configurações salvas com sucesso!');
     } catch (error) {
       alert('Erro ao salvar configurações');

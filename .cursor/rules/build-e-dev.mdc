@@ -1,0 +1,10 @@
+---
+description: Nunca rodar npm run build com dev ativo; validar compilação com tsc
+alwaysApply: true
+---
+
+# Build e dev no projeto
+
+- **Nunca** execute `npm run build` nem chame esse comando, exceto se o usuário pedir **expressamente**.
+- Manter o sistema rodando com `npm run dev` no terminal e rodar `npm run build` ao mesmo tempo quebra dependências no projeto.
+- Para validar se o projeto está compilando, use sempre **`npx tsc -b`**.

@@ -9,7 +9,10 @@ serve(async (req) => {
     const url = new URL(req.url)
 
     if (req.method === 'GET') {
-      const { data, error } = await supabaseAdmin.from('products').select('*').eq('active', true)
+      const all = url.searchParams.get('all') === 'true' || url.searchParams.get('all') === '1'
+      let q = supabaseAdmin.from('products').select('*')
+      if (!all) q = q.eq('active', true)
+      const { data, error } = await q
       if (error) throw error
       return new Response(JSON.stringify(data ?? []), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
