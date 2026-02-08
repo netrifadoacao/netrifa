@@ -17,7 +17,7 @@ const cinzel = Cinzel({
 });
 
 export const metadata: Metadata = {
-  title: 'Golden Rifas - Inovação e Independência Financeira',
+  title: 'AS Digital - Inovação e Independência Financeira',
   description: 'Descubra o futuro do mercado digital. Produtos de alta performance e um ecossistema exclusivo para você escalar seus resultados.',
 };
 

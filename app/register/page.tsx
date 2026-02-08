@@ -50,7 +50,7 @@ export default function RegisterPage() {
               <div className="relative w-full h-full rounded-full overflow-hidden bg-rich-black">
                 <Image 
                   src="/logo-as.png" 
-                  alt="Golden Rifas" 
+                  alt="AS Digital" 
                   fill 
                   sizes="96px"
                   className="object-contain p-2"
@@ -61,7 +61,7 @@ export default function RegisterPage() {
             Crie sua conta
           </h2>
           <p className="mt-2 text-sm text-steel-400">
-            Comece sua jornada na <span className="brand-logo-text font-semibold">Golden Rifas</span>
+            Comece sua jornada na <span className="brand-logo-text font-semibold">AS Digital</span>
           </p>
           <p className="mt-2 text-sm text-steel-500">
             Já tem uma conta?{' '}

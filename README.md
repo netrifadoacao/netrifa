@@ -1,4 +1,4 @@
-# Sistema de Renda Recorrente Universal (Golden Rifas)
+# Sistema de Renda Recorrente Universal (AS Digital)
 
 Este sistema é uma plataforma digital de vendas em rede (multinível) que permite a comercialização de produtos/serviços com distribuição automática de bônus.
 

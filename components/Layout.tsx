@@ -79,7 +79,7 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
                   <div className="relative w-full h-full rounded-full overflow-hidden bg-rich-black">
                     <Image 
                       src="/logo-as.png" 
-                      alt="Golden Rifas" 
+                      alt="AS Digital" 
                       fill 
                       sizes="44px"
                       className="object-contain p-0.5"
@@ -87,7 +87,7 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
                   </div>
                 </div>
                 <div className="hidden sm:block">
-                  <span className="brand-logo-text font-semibold text-lg">Golden Rifas</span>
+                  <span className="brand-logo-text font-semibold text-lg">AS Digital</span>
                   <span className="block text-xs text-steel-400 font-normal mt-0.5">{tipo === 'admin' ? 'Painel Administrativo' : 'Escritório Virtual'}</span>
                 </div>
               </div>

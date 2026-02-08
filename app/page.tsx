@@ -99,7 +99,7 @@ export default function LandingPage() {
                 <div className="relative w-full h-full rounded-full overflow-hidden bg-rich-black">
                   <Image 
                     src="/logo-as.png" 
-                    alt="Golden Rifas" 
+                    alt="AS Digital" 
                     fill 
                     sizes="56px"
                     className="object-contain p-1"
@@ -107,7 +107,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <span className="brand-logo-text font-semibold text-xl sm:text-2xl group-hover:opacity-95 transition-opacity">
-                Golden Rifas
+                AS Digital
               </span>
             </Link>
 
@@ -238,7 +238,7 @@ export default function LandingPage() {
             </h1>
             
             <p className="text-xl md:text-2xl text-steel-400 mb-10 max-w-3xl mx-auto animate-slide-up">
-              Descubra produtos validados que vendem no piloto automático. Afilie-se, escale suas vendas e construa um negócio digital sólido com a <span className="font-semibold brand-logo-text">Golden Rifas</span>.
+              Descubra produtos validados que vendem no piloto automático. Afilie-se, escale suas vendas e construa um negócio digital sólido com a <span className="font-semibold brand-logo-text">AS Digital</span>.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
@@ -559,7 +559,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="brand-logo-text font-semibold text-2xl mb-4 flex items-center gap-2">
-                Golden Rifas
+                AS Digital
               </div>
               <p className="text-sm text-steel-500">
                 A plataforma definitiva para quem quer viver de internet.
@@ -600,7 +600,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-steel-800 pt-8 text-center text-sm text-steel-500">
-            <p>&copy; {new Date().getFullYear()} <span className="brand-logo-text font-medium">Golden Rifas</span>. Todos os direitos reservados.</p>
+            <p>&copy; {new Date().getFullYear()} <span className="brand-logo-text font-medium">AS Digital</span>. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>
