@@ -190,9 +190,18 @@ export function AuthProvider({
   };
 
   const logout = async () => {
-    await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
+    setSession(null);
+    await supabase.auth.signOut();
+    if (typeof window !== 'undefined') {
+      const keys: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith('sb-') || k.includes('supabase'))) keys.push(k);
+      }
+      keys.forEach((k) => localStorage.removeItem(k));
+    }
   };
 
   return (

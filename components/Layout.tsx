@@ -42,8 +42,8 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
     );
   }
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     router.push('/login');
   };
 

@@ -52,6 +52,19 @@ O projeto utiliza o **Supabase** como Backend-as-a-Service (BaaS). Toda a lógic
     npx supabase functions deploy mp-webhook
     ```
 
+### 403 Forbidden nas Edge Functions (ex.: admin-dashboard)
+
+As rotas de admin exigem `profiles.role = 'admin'`. Se você entrar com um usuário que não é admin (ex.: membro1@projetodoacao.com), as chamadas a `/functions/v1/admin-dashboard` e outras rotas protegidas retornam `{"error":"Forbidden"}`.
+
+**Opções:**
+
+1. **Entrar como admin:** use `admin@projetodoacao.com` com a senha do seed (ex.: `Senha123!`).
+2. **Tornar um usuário admin:** no Supabase Dashboard → SQL Editor, execute:
+   ```sql
+   update public.profiles set role = 'admin' where id = 'a0000002-0000-4000-8000-000000000002';
+   ```
+   (troque o `id` pelo UUID do usuário desejado, ou use o script `supabase/set-admin.sql`).
+
 ## 📂 Estrutura do Projeto
 
 *   `/app`: Código fonte do Frontend (Next.js).
