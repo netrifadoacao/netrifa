@@ -74,7 +74,7 @@ export default function DadosPage() {
                   type="text"
                   id="nome"
                   required
-                  className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
+                  className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-steel-500 focus:border-transparent sm:text-sm transition-all"
                   value={formData.nome}
                   onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                 />
@@ -88,7 +88,7 @@ export default function DadosPage() {
                   type="email"
                   id="email"
                   required
-                  className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
+                  className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-steel-500 focus:border-transparent sm:text-sm transition-all"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 />
@@ -102,7 +102,7 @@ export default function DadosPage() {
                   type="tel"
                   id="telefone"
                   required
-                  className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
+                  className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-steel-500 focus:border-transparent sm:text-sm transition-all"
                   value={formData.telefone}
                   onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
                 />
@@ -119,7 +119,7 @@ export default function DadosPage() {
                   <input
                     type="text"
                     id="banco"
-                    className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
+                    className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-steel-500 focus:border-transparent sm:text-sm transition-all"
                     value={formData.banco}
                     onChange={(e) => setFormData({ ...formData, banco: e.target.value })}
                   />
@@ -132,7 +132,7 @@ export default function DadosPage() {
                   <input
                     type="text"
                     id="agencia"
-                    className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
+                    className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-steel-500 focus:border-transparent sm:text-sm transition-all"
                     value={formData.agencia}
                     onChange={(e) => setFormData({ ...formData, agencia: e.target.value })}
                   />
@@ -145,7 +145,7 @@ export default function DadosPage() {
                   <input
                     type="text"
                     id="conta"
-                    className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
+                    className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-steel-500 focus:border-transparent sm:text-sm transition-all"
                     value={formData.conta}
                     onChange={(e) => setFormData({ ...formData, conta: e.target.value })}
                   />
@@ -158,7 +158,7 @@ export default function DadosPage() {
                   <input
                     type="text"
                     id="pix"
-                    className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
+                    className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-steel-500 focus:border-transparent sm:text-sm transition-all"
                     value={formData.pix}
                     onChange={(e) => setFormData({ ...formData, pix: e.target.value })}
                   />
@@ -177,7 +177,7 @@ export default function DadosPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 border border-transparent shadow-[0_0_15px_rgba(14,165,233,0.3)] text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-500 hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 transition-all"
+                className="px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-steel-700 hover:bg-steel-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-steel-500 disabled:opacity-50 transition-all"
               >
                 {loading ? 'Salvando...' : 'Salvar Alterações'}
               </button>

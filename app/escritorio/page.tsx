@@ -64,7 +64,7 @@ export default function EscritorioHome() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-steel-500"></div>
       </div>
     );
   }
@@ -83,16 +83,16 @@ export default function EscritorioHome() {
           {produtos.map((produto) => (
             <div
               key={produto.id}
-              className="bg-white/5 backdrop-blur-md overflow-hidden shadow-lg rounded-xl border border-white/10 transition-all duration-300 hover:bg-white/10 hover:shadow-[0_0_20px_rgba(14,165,233,0.1)] group"
+              className="bg-white/5 backdrop-blur-md overflow-hidden shadow-lg rounded-xl border border-white/10 transition-all duration-300 hover:bg-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.08)] group"
             >
               <div className="p-6">
                 <div className="flex items-center">
-                  <div className="p-3 rounded-lg bg-primary-500/20 group-hover:bg-primary-500/30 transition-colors">
-                    <FiShoppingBag className="h-8 w-8 text-primary-400" />
+                  <div className="p-3 rounded-lg bg-steel-800 group-hover:bg-steel-700 transition-colors">
+                    <FiShoppingBag className="h-8 w-8 text-steel-300" />
                   </div>
                   <div className="ml-4">
                     <h3 className="text-lg font-medium text-white">{produto.nome}</h3>
-                    <p className="text-2xl font-bold text-primary-400 mt-2">
+                    <p className="text-2xl font-bold text-steel-300 mt-2">
                       R$ {produto.preco.toFixed(2)}
                     </p>
                   </div>
@@ -109,7 +109,7 @@ export default function EscritorioHome() {
                   <button
                     onClick={() => handleComprar(produto)}
                     disabled={buying}
-                    className="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-500 shadow-[0_0_15px_rgba(14,165,233,0.3)] hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-steel-700 hover:bg-steel-600 hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {buying ? 'Processando...' : 'Comprar'}
                   </button>
@@ -132,9 +132,9 @@ export default function EscritorioHome() {
             <div className="mt-2">
               <h3 className="text-xl font-bold text-white mb-4 font-display">{selectedProduct.nome}</h3>
               <p className="text-sm text-gray-300 mb-6 leading-relaxed">{selectedProduct.descricao}</p>
-              <div className="bg-primary-500/10 rounded-lg p-4 mb-6 border border-primary-500/20">
-                <p className="text-sm text-primary-300 mb-1">Preço</p>
-                <p className="text-3xl font-bold text-primary-400">
+              <div className="bg-steel-800 rounded-lg p-4 mb-6 border border-steel-600">
+                <p className="text-sm text-steel-400 mb-1">Preço</p>
+                <p className="text-3xl font-bold text-steel-300">
                   R$ {selectedProduct.preco.toFixed(2)}
                 </p>
               </div>
@@ -148,7 +148,7 @@ export default function EscritorioHome() {
                 <button
                   onClick={() => handleComprar(selectedProduct)}
                   disabled={buying}
-                  className="flex-1 px-4 py-3 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-500 shadow-[0_0_15px_rgba(14,165,233,0.3)] hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] transition-all disabled:opacity-50"
+                  className="flex-1 px-4 py-3 border border-steel-600 text-sm font-medium rounded-lg text-white bg-steel-700 hover:bg-steel-600 transition-all disabled:opacity-50"
                 >
                   {buying ? 'Processando...' : 'Confirmar Compra'}
                 </button>

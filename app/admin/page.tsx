@@ -171,11 +171,11 @@ export default function AdminHome() {
   if (loading) return <DashboardSkeleton />;
 
   const stats = [
-    { name: 'Total Vendidos', value: data?.totalVendidos ?? 0, icon: FiShoppingBag, color: 'text-primary-400', bgColor: 'bg-primary-500/20', href: null },
-    { name: 'Faturamento', value: `R$ ${(data?.faturamento ?? 0).toFixed(2)}`, icon: FiDollarSign, color: 'text-amber-400', bgColor: 'bg-amber-500/20', href: null },
+    { name: 'Total Vendidos', value: data?.totalVendidos ?? 0, icon: FiShoppingBag, color: 'text-steel-300', bgColor: 'bg-steel-800', href: null },
+    { name: 'Faturamento', value: `R$ ${(data?.faturamento ?? 0).toFixed(2)}`, icon: FiDollarSign, color: 'text-steel-300', bgColor: 'bg-steel-800', href: null },
     { name: 'Usuários', value: data?.quantidadeUsuarios ?? 0, icon: FiUsers, color: 'text-cyan-400', bgColor: 'bg-cyan-500/20', href: null },
-    { name: 'Produtos Ativos', value: data?.produtosAtivos ?? 0, icon: FiTrendingUp, color: 'text-emerald-400', bgColor: 'bg-emerald-500/20', href: '/admin/criar' },
-    { name: 'Compras Pendentes', value: data?.comprasPendentes ?? 0, icon: FiClock, color: 'text-secondary-400', bgColor: 'bg-secondary-500/20', href: '/admin/aprovar' },
+    { name: 'Produtos Ativos', value: data?.produtosAtivos ?? 0, icon: FiTrendingUp, color: 'text-steel-400', bgColor: 'bg-steel-500/20', href: '/admin/criar' },
+    { name: 'Compras Pendentes', value: data?.comprasPendentes ?? 0, icon: FiClock, color: 'text-steel-300', bgColor: 'bg-steel-800', href: '/admin/aprovar' },
   ];
 
   const quickActions = [
@@ -194,7 +194,7 @@ export default function AdminHome() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white font-display">Dashboard Administrativo</h1>
           <p className="mt-2 text-sm text-gray-400">Visão geral e analytics do sistema</p>
-          {error && <p className="mt-2 text-sm text-amber-400">Não foi possível carregar alguns dados. Exibindo o que foi possível.</p>}
+          {error && <p className="mt-2 text-sm text-steel-300">Não foi possível carregar alguns dados. Exibindo o que foi possível.</p>}
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5 mb-10">
@@ -216,7 +216,7 @@ export default function AdminHome() {
             return (
               <div
                 key={stat.name}
-                className="bg-white/5 backdrop-blur-md overflow-hidden shadow-lg rounded-xl border border-white/10 transition-all duration-300 hover:bg-white/10 hover:shadow-[0_0_20px_rgba(14,165,233,0.1)]"
+                className="bg-white/5 backdrop-blur-md overflow-hidden shadow-lg rounded-xl border border-white/10 transition-all duration-300 hover:bg-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.08)]"
               >
                 <div className="p-5">
                   {stat.href ? <Link href={stat.href} className="block">{content}</Link> : content}
@@ -236,7 +236,7 @@ export default function AdminHome() {
                   <XAxis dataKey="data" tick={{ fill: '#9ca3af', fontSize: 11 }} />
                   <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} allowDecimals={false} />
                   <Tooltip contentStyle={{ backgroundColor: 'rgba(10,10,15,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }} labelStyle={{ color: '#e5e7eb' }} />
-                  <Bar dataKey="quantidade" fill="#0ea5e9" radius={[4, 4, 0, 0]} name="Cadastros" />
+                  <Bar dataKey="quantidade" fill="#71717a" radius={[4, 4, 0, 0]} name="Cadastros" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -250,7 +250,7 @@ export default function AdminHome() {
                   <XAxis dataKey="data" tick={{ fill: '#9ca3af', fontSize: 11 }} />
                   <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} allowDecimals={false} />
                   <Tooltip contentStyle={{ backgroundColor: 'rgba(10,10,15,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }} labelStyle={{ color: '#e5e7eb' }} />
-                  <Line type="monotone" dataKey="quantidade" stroke="#f59e0b" strokeWidth={2} dot={{ fill: '#f59e0b', strokeWidth: 0 }} activeDot={{ r: 4 }} name="Saques" />
+                  <Line type="monotone" dataKey="quantidade" stroke="#71717a" strokeWidth={2} dot={{ fill: '#71717a', strokeWidth: 0 }} activeDot={{ r: 4 }} name="Saques" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -266,7 +266,7 @@ export default function AdminHome() {
                 <XAxis type="number" tick={{ fill: '#9ca3af', fontSize: 11 }} allowDecimals={false} />
                 <YAxis type="category" dataKey="nome" tick={{ fill: '#9ca3af', fontSize: 11 }} width={76} />
                 <Tooltip contentStyle={{ backgroundColor: 'rgba(10,10,15,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }} />
-                <Bar dataKey="vendas" fill="#10b981" radius={[0, 4, 4, 0]} name="Vendas" />
+                <Bar dataKey="vendas" fill="#52525b" radius={[0, 4, 4, 0]} name="Vendas" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -281,10 +281,10 @@ export default function AdminHome() {
                 <Link
                   key={action.href}
                   href={action.href}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary-500/30 transition-all group"
+                  className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-steel-600 transition-all group"
                 >
-                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Icon className="w-6 h-6 text-primary-400" />
+                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-steel-800 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Icon className="w-6 h-6 text-steel-300" />
                   </div>
                   <div className="min-w-0">
                     <p className="font-medium text-white truncate">{action.label}</p>

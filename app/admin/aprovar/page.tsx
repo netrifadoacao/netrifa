@@ -82,7 +82,7 @@ export default function AprovarPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-steel-500"></div>
       </div>
     );
   }
@@ -117,7 +117,7 @@ export default function AprovarPage() {
                             Comprador: {compra.usuario?.nome} ({compra.usuario?.email})
                           </p>
                           <p className="text-sm text-gray-400">
-                            Valor: <span className="text-primary-400 font-bold">R$ {compra.valor.toFixed(2)}</span>
+                            Valor: <span className="text-steel-300 font-bold">R$ {compra.valor.toFixed(2)}</span>
                           </p>
                           <p className="text-xs text-gray-500 mt-1">
                             Data: {formatDate(compra.dataCompra)}
@@ -128,14 +128,14 @@ export default function AprovarPage() {
                     <div className="ml-4 flex space-x-2">
                       <button
                         onClick={() => handleAprovar(compra.id)}
-                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)] transition-all"
+                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-steel-600 hover:bg-steel-500 transition-all"
                       >
                         <FiCheckCircle className="mr-2" />
                         Aprovar
                       </button>
                       <button
                         onClick={() => handleReprovar(compra.id)}
-                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-red-600 hover:bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)] transition-all"
+                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-steel-700 hover:bg-steel-600 transition-all"
                       >
                         <FiXCircle className="mr-2" />
                         Reprovar

@@ -64,13 +64,13 @@ function AvatarCard({
     <div className="relative inline-flex flex-shrink-0" style={{ width: size, height: size }}>
       <div
         className={`absolute inset-0 rounded-full overflow-hidden border-2 ${
-          isAdmin ? 'bg-amber-500/20 border-amber-500/50' : 'bg-primary-500/20 border-primary-500/40'
+          isAdmin ? 'bg-steel-700 border-steel-500' : 'bg-steel-800 border-steel-600'
         }`}
       >
         {p.avatar_url ? (
           <img src={p.avatar_url} alt={p.full_name || ''} className="absolute inset-0 object-cover w-full h-full" />
         ) : (
-          <span className="text-primary-300 font-bold flex items-center justify-center w-full h-full" style={{ fontSize: size * 0.35 }}>{initials}</span>
+          <span className="text-steel-300 font-bold flex items-center justify-center w-full h-full" style={{ fontSize: size * 0.35 }}>{initials}</span>
         )}
         <div className="absolute inset-x-0 bottom-0 py-1 bg-gradient-to-t from-black/85 to-transparent flex items-center justify-center w-full">
           <span className={`${fontSize} font-medium text-white truncate max-w-[85%] px-1`} style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }} title={p.full_name || p.email}>
@@ -79,12 +79,12 @@ function AvatarCard({
         </div>
       </div>
       {totalDescendants > 0 && (
-        <span className="absolute -bottom-1 -left-1 min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-semibold border-2 border-rich-black z-10">
+        <span className="absolute -bottom-1 -left-1 min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full bg-steel-700 text-white text-xs font-semibold border-2 border-rich-black z-10">
           {totalDescendants}
         </span>
       )}
       {childCount > 0 && (
-        <span className="absolute -bottom-1 -right-1 min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full bg-primary-500 text-white text-xs font-semibold border-2 border-rich-black z-10">
+        <span className="absolute -bottom-1 -right-1 min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full bg-steel-600 text-white text-xs font-semibold border-2 border-rich-black z-10">
           {childCount}
         </span>
       )}

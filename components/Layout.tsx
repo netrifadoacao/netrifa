@@ -28,7 +28,7 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
   if (authLoading) {
     return (
       <div className="min-h-screen bg-rich-black flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-steel-500 border-t-transparent" />
       </div>
     );
   }
@@ -37,7 +37,7 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
     if (typeof window !== 'undefined') window.location.href = '/login';
     return (
       <div className="min-h-screen bg-rich-black flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-steel-500 border-t-transparent" />
       </div>
     );
   }
@@ -67,17 +67,15 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
   const menuItems = tipo === 'admin' ? menuItemsAdmin : menuItemsUsuario;
 
   return (
-    <div className="min-h-screen bg-rich-black text-gray-100 relative selection:bg-primary-500/30">
-      {/* Background Effects */}
-      <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-20 pointer-events-none"></div>
-      <div className="fixed inset-0 bg-gradient-to-br from-primary-900/20 via-transparent to-secondary-900/20 pointer-events-none"></div>
+    <div className="min-h-screen bg-rich-black text-steel-100 relative selection:bg-steel-500/30">
+      <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-15 pointer-events-none"></div>
 
-      <nav className="bg-white/5 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
+      <nav className="bg-steel-950/80 backdrop-blur-xl border-b border-steel-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center gap-3 group cursor-pointer" onClick={() => router.push(tipo === 'admin' ? '/admin' : '/escritorio')}>
-                <div className="relative w-10 h-10 overflow-hidden rounded-full border-2 border-primary-500 shadow-[0_0_15px_rgba(0,136,255,0.5)] group-hover:shadow-[0_0_25px_rgba(0,136,255,0.7)] transition-all duration-300">
+                <div className="relative w-10 h-10 overflow-hidden rounded-full border border-steel-600 ring-1 ring-white/5 transition-all duration-300">
                   <Image 
                     src="/logomarca-as.jpeg" 
                     alt="AS Miranda" 
@@ -86,7 +84,7 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
                     className="object-cover scale-150"
                   />
                 </div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-primary-400 via-white to-secondary-500 bg-clip-text text-transparent hidden sm:block">
+                <h1 className="text-xl font-bold text-white hidden sm:block">
                   {tipo === 'admin' ? 'Painel Administrativo' : 'Escritório Virtual'}
                 </h1>
               </div>
@@ -100,8 +98,8 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
                       href={item.href}
                       className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-sm font-medium whitespace-nowrap transition-colors duration-200 ${
                         isActive
-                          ? 'border-b-2 border-primary-500 text-primary-400 bg-primary-500/10'
-                          : 'border-transparent text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                          ? 'border-b-2 border-steel-400 text-white bg-steel-800'
+                          : 'border-transparent text-steel-400 hover:text-white hover:bg-white/5'
                       }`}
                     >
                       <Icon className="w-4 h-4 flex-shrink-0" />
@@ -112,17 +110,17 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-300 flex items-center gap-2">
+              <div className="text-sm text-steel-300 flex items-center gap-2">
                 <span className="hidden sm:inline">{profile?.full_name ?? user?.email ?? ''}</span>
                 {tipo === 'usuario' && (
-                  <span className="ml-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 font-semibold text-xs shadow-[0_0_10px_rgba(14,165,233,0.1)]">
+                  <span className="ml-2 px-3 py-1 rounded-full bg-steel-800 border border-steel-600 text-steel-200 font-semibold text-xs">
                     R$ {(Number(profile?.wallet_balance) || 0).toFixed(2)}
                   </span>
                 )}
               </div>
               <button
                 onClick={handleLogout}
-                className="inline-flex items-center gap-2 px-3 py-2 border border-secondary-500/30 text-sm font-medium rounded-full text-white bg-secondary-600/80 hover:bg-secondary-600 shadow-[0_0_10px_rgba(255,41,41,0.2)] transition-all duration-200 hover:shadow-[0_0_15px_rgba(255,41,41,0.4)] backdrop-blur-sm group"
+                className="inline-flex items-center gap-2 px-3 py-2 border border-steel-600 text-sm font-medium rounded-full text-white bg-steel-800 hover:bg-steel-700 transition-all duration-200 backdrop-blur-sm group"
               >
                 <FiLogOut className="w-4 h-4 flex-shrink-0 group-hover:-translate-x-1 transition-transform" />
                 <span className="hidden sm:inline whitespace-nowrap">Sair</span>

@@ -59,28 +59,28 @@ function NodeCard({ profile: p, isAdmin }: { profile: Profile; isAdmin: boolean 
     <div
       className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 min-w-[220px] ${
         isAdmin
-          ? 'bg-amber-500/10 border-amber-500/30'
-          : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-primary-500/20'
+          ? 'bg-steel-800 border-steel-600'
+          : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-steel-500/50'
       }`}
     >
-      <div className={`flex-shrink-0 w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border-2 ${isAdmin ? 'border-amber-500/50 bg-amber-500/20' : 'border-primary-500/40 bg-primary-500/20'}`}>
+      <div className={`flex-shrink-0 w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border-2 ${isAdmin ? 'border-steel-500 bg-steel-800' : 'border-steel-600 bg-steel-800'}`}>
         {p.avatar_url ? (
           <img src={p.avatar_url} alt={p.full_name || ''} className="w-full h-full object-cover" />
         ) : (
-          <span className="text-primary-300 font-bold text-sm">{initials}</span>
+          <span className="text-steel-300 font-bold text-sm">{initials}</span>
         )}
       </div>
       <div className="min-w-0 flex-1">
         <p className="font-semibold text-white truncate">
           {p.full_name || 'Sem nome'}
-          {isAdmin && <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-amber-500/30 text-amber-300">Admin</span>}
+          {isAdmin && <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-steel-700 text-steel-200">Admin</span>}
         </p>
         <p className="text-sm text-gray-400 truncate flex items-center gap-1">
           <FiMail className="w-3 h-3 flex-shrink-0" />
           {p.email}
         </p>
         {p.referral_code && (
-          <p className="text-xs text-primary-400/80 mt-0.5">Código: {p.referral_code}</p>
+          <p className="text-xs text-steel-400 mt-0.5">Código: {p.referral_code}</p>
         )}
       </div>
     </div>
@@ -131,8 +131,8 @@ function TopicNode({
       <div
         className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${
           isAdmin
-            ? 'bg-amber-500/10 border-amber-500/30'
-            : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-primary-500/20'
+            ? 'bg-steel-800 border-steel-600'
+            : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-steel-500/50'
         }`}
         style={{ marginLeft: depth * 24 }}
       >
@@ -143,24 +143,24 @@ function TopicNode({
         >
           {hasChildren ? expanded ? <FiChevronDown className="w-4 h-4" /> : <FiChevronRight className="w-4 h-4" /> : <span className="w-4" />}
         </button>
-        <div className={`flex-shrink-0 w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border-2 ${isAdmin ? 'border-amber-500/50 bg-amber-500/20' : 'border-primary-500/40 bg-primary-500/20'}`}>
+        <div className={`flex-shrink-0 w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border-2 ${isAdmin ? 'border-steel-500 bg-steel-800' : 'border-steel-600 bg-steel-800'}`}>
           {p.avatar_url ? (
             <img src={p.avatar_url} alt={p.full_name || ''} className="w-full h-full object-cover" />
           ) : (
-            <span className="text-primary-300 font-bold text-sm">{initials}</span>
+            <span className="text-steel-300 font-bold text-sm">{initials}</span>
           )}
         </div>
         <div className="min-w-0 flex-1">
           <p className="font-semibold text-white truncate">
             {p.full_name || 'Sem nome'}
-            {isAdmin && <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-amber-500/30 text-amber-300">Admin</span>}
+            {isAdmin && <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-steel-700 text-steel-200">Admin</span>}
           </p>
           <p className="text-sm text-gray-400 truncate flex items-center gap-1">
             <FiMail className="w-3 h-3 flex-shrink-0" />
             {p.email}
           </p>
           {p.referral_code && (
-            <p className="text-xs text-primary-400/80 mt-0.5">Código: {p.referral_code}</p>
+            <p className="text-xs text-steel-400 mt-0.5">Código: {p.referral_code}</p>
           )}
         </div>
         {hasChildren && (
@@ -321,7 +321,7 @@ export default function AdminRedePage() {
   if (authLoading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-steel-500 border-t-transparent" />
       </div>
     );
   }
@@ -329,7 +329,7 @@ export default function AdminRedePage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-steel-500 border-t-transparent" />
       </div>
     );
   }
@@ -354,7 +354,7 @@ export default function AdminRedePage() {
                   ? 'Estrutura em tópicos. Clique na seta para expandir ou recolher.'
                   : 'Avatares. Clique nos círculos para expandir ou recolher.'}
             </p>
-            {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+            {error && <p className="mt-2 text-sm text-steel-400">{error}</p>}
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex gap-2">
@@ -363,7 +363,7 @@ export default function AdminRedePage() {
                 onClick={() => setViewMode('organogram')}
                 className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
                   viewMode === 'organogram'
-                    ? 'bg-primary-500/20 border-primary-500/50 text-primary-400'
+                    ? 'bg-steel-800 border-steel-600 text-steel-300'
                     : 'border-white/10 text-gray-400 hover:bg-white/5 hover:text-gray-200'
                 }`}
                 title="Organograma"
@@ -376,7 +376,7 @@ export default function AdminRedePage() {
                 onClick={() => setViewMode('topic')}
                 className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
                   viewMode === 'topic'
-                    ? 'bg-primary-500/20 border-primary-500/50 text-primary-400'
+                    ? 'bg-steel-800 border-steel-600 text-steel-300'
                     : 'border-white/10 text-gray-400 hover:bg-white/5 hover:text-gray-200'
                 }`}
                 title="Estrutura em tópicos"
@@ -389,7 +389,7 @@ export default function AdminRedePage() {
                 onClick={() => setViewMode('avatar')}
                 className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
                   viewMode === 'avatar'
-                    ? 'bg-primary-500/20 border-primary-500/50 text-primary-400'
+                    ? 'bg-steel-800 border-steel-600 text-steel-300'
                     : 'border-white/10 text-gray-400 hover:bg-white/5 hover:text-gray-200'
                 }`}
                 title="Avatares"

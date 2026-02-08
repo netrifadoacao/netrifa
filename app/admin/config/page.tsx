@@ -91,7 +91,7 @@ export default function ConfigPage() {
                     min="0"
                     max="100"
                     required
-                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
                     value={formData.indicacaoDireta}
                     onChange={(e) => setFormData({ ...formData, indicacaoDireta: parseFloat(e.target.value) })}
                   />
@@ -108,7 +108,7 @@ export default function ConfigPage() {
                     min="0"
                     max="100"
                     required
-                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
                     value={formData.nivel1}
                     onChange={(e) => setFormData({ ...formData, nivel1: parseFloat(e.target.value) })}
                   />
@@ -125,7 +125,7 @@ export default function ConfigPage() {
                     min="0"
                     max="100"
                     required
-                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
                     value={formData.nivel2}
                     onChange={(e) => setFormData({ ...formData, nivel2: parseFloat(e.target.value) })}
                   />
@@ -142,7 +142,7 @@ export default function ConfigPage() {
                     min="0"
                     max="100"
                     required
-                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
                     value={formData.nivel3}
                     onChange={(e) => setFormData({ ...formData, nivel3: parseFloat(e.target.value) })}
                   />
@@ -159,7 +159,7 @@ export default function ConfigPage() {
                     min="0"
                     max="100"
                     required
-                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
                     value={formData.nivel4}
                     onChange={(e) => setFormData({ ...formData, nivel4: parseFloat(e.target.value) })}
                   />
@@ -176,7 +176,7 @@ export default function ConfigPage() {
                     min="0"
                     max="100"
                     required
-                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
                     value={formData.nivel5}
                     onChange={(e) => setFormData({ ...formData, nivel5: parseFloat(e.target.value) })}
                   />
@@ -195,7 +195,7 @@ export default function ConfigPage() {
                   step="0.01"
                   min="0"
                   required
-                  className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+                  className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
                   value={formData.valorMinimoSaque}
                   onChange={(e) => setFormData({ ...formData, valorMinimoSaque: parseFloat(e.target.value) })}
                 />
@@ -206,7 +206,7 @@ export default function ConfigPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex items-center px-6 py-3 border border-transparent shadow-[0_0_15px_rgba(14,165,233,0.3)] text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-500 hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 transition-all duration-300"
+                className="inline-flex items-center px-6 py-3 border border-steel-600 text-sm font-medium rounded-lg text-white bg-steel-700 hover:bg-steel-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-steel-500 disabled:opacity-50 transition-all duration-300"
               >
                 <FiSave className="mr-2" />
                 {loading ? 'Salvando...' : 'Salvar Configurações'}

@@ -86,12 +86,12 @@ export default function SaquePage() {
 
         <div className="bg-white/5 backdrop-blur-md border border-white/10 shadow-lg rounded-xl p-6 mb-6">
           <div className="flex items-center">
-            <div className="p-3 rounded-lg bg-primary-500/20">
-              <FiDollarSign className="h-8 w-8 text-primary-400" />
+            <div className="p-3 rounded-lg bg-steel-800">
+              <FiDollarSign className="h-8 w-8 text-steel-300" />
             </div>
             <div className="ml-4">
               <p className="text-sm text-gray-400">Saldo Disponível</p>
-              <p className="text-3xl font-bold text-primary-400">R$ {saldo.toFixed(2)}</p>
+              <p className="text-3xl font-bold text-steel-300">R$ {saldo.toFixed(2)}</p>
               <p className="text-xs text-gray-500 mt-1">
                 Valor mínimo: R$ {valorMinimo.toFixed(2)}
               </p>
@@ -112,7 +112,7 @@ export default function SaquePage() {
                 min={valorMinimo}
                 max={saldo}
                 required
-                className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+                className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
                 placeholder={`Mínimo: R$ ${valorMinimo.toFixed(2)}`}
                 value={formData.valor}
                 onChange={(e) => setFormData({ ...formData, valor: e.target.value })}
@@ -126,7 +126,7 @@ export default function SaquePage() {
               <select
                 id="metodoPagamento"
                 required
-                className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors [&>option]:text-gray-900"
+                className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors [&>option]:text-gray-900"
                 value={formData.metodoPagamento}
                 onChange={(e) => setFormData({ ...formData, metodoPagamento: e.target.value })}
               >
@@ -144,7 +144,7 @@ export default function SaquePage() {
                   type="text"
                   id="pix"
                   required
-                  className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+                  className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
                   placeholder="CPF, Email, Telefone ou Chave Aleatória"
                   value={formData.pix}
                   onChange={(e) => setFormData({ ...formData, pix: e.target.value })}
@@ -160,7 +160,7 @@ export default function SaquePage() {
                     type="text"
                     id="banco"
                     required
-                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
                     value={formData.banco}
                     onChange={(e) => setFormData({ ...formData, banco: e.target.value })}
                   />
@@ -173,7 +173,7 @@ export default function SaquePage() {
                     type="text"
                     id="agencia"
                     required
-                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
                     value={formData.agencia}
                     onChange={(e) => setFormData({ ...formData, agencia: e.target.value })}
                   />
@@ -186,7 +186,7 @@ export default function SaquePage() {
                     type="text"
                     id="conta"
                     required
-                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+                    className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
                     value={formData.conta}
                     onChange={(e) => setFormData({ ...formData, conta: e.target.value })}
                   />
@@ -205,7 +205,7 @@ export default function SaquePage() {
               <button
                 type="submit"
                 disabled={loading || saldo < valorMinimo}
-                className="px-6 py-2 border border-transparent shadow-[0_0_15px_rgba(14,165,233,0.3)] text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-500 hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 transition-all"
+                className="px-6 py-2 border border-transparent  text-sm font-medium rounded-lg text-white bg-steel-700 hover:bg-steel-600  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-steel-500 disabled:opacity-50 transition-all"
               >
                 {loading ? 'Processando...' : 'Solicitar Saque'}
               </button>

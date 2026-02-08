@@ -98,7 +98,7 @@ export default function CriarPage() {
                   type="text"
                   id="nome"
                   required
-                  className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
+                  className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-steel-500 focus:border-transparent sm:text-sm transition-all"
                   value={formData.nome}
                   onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                 />
@@ -112,7 +112,7 @@ export default function CriarPage() {
                   id="descricao"
                   rows={3}
                   required
-                  className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
+                  className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-steel-500 focus:border-transparent sm:text-sm transition-all"
                   value={formData.descricao}
                   onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
                 />
@@ -129,7 +129,7 @@ export default function CriarPage() {
                     step="0.01"
                     min="0"
                     required
-                    className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
+                    className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-steel-500 focus:border-transparent sm:text-sm transition-all"
                     value={formData.preco}
                     onChange={(e) => setFormData({ ...formData, preco: e.target.value })}
                   />
@@ -141,7 +141,7 @@ export default function CriarPage() {
                   </label>
                   <select
                     id="tipo"
-                    className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
+                    className="mt-1 block w-full bg-black/20 border border-white/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-steel-500 focus:border-transparent sm:text-sm transition-all"
                     value={formData.tipo}
                     onChange={(e) => setFormData({ ...formData, tipo: e.target.value })}
                   >
@@ -154,7 +154,7 @@ export default function CriarPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-[0_0_15px_rgba(14,165,233,0.3)] text-sm font-medium text-white bg-primary-600 hover:bg-primary-500 hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 transition-all"
+                className="w-full flex justify-center py-2 px-4 border border-steel-600 rounded-lg text-sm font-medium text-white bg-steel-700 hover:bg-steel-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-steel-500 disabled:opacity-50 transition-all"
               >
                 {loading ? 'Criando...' : 'Criar Produto'}
               </button>
@@ -169,18 +169,18 @@ export default function CriarPage() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center">
-                        <FiShoppingBag className="h-5 w-5 text-primary-400" />
+                        <FiShoppingBag className="h-5 w-5 text-steel-300" />
                         <h3 className="ml-2 text-sm font-medium text-white">{produto.nome}</h3>
                         <span className={`ml-2 px-2 py-1 text-xs rounded-full border ${
                           produto.ativo 
-                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
-                            : 'bg-red-500/10 text-red-400 border-red-500/20'
+                            ? 'bg-steel-800 text-steel-300 border-steel-600' 
+                            : 'bg-steel-800 text-steel-400 border-steel-600'
                         }`}>
                           {produto.ativo ? 'Ativo' : 'Inativo'}
                         </span>
                       </div>
                       <p className="mt-1 text-sm text-gray-400">{produto.descricao}</p>
-                      <p className="mt-1 text-sm font-semibold text-primary-400">
+                      <p className="mt-1 text-sm font-semibold text-steel-300">
                         R$ {produto.preco.toFixed(2)}
                       </p>
                     </div>
@@ -188,8 +188,8 @@ export default function CriarPage() {
                       onClick={() => handleToggleAtivo(produto.id, produto.ativo)}
                       className={`ml-4 p-2 rounded-md ${
                         produto.ativo
-                          ? 'text-red-600 hover:bg-red-50'
-                          : 'text-green-600 hover:bg-green-50'
+                          ? 'text-steel-400 hover:bg-steel-800'
+                          : 'text-steel-400 hover:bg-steel-800'
                       }`}
                       title={produto.ativo ? 'Desativar' : 'Ativar'}
                     >

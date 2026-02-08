@@ -64,7 +64,7 @@ export default function RedePage() {
                 <div>
                   <p className="font-semibold text-white">{item.nome}</p>
                   <p className="text-sm text-gray-400">{item.email}</p>
-                  <p className="text-xs text-primary-400 mt-1">Nível {item.nivel}</p>
+                  <p className="text-xs text-steel-300 mt-1">Nível {item.nivel}</p>
                 </div>
                 {item.indicados && item.indicados.length > 0 && (
                   <span className="text-sm text-gray-400">
@@ -83,7 +83,7 @@ export default function RedePage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-steel-500"></div>
       </div>
     );
   }
@@ -105,11 +105,11 @@ export default function RedePage() {
               type="text"
               readOnly
               value={linkIndicacao}
-              className="flex-1 block border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+              className="flex-1 block border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
             />
             <button
               onClick={copyLink}
-              className="inline-flex items-center px-4 py-2 border border-transparent shadow-[0_0_15px_rgba(14,165,233,0.3)] text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-500 hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] transition-all"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-steel-700 hover:bg-steel-600 hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all"
             >
               <FiCopy className="mr-2" />
               Copiar
@@ -119,7 +119,7 @@ export default function RedePage() {
 
         <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
           <h2 className="text-lg font-medium text-white mb-4 flex items-center">
-            <FiUsers className="mr-2 text-primary-400" />
+            <FiUsers className="mr-2 text-steel-300" />
             Estrutura da Rede
           </h2>
           {rede.length === 0 ? (

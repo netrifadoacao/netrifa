@@ -69,12 +69,11 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-rich-black relative overflow-hidden">
-      <div className="absolute inset-0 bg-cyber-grid opacity-20"></div>
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary-900/20 to-secondary-900/20 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-cyber-grid opacity-15"></div>
       
-      <div className="max-w-md w-full space-y-8 relative z-10 bg-white/5 backdrop-blur-md p-8 rounded-2xl border border-white/10 shadow-2xl">
+      <div className="max-w-md w-full space-y-8 relative z-10 bg-steel-900/80 backdrop-blur-xl p-8 rounded-2xl border border-steel-700 shadow-2xl">
         <div className="text-center">
-          <div className="relative w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-2 border-primary-500 shadow-[0_0_15px_rgba(0,136,255,0.5)]">
+          <div className="relative w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border border-steel-600 ring-1 ring-white/5">
               <Image 
                 src="/logomarca-as.jpeg" 
                 alt="AS Miranda" 
@@ -86,12 +85,12 @@ export default function LoginPage() {
           <h2 className="mt-2 text-3xl font-display font-black text-white">
             Bem-vindo de volta
           </h2>
-          <p className="mt-2 text-sm text-gray-400">
-            Acesse sua conta <span className="text-primary-400 font-semibold">AS Miranda</span>
+          <p className="mt-2 text-sm text-steel-400">
+            Acesse sua conta <span className="text-steel-200 font-semibold">AS Miranda</span>
           </p>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-steel-500">
             Ou{' '}
-            <Link href={`/register${patrocinadorLink ? `?ref=${patrocinadorLink}` : ''}`} className="font-medium text-primary-400 hover:text-primary-300 transition-colors">
+            <Link href={`/register${patrocinadorLink ? `?ref=${patrocinadorLink}` : ''}`} className="font-medium text-steel-300 hover:text-white transition-colors">
               cadastre-se aqui
             </Link>
           </p>
@@ -99,13 +98,13 @@ export default function LoginPage() {
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="rounded-lg bg-red-900/20 border border-red-500/50 p-4">
-              <div className="text-sm text-red-400">{error}</div>
+            <div className="rounded-lg bg-steel-800 border border-steel-600 p-4">
+              <div className="text-sm text-steel-300">{error}</div>
             </div>
           )}
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-steel-300 mb-1">
                 Email
               </label>
               <input
@@ -114,14 +113,14 @@ export default function LoginPage() {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none relative block w-full px-3 py-3 border border-white/10 placeholder-gray-500 text-white bg-rich-gray/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
+                className="appearance-none relative block w-full px-3 py-3 border border-steel-600 placeholder-steel-500 text-white bg-steel-900/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-steel-500 focus:border-transparent sm:text-sm transition-all"
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
-              <label htmlFor="senha" className="block text-sm font-medium text-gray-300 mb-1">
+              <label htmlFor="senha" className="block text-sm font-medium text-steel-300 mb-1">
                 Senha
               </label>
               <input
@@ -130,7 +129,7 @@ export default function LoginPage() {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none relative block w-full px-3 py-3 border border-white/10 placeholder-gray-500 text-white bg-rich-gray/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent sm:text-sm transition-all"
+                className="appearance-none relative block w-full px-3 py-3 border border-steel-600 placeholder-steel-500 text-white bg-steel-900/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-steel-500 focus:border-transparent sm:text-sm transition-all"
                 placeholder="••••••••"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
@@ -142,7 +141,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-800 hover:from-primary-500 hover:to-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 transition-all duration-200 shadow-lg shadow-primary-500/20 hover:shadow-primary-500/40 hover:scale-[1.02]"
+              className="group relative w-full flex justify-center py-3 px-4 border border-steel-600 text-sm font-bold rounded-xl text-white bg-steel-700 hover:bg-steel-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-steel-500 disabled:opacity-50 transition-all duration-200"
             >
               {loading ? 'Entrando...' : 'Entrar'}
             </button>

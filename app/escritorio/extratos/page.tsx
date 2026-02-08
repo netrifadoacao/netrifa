@@ -64,7 +64,7 @@ export default function ExtratosPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-steel-500"></div>
       </div>
     );
   }
@@ -81,12 +81,12 @@ export default function ExtratosPage() {
 
         <div className="bg-white/5 backdrop-blur-md border border-white/10 shadow-lg rounded-xl p-6 mb-6">
           <div className="flex items-center">
-            <div className="p-3 rounded-lg bg-primary-500/20">
-              <FiTrendingUp className="h-8 w-8 text-primary-400" />
+            <div className="p-3 rounded-lg bg-steel-800">
+              <FiTrendingUp className="h-8 w-8 text-steel-300" />
             </div>
             <div className="ml-4">
               <p className="text-sm text-gray-400">Total de Ganhos</p>
-              <p className="text-3xl font-bold text-primary-400">R$ {totalGanhos.toFixed(2)}</p>
+              <p className="text-3xl font-bold text-steel-300">R$ {totalGanhos.toFixed(2)}</p>
             </div>
           </div>
         </div>
@@ -102,8 +102,8 @@ export default function ExtratosPage() {
                 <li key={item.id} className="px-6 py-4 hover:bg-white/5 transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <div className="p-2 rounded-lg bg-primary-500/10 mr-4">
-                        <FiFileText className="h-5 w-5 text-primary-400" />
+                      <div className="p-2 rounded-lg bg-steel-800 mr-4">
+                        <FiFileText className="h-5 w-5 text-steel-300" />
                       </div>
                       <div>
                         <p className="text-sm font-medium text-white">
@@ -117,7 +117,7 @@ export default function ExtratosPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-semibold text-emerald-400">
+                      <p className="text-lg font-semibold text-steel-400">
                         + R$ {item.valor.toFixed(2)}
                       </p>
                     </div>
