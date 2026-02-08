@@ -85,16 +85,20 @@ export function AuthProvider({
       const { data: { session: s } } = await supabase.auth.getSession();
       resolved.current = true;
       setSession(s ?? null);
-      setUser(s?.user ?? null);
       if (s?.user) {
+        setUser(s.user);
         if (initialUser?.id === s.user.id && initialProfile != null) {
           setProfile(initialProfile);
           setProfileLoading(false);
+        } else {
+          setProfileLoading(true);
         }
-        setProfileLoading(true);
         await fetchProfile(s.user.id);
       } else {
-        setProfile(null);
+        if (!initialUser) {
+          setUser(null);
+          setProfile(null);
+        }
         setProfileLoading(false);
       }
       setLoading(false);
