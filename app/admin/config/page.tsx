@@ -15,6 +15,8 @@ interface ConfigBonus {
   nivel4: number;
   nivel5: number;
   valorMinimoSaque: number;
+  valorAdesao?: number;
+  limiteMaximoSaque?: number;
 }
 
 export default function ConfigPage() {
@@ -31,6 +33,8 @@ export default function ConfigPage() {
     nivel4: 1,
     nivel5: 0.5,
     valorMinimoSaque: 50,
+    valorAdesao: 250,
+    limiteMaximoSaque: 3000,
   });
 
   useEffect(() => {
@@ -185,7 +189,22 @@ export default function ConfigPage() {
               </div>
             </div>
 
-            <div className="border-t border-white/10 pt-4">
+            <div className="border-t border-white/10 pt-4 space-y-4">
+              <div>
+                <label htmlFor="valorAdesao" className="block text-sm font-medium text-gray-300">
+                  Valor da Adesão (R$)
+                </label>
+                <input
+                  type="number"
+                  id="valorAdesao"
+                  step="0.01"
+                  min="0"
+                  required
+                  className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
+                  value={formData.valorAdesao ?? 250}
+                  onChange={(e) => setFormData({ ...formData, valorAdesao: parseFloat(e.target.value) })}
+                />
+              </div>
               <div>
                 <label htmlFor="valorMinimoSaque" className="block text-sm font-medium text-gray-300">
                   Valor Mínimo de Saque (R$)
@@ -200,6 +219,22 @@ export default function ConfigPage() {
                   value={formData.valorMinimoSaque}
                   onChange={(e) => setFormData({ ...formData, valorMinimoSaque: parseFloat(e.target.value) })}
                 />
+              </div>
+              <div>
+                <label htmlFor="limiteMaximoSaque" className="block text-sm font-medium text-gray-300">
+                  Limite Máximo de Saque – Reinvestimento (R$)
+                </label>
+                <input
+                  type="number"
+                  id="limiteMaximoSaque"
+                  step="0.01"
+                  min="0"
+                  required
+                  className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
+                  value={formData.limiteMaximoSaque ?? 3000}
+                  onChange={(e) => setFormData({ ...formData, limiteMaximoSaque: parseFloat(e.target.value) })}
+                />
+                <p className="mt-1 text-xs text-gray-500">Ao atingir este total em saques, o membro é informado sobre a necessidade de reinvestir para continuar recebendo a renda da rede.</p>
               </div>
             </div>
 

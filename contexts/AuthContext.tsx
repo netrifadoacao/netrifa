@@ -172,8 +172,10 @@ export function AuthProvider({
     });
     const tokenData = await tokenRes.json().catch(() => ({}));
     if (!tokenRes.ok) {
-      const msg = tokenData?.msg ?? tokenData?.error_description ?? tokenData?.error ?? 'Falha no login';
-      throw new Error(typeof msg === 'string' ? msg : 'Falha no login');
+      const raw = tokenData?.msg ?? tokenData?.error_description ?? tokenData?.error ?? 'Falha no login';
+      const msg = typeof raw === 'string' ? raw : 'Falha no login';
+      const isUnconfirmed = /email\s*not\s*confirmed|email_not_confirmed|confirmação|confirmado/i.test(msg);
+      throw new Error(isUnconfirmed ? 'Aguardando aprovação' : msg);
     }
     const accessToken = tokenData.access_token;
     const refreshToken = tokenData.refresh_token;

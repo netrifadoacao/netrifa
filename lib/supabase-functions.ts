@@ -118,6 +118,24 @@ function createFunctions(accessToken: string | null | undefined) {
     profile: (userId?: string) => invokeFunction<{ id: string; email: string; nome?: string; saldo: number; referral_code?: string }>('profile', { params: userId ? { id: userId } : {} }, token),
     profileUpdate: (body: { nome?: string; full_name?: string; telefone?: string; phone?: string; banco?: string; agencia?: string; conta?: string; pix?: string; avatar_url?: string }) =>
       invokeFunction('profile', { method: 'PATCH', body: { full_name: body.nome ?? body.full_name, phone: body.telefone ?? body.phone, banco: body.banco, agencia: body.agencia, conta: body.conta, pix: body.pix, avatar_url: body.avatar_url } }, token),
+    approveUsers: {
+      list: async () => {
+        const res = await fetch('/api/admin/approve-users')
+        const data = await res.json().catch(() => ({}))
+        if (!res.ok) throw new Error((data as { error?: string }).error ?? res.statusText)
+        return data as { users: { id: string; email: string; full_name?: string | null; phone?: string | null; created_at?: string }[] }
+      },
+      approve: async (userId: string) => {
+        const res = await fetch('/api/admin/approve-users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId }),
+        })
+        const data = await res.json().catch(() => ({}))
+        if (!res.ok) throw new Error((data as { error?: string }).error ?? res.statusText)
+        return data
+      },
+    },
   }
 }
 

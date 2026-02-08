@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import toast from 'react-hot-toast';
 import { useRouter, usePathname } from 'next/navigation';
-import { FiDollarSign } from 'react-icons/fi';
+import { FiDollarSign, FiX } from 'react-icons/fi';
 import { useFunctions } from '@/lib/supabase-functions';
 
 export default function SaquePage() {
@@ -14,6 +14,9 @@ export default function SaquePage() {
   const pathname = usePathname();
   const [saldo, setSaldo] = useState(0);
   const [valorMinimo, setValorMinimo] = useState(50);
+  const [limiteMaximoSaque, setLimiteMaximoSaque] = useState(3000);
+  const [totalSacado, setTotalSacado] = useState(0);
+  const [showReinvestModal, setShowReinvestModal] = useState(false);
   const [formData, setFormData] = useState({
     valor: '',
     metodoPagamento: 'pix',
@@ -33,16 +36,35 @@ export default function SaquePage() {
     }
     setSaldo(Number(profile?.wallet_balance ?? 0));
     fetchConfig();
+    fetchWithdrawals();
   }, [pathname, authLoading, user, profile, router]);
 
   const fetchConfig = async () => {
     try {
       const data = await functions.bonusConfig.get();
       setValorMinimo(data.valorMinimoSaque ?? 50);
+      setLimiteMaximoSaque(data.limiteMaximoSaque ?? 3000);
     } catch (error) {
       console.error('Erro ao buscar configuração:', error);
     }
   };
+
+  const fetchWithdrawals = async () => {
+    try {
+      const list = await functions.withdrawals.list();
+      const arr = Array.isArray(list) ? list : [];
+      const total = arr.filter((s: { status: string }) => s.status === 'pago').reduce((acc: number, s: { valor: number }) => acc + Number(s.valor ?? 0), 0);
+      setTotalSacado(total);
+    } catch (error) {
+      console.error('Erro ao buscar saques:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (limiteMaximoSaque > 0 && totalSacado >= limiteMaximoSaque) {
+      setShowReinvestModal(true);
+    }
+  }, [limiteMaximoSaque, totalSacado]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -213,6 +235,32 @@ export default function SaquePage() {
             </div>
           </form>
         </div>
+
+        {showReinvestModal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4" onClick={() => setShowReinvestModal(false)}>
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl max-w-md w-full p-6 border border-white/20 text-white" onClick={(e) => e.stopPropagation()}>
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="font-display text-xl font-bold text-white">Limite de saque atingido – Reinvestimento</h3>
+                <button type="button" onClick={() => setShowReinvestModal(false)} className="p-2 rounded-lg text-steel-400 hover:bg-white/5 hover:text-white">
+                  <FiX className="w-5 h-5" />
+                </button>
+              </div>
+              <p className="text-steel-300 text-sm mb-3">
+                Você completou R$ {limiteMaximoSaque.toFixed(2)} em saques. Conforme os termos que você aceitou ao entrar na rede, a partir deste momento a <strong className="text-white">renda passiva</strong> gerada pela sua rede será <strong className="text-gold-300">represada</strong> até que você autorize o reinvestimento.
+              </p>
+              <p className="text-steel-400 text-sm mb-4">
+                Para voltar a receber os ganhos da rede, faça o reinvestimento usando o saldo da sua conta ou um novo pagamento via PIX na plataforma.
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowReinvestModal(false)}
+                className="w-full py-2.5 px-4 rounded-xl btn-gold-metallic font-semibold"
+              >
+                Entendi
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

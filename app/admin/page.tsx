@@ -8,10 +8,9 @@ import { useFunctions } from '@/lib/supabase-functions';
 import {
   FiShoppingBag,
   FiUsers,
+  FiUserPlus,
   FiDollarSign,
   FiTrendingUp,
-  FiClock,
-  FiCheckCircle,
   FiMap,
   FiPlusCircle,
   FiSettings,
@@ -175,12 +174,11 @@ export default function AdminHome() {
     { name: 'Faturamento', value: `R$ ${(data?.faturamento ?? 0).toFixed(2)}`, icon: FiDollarSign, color: 'text-steel-300', bgColor: 'bg-steel-800', href: null },
     { name: 'Usuários', value: data?.quantidadeUsuarios ?? 0, icon: FiUsers, color: 'text-gold-400', bgColor: 'bg-gold-500/20', href: null },
     { name: 'Produtos Ativos', value: data?.produtosAtivos ?? 0, icon: FiTrendingUp, color: 'text-steel-400', bgColor: 'bg-steel-500/20', href: '/admin/criar' },
-    { name: 'Compras Pendentes', value: data?.comprasPendentes ?? 0, icon: FiClock, color: 'text-steel-300', bgColor: 'bg-steel-800', href: '/admin/aprovar' },
   ];
 
   const quickActions = [
     { label: 'Ver rede em mapa', href: '/admin/rede', icon: FiMap, desc: 'Rede hierárquica expansível' },
-    { label: 'Aprovar compras', href: '/admin/aprovar', icon: FiCheckCircle, desc: 'Compras pendentes' },
+    { label: 'Aprovar usuários', href: '/admin/usuarios', icon: FiUserPlus, desc: 'Liberar acesso de novos cadastros' },
     { label: 'Criar produto', href: '/admin/criar', icon: FiPlusCircle, desc: 'Novo produto' },
     { label: 'Config. bônus', href: '/admin/config', icon: FiSettings, desc: 'Percentuais por nível' },
   ];

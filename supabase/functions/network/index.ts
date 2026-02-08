@@ -15,7 +15,7 @@ serve(async (req) => {
     const isAdmin = myProfile?.role === 'admin'
     if (userId !== user.id && !isAdmin) throw new Error('Forbidden')
     const supabase = createSupabaseAdmin()
-    const { data: profiles, error: profilesError } = await supabase.from('profiles').select('id, full_name, email, sponsor_id, referral_code, role, avatar_url').order('created_at', { ascending: true })
+    const { data: profiles, error: profilesError } = await supabase.from('profiles').select('id, full_name, email, sponsor_id, referral_code, role, avatar_url, created_at').order('created_at', { ascending: true })
     if (profilesError) throw profilesError
     if (flat && isAdmin) {
       const list = (profiles ?? []).map((p: { id: string; full_name: string | null; email: string; sponsor_id: string | null; referral_code?: string; role?: string; avatar_url?: string | null }) => ({
@@ -29,16 +29,27 @@ serve(async (req) => {
       }))
       return new Response(JSON.stringify({ profiles: list }), { headers: { ...cors, 'Content-Type': 'application/json' } })
     }
-    type P = { id: string; full_name: string | null; email: string; sponsor_id: string | null; referral_code?: string | null; role?: string | null; avatar_url?: string | null }
+    type P = { id: string; full_name: string | null; email: string; sponsor_id: string | null; referral_code?: string | null; role?: string | null; avatar_url?: string | null; created_at?: string | null }
     const list = (profiles ?? []) as P[]
     if (!isAdmin && userId === user.id) {
       const me = list.find((p) => p.id === user.id)
       const upline = me?.sponsor_id ? list.find((p) => p.id === me.sponsor_id) ?? null : null
+      const getDirects = (sid: string): P[] => {
+        const direct = list.filter((p) => p.sponsor_id === sid)
+        const profile = list.find((p) => p.id === sid)
+        const sponsorId = profile?.sponsor_id
+        if (!sponsorId) return direct
+        const siblings = list.filter((p) => p.sponsor_id === sponsorId).sort((a, b) => (a.created_at || '').localeCompare(b.created_at || ''))
+        const pos = siblings.findIndex((p) => p.id === sid)
+        if (pos === 0 && siblings.length >= 2) {
+          const gifted = siblings.slice(1, 3)
+          return [...direct, ...gifted]
+        }
+        return direct
+      }
       const buildDown = (sid: string, nivel: number): { profile: P; children: unknown[] }[] => {
         if (nivel > 5) return []
-        return list
-          .filter((p) => p.sponsor_id === sid)
-          .map((p) => ({ profile: p, children: buildDown(p.id, nivel + 1) }))
+        return getDirects(sid).map((p) => ({ profile: p, children: buildDown(p.id, nivel + 1) }))
       }
       const downline = me ? buildDown(user.id, 1) : []
       return new Response(

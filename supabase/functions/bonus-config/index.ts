@@ -18,6 +18,12 @@ serve(async (req) => {
         else config[`nivel${r.level - 1}`] = Number(r.percentage)
       })
       config.valorMinimoSaque = 50
+      const { data: appRows } = await supabase.from('app_config').select('key, value')
+      ;(appRows ?? []).forEach((r: { key: string; value: number }) => {
+        if (r.key === 'valor_adesao') config.valorAdesao = Number(r.value)
+        if (r.key === 'limite_maximo_saque') config.limiteMaximoSaque = Number(r.value)
+        if (r.key === 'valor_minimo_saque') config.valorMinimoSaque = Number(r.value)
+      })
       return new Response(JSON.stringify(config), { headers: { ...cors, 'Content-Type': 'application/json' } })
     }
 
@@ -33,6 +39,15 @@ serve(async (req) => {
       ]
       for (const row of levels) {
         await supabase.from('bonus_config').upsert(row, { onConflict: 'level' })
+      }
+      if (body.valorAdesao != null) {
+        await supabase.from('app_config').upsert({ key: 'valor_adesao', value: Number(body.valorAdesao) }, { onConflict: 'key' })
+      }
+      if (body.limiteMaximoSaque != null) {
+        await supabase.from('app_config').upsert({ key: 'limite_maximo_saque', value: Number(body.limiteMaximoSaque) }, { onConflict: 'key' })
+      }
+      if (body.valorMinimoSaque != null) {
+        await supabase.from('app_config').upsert({ key: 'valor_minimo_saque', value: Number(body.valorMinimoSaque) }, { onConflict: 'key' })
       }
       return new Response(JSON.stringify(body), { headers: { ...cors, 'Content-Type': 'application/json' } })
     }

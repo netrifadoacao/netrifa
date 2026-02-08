@@ -6,7 +6,7 @@ import { Toaster } from 'react-hot-toast';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FiHome, FiUser, FiUsers, FiDollarSign, FiFileText, FiLogOut, FiShoppingBag, FiCheckCircle, FiSettings, FiMenu, FiX, FiChevronDown } from 'react-icons/fi';
+import { FiHome, FiUser, FiUsers, FiUserPlus, FiDollarSign, FiFileText, FiLogOut, FiShoppingBag, FiSettings, FiMenu, FiX, FiChevronDown } from 'react-icons/fi';
 import { getAvatarDisplayUrl } from '@/lib/avatar';
 
 interface LayoutProps {
@@ -78,7 +78,7 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
     { href: '/admin', icon: FiHome, label: 'Home' },
     { href: '/admin/dados', icon: FiUser, label: 'Dados' },
     { href: '/admin/rede', icon: FiUsers, label: 'Rede' },
-    { href: '/admin/aprovar', icon: FiCheckCircle, label: 'Aprovar' },
+    { href: '/admin/usuarios', icon: FiUserPlus, label: 'Aprovar usuários' },
     { href: '/admin/criar', icon: FiShoppingBag, label: 'Produtos' },
     { href: '/admin/saques', icon: FiDollarSign, label: 'Saques' },
     { href: '/admin/config', icon: FiSettings, label: 'Bônus' },
