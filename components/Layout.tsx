@@ -75,18 +75,21 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center gap-3 group cursor-pointer" onClick={() => router.push(tipo === 'admin' ? '/admin' : '/escritorio')}>
-                <div className="relative w-10 h-10 overflow-hidden rounded-full border border-white/20 ring-1 ring-white/10 shadow-gleam-silver transition-all duration-300">
-                  <Image 
-                    src="/logomarca-as.jpeg" 
-                    alt="AS Miranda" 
-                    fill 
-                    sizes="40px"
-                    className="object-cover scale-150"
-                  />
+                <div className="logo-circle-gold flex-shrink-0 w-11 h-11 transition-all duration-300">
+                  <div className="relative w-full h-full rounded-full overflow-hidden bg-rich-black">
+                    <Image 
+                      src="/logo-as.png" 
+                      alt="Golden Rifas" 
+                      fill 
+                      sizes="44px"
+                      className="object-contain p-0.5"
+                    />
+                  </div>
                 </div>
-                <h1 className="text-xl font-bold text-white hidden sm:block">
-                  {tipo === 'admin' ? 'Painel Administrativo' : 'Escritório Virtual'}
-                </h1>
+                <div className="hidden sm:block">
+                  <span className="brand-logo-text-glass font-semibold text-lg">Golden Rifas</span>
+                  <span className="block text-xs text-steel-400 font-normal mt-0.5">{tipo === 'admin' ? 'Painel Administrativo' : 'Escritório Virtual'}</span>
+                </div>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-1 lg:space-x-2 flex-shrink-0">
                 {menuItems.map((item) => {

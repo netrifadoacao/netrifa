@@ -95,17 +95,19 @@ export default function LandingPage() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <Link href="/" className="flex items-center space-x-2 group">
-              <div className="relative w-12 h-12 overflow-hidden rounded-full border border-white/20 ring-1 ring-white/10 transition-all duration-300 shadow-gleam-silver">
-                <Image 
-                  src="/logomarca-as.jpeg" 
-                  alt="AS Miranda" 
-                  fill 
-                  sizes="48px"
-                  className="object-cover scale-150"
-                />
+              <div className="logo-circle-gold flex-shrink-0 w-14 h-14 transition-all duration-300">
+                <div className="relative w-full h-full rounded-full overflow-hidden bg-rich-black">
+                  <Image 
+                    src="/logo-as.png" 
+                    alt="Golden Rifas" 
+                    fill 
+                    sizes="56px"
+                    className="object-contain p-1"
+                  />
+                </div>
               </div>
-              <span className="font-display text-2xl font-black text-white group-hover:text-steel-200 transition-colors">
-                AS Miranda
+              <span className="brand-logo-text-glass font-semibold text-xl sm:text-2xl group-hover:opacity-95 transition-opacity">
+                Golden Rifas
               </span>
             </Link>
 
@@ -236,7 +238,7 @@ export default function LandingPage() {
             </h1>
             
             <p className="text-xl md:text-2xl text-steel-400 mb-10 max-w-3xl mx-auto animate-slide-up">
-              Descubra produtos validados que vendem no piloto automático. Afilie-se, escale suas vendas e construa um negócio digital sólido com a <span className="font-semibold text-white">AS Miranda</span>.
+              Descubra produtos validados que vendem no piloto automático. Afilie-se, escale suas vendas e construa um negócio digital sólido com a <span className="font-semibold brand-logo-text">Golden Rifas</span>.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
@@ -556,8 +558,8 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
-              <div className="font-display text-2xl font-black text-white mb-4 flex items-center gap-2">
-                AS Miranda
+              <div className="brand-logo-text font-semibold text-2xl mb-4 flex items-center gap-2">
+                Golden Rifas
               </div>
               <p className="text-sm text-steel-500">
                 A plataforma definitiva para quem quer viver de internet.
@@ -598,7 +600,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-steel-800 pt-8 text-center text-sm text-steel-500">
-            <p>&copy; {new Date().getFullYear()} AS Miranda. Todos os direitos reservados.</p>
+            <p>&copy; {new Date().getFullYear()} <span className="brand-logo-text font-medium">Golden Rifas</span>. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>

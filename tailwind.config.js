@@ -10,6 +10,7 @@ module.exports = {
       fontFamily: {
         sans: ['var(--font-inter)', 'sans-serif'],
         display: ['var(--font-poppins)', 'sans-serif'],
+        brand: ['var(--font-cinzel)', 'serif'],
       },
       colors: {
         steel: {

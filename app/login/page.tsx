@@ -73,20 +73,22 @@ export default function LoginPage() {
       
       <div className="max-w-md w-full space-y-8 relative z-10 glass-strong p-8 rounded-2xl border border-white/10 shadow-glass">
         <div className="text-center">
-          <div className="relative w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border border-white/20 ring-1 ring-white/10 shadow-gleam-silver">
-              <Image 
-                src="/logomarca-as.jpeg" 
-                alt="AS Miranda" 
-                fill 
-                sizes="80px"
-                className="object-cover"
-              />
+          <div className="logo-circle-gold w-24 h-24 mx-auto mb-4">
+              <div className="relative w-full h-full rounded-full overflow-hidden bg-rich-black">
+                <Image 
+                  src="/logo-as.png" 
+                  alt="Golden Rifas" 
+                  fill 
+                  sizes="96px"
+                  className="object-contain p-2"
+                />
+              </div>
             </div>
           <h2 className="mt-2 text-3xl font-display font-black text-white">
             Bem-vindo de volta
           </h2>
           <p className="mt-2 text-sm text-steel-400">
-            Acesse sua conta <span className="text-steel-200 font-semibold">AS Miranda</span>
+            Acesse sua conta <span className="brand-logo-text font-semibold">Golden Rifas</span>
           </p>
           <p className="mt-2 text-sm text-steel-500">
             Ou{' '}

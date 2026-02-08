@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Poppins } from 'next/font/google';
+import { Inter, Poppins, Cinzel } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { createClient } from '@/utils/supabase/server';
@@ -10,9 +10,14 @@ const poppins = Poppins({
   weight: ['400', '500', '600', '700', '800', '900'],
   variable: '--font-poppins'
 });
+const cinzel = Cinzel({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-cinzel',
+});
 
 export const metadata: Metadata = {
-  title: 'AS Miranda - Inovação e Independência Financeira',
+  title: 'Golden Rifas - Inovação e Independência Financeira',
   description: 'Descubra o futuro do mercado digital. Produtos de alta performance e um ecossistema exclusivo para você escalar seus resultados.',
 };
 
@@ -35,7 +40,7 @@ export default async function RootLayout({
 
   return (
     <html lang="pt-BR">
-      <body className={`${inter.variable} ${poppins.variable} font-sans`}>
+      <body className={`${inter.variable} ${poppins.variable} ${cinzel.variable} font-sans`}>
         <AuthProvider initialUser={initialUser} initialProfile={initialProfile}>{children}</AuthProvider>
       </body>
     </html>
