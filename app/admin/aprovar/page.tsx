@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import { functions } from '@/lib/supabase-functions';
 
 interface Compra {
   id: string;
@@ -17,24 +18,24 @@ interface Compra {
 }
 
 export default function AprovarPage() {
-  const { user } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const router = useRouter();
   const [compras, setCompras] = useState<Compra[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user || user.tipo !== 'admin') {
+    if (authLoading) return;
+    if (!user || profile?.role !== 'admin') {
       router.push('/login');
       return;
     }
     fetchCompras();
-  }, [user, router]);
+  }, [authLoading, user, profile, router]);
 
   const fetchCompras = async () => {
     try {
-      const response = await fetch('/api/compras?status=pendente');
-      const data = await response.json();
-      setCompras(data);
+      const data = await functions.orders.list('pendente');
+      setCompras(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao buscar compras:', error);
     } finally {
@@ -44,15 +45,7 @@ export default function AprovarPage() {
 
   const handleAprovar = async (compraId: string) => {
     try {
-      const response = await fetch(`/api/compras/${compraId}/aprovar`, {
-        method: 'PUT',
-      });
-
-      if (!response.ok) {
-        alert('Erro ao aprovar compra');
-        return;
-      }
-
+      await functions.orders.approve(compraId);
       alert('Compra aprovada com sucesso!');
       fetchCompras();
     } catch (error) {
@@ -62,17 +55,8 @@ export default function AprovarPage() {
 
   const handleReprovar = async (compraId: string) => {
     if (!confirm('Tem certeza que deseja reprovar esta compra?')) return;
-
     try {
-      const response = await fetch(`/api/compras/${compraId}/reprovar`, {
-        method: 'PUT',
-      });
-
-      if (!response.ok) {
-        alert('Erro ao reprovar compra');
-        return;
-      }
-
+      await functions.orders.reject(compraId);
       alert('Compra reprovada');
       fetchCompras();
     } catch (error) {

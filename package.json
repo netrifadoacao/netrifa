@@ -6,15 +6,20 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed:remote": "node scripts/seed-remote.js",
+    "seed:extra": "node scripts/seed-extra-remote.js",
+    "seed:demo": "node scripts/seed-demo-remote.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.91.1",
     "next": "^14.2.0",
+    "pg": "^8.18.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
-    "react-icons": "^5.0.0"
+    "react-icons": "^5.0.0",
+    "recharts": "^3.7.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { FiFileText, FiTrendingUp } from 'react-icons/fi';
+import { functions } from '@/lib/supabase-functions';
 
 interface Bonus {
   id: string;
@@ -16,27 +17,27 @@ interface Bonus {
 }
 
 export default function ExtratosPage() {
-  const { user } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const router = useRouter();
   const [bonus, setBonus] = useState<Bonus[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalGanhos, setTotalGanhos] = useState(0);
 
   useEffect(() => {
-    if (!user || user.tipo === 'admin') {
+    if (authLoading) return;
+    if (!user || profile?.role === 'admin') {
       router.push('/login');
       return;
     }
     fetchBonus();
-  }, [user, router]);
+  }, [authLoading, user, profile, router]);
 
   const fetchBonus = async () => {
     if (!user) return;
     try {
-      const response = await fetch(`/api/bonus/${user.id}`);
-      const data = await response.json();
-      setBonus(data);
-      const total = data.reduce((acc: number, b: Bonus) => acc + b.valor, 0);
+      const data = await functions.bonus(user.id);
+      setBonus(Array.isArray(data) ? data : []);
+      const total = (Array.isArray(data) ? data : []).reduce((acc: number, b: Bonus) => acc + (b.valor ?? 0), 0);
       setTotalGanhos(total);
     } catch (error) {
       console.error('Erro ao buscar bônus:', error);

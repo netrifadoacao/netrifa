@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef, useLayoutEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
-import { FiChevronDown, FiChevronRight, FiUser, FiMail, FiGitBranch, FiList } from 'react-icons/fi';
+import { FiChevronDown, FiChevronRight, FiUser, FiMail, FiGitBranch, FiList, FiCircle, FiPlus, FiMinus } from 'react-icons/fi';
 
 interface Profile {
   id: string;
@@ -13,6 +13,25 @@ interface Profile {
   sponsor_id: string | null;
   referral_code: string | null;
   role: string | null;
+  avatar_url?: string | null;
+}
+
+function getInitials(p: Profile): string {
+  if (p.full_name?.trim()) {
+    const parts = p.full_name.trim().split(/\s+/);
+    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+  if (p.email) return p.email[0].toUpperCase();
+  return '?';
+}
+
+function getFirstName(p: Profile): string {
+  if (p.full_name?.trim()) {
+    return p.full_name.trim().split(/\s+/)[0];
+  }
+  if (p.email) return p.email.split('@')[0] || '?';
+  return '?';
 }
 
 interface TreeNode {
@@ -75,6 +94,75 @@ function OrganogramNode({ node, depth = 0 }: { node: TreeNode; depth?: number })
             {node.children.map((child) => (
               <div key={child.profile.id} className="flex flex-col items-center">
                 <OrganogramNode node={child} depth={depth + 1} />
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+
+function AvatarNode({
+  node,
+  depth = 0,
+  defaultExpanded = true,
+  size = 64,
+}: {
+  node: TreeNode;
+  depth?: number;
+  defaultExpanded?: boolean;
+  size?: number;
+}) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
+  const hasChildren = node.children.length > 0;
+  const p = node.profile;
+  const isAdmin = p.role === 'admin';
+  const initials = getInitials(p);
+  const displayName = isAdmin ? 'Admin' : getFirstName(p);
+  const fontSize = size <= 44 ? 'text-[8px]' : size <= 52 ? 'text-[9px]' : 'text-[10px]';
+  const childSize = Math.max(44, size - 10);
+
+  return (
+    <div className="relative flex flex-col items-center">
+      <button
+        type="button"
+        onClick={() => hasChildren && setExpanded((e) => !e)}
+        className={`relative group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-rich-black rounded-full transition-transform ${hasChildren ? 'cursor-pointer hover:scale-105' : 'cursor-default'}`}
+      >
+        <div
+          style={{ width: size, height: size }}
+          className={`rounded-full overflow-hidden relative flex items-center justify-center border-2 flex-shrink-0 ${
+            isAdmin
+              ? 'bg-amber-500/20 border-amber-500/50'
+              : 'bg-primary-500/20 border-primary-500/40'
+          }`}
+        >
+          {p.avatar_url ? (
+            <img src={p.avatar_url} alt={p.full_name || ''} className="absolute inset-0 object-cover w-full h-full" />
+          ) : (
+            <span className="text-primary-300 font-bold" style={{ fontSize: size * 0.35 }}>{initials}</span>
+          )}
+          <div className="absolute inset-x-0 bottom-0 py-1 bg-gradient-to-t from-black/85 to-transparent flex items-center justify-center">
+            <span className={`${fontSize} font-medium text-white truncate max-w-[85%] px-1`} style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }} title={p.full_name || p.email}>
+              {displayName}
+            </span>
+          </div>
+        </div>
+        {hasChildren && (
+          <span className="absolute -bottom-1 -right-1 min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full bg-primary-500 text-white text-xs font-semibold border-2 border-rich-black">
+            {node.children.length}
+          </span>
+        )}
+      </button>
+      {hasChildren && expanded && (
+        <>
+          <div className="w-0.5 h-6 bg-white/20 flex-shrink-0" />
+          <div className="flex border-t-2 border-white/20 pt-6 gap-8">
+            {node.children.map((child) => (
+              <div key={child.profile.id} className="flex flex-col items-center">
+                <AvatarNode node={child} depth={depth + 1} defaultExpanded={true} size={childSize} />
               </div>
             ))}
           </div>
@@ -148,7 +236,12 @@ function TopicNode({
   );
 }
 
-type ViewMode = 'organogram' | 'topic';
+type ViewMode = 'organogram' | 'topic' | 'avatar';
+
+const MIN_ZOOM = 0.25;
+const MAX_ZOOM = 2;
+const ZOOM_STEP = 0.15;
+const DEFAULT_ZOOM = 0.5;
 
 export default function AdminRedePage() {
   const { user, profile, loading: authLoading } = useAuth();
@@ -157,6 +250,91 @@ export default function AdminRedePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('organogram');
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartRef = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const transformWrapperRef = useRef<HTMLDivElement>(null);
+
+  const zoomIn = useCallback(() => setZoom((z) => Math.min(MAX_ZOOM, z + ZOOM_STEP)), []);
+  const zoomOut = useCallback(() => setZoom((z) => Math.max(MIN_ZOOM, z - ZOOM_STEP)), []);
+
+  useEffect(() => {
+    setZoom(DEFAULT_ZOOM);
+  }, [viewMode]);
+
+  useLayoutEffect(() => {
+    const viewport = viewportRef.current;
+    const wrapper = transformWrapperRef.current;
+    const content = wrapper?.firstElementChild as HTMLElement | null;
+    if (!viewport || !content) return;
+    const vw = viewport.clientWidth;
+    const cw = content.offsetWidth;
+    const panX = vw / 2 - (cw * zoom) / 2;
+    setPan({ x: panX, y: 0 });
+  }, [viewMode, zoom, profiles.length]);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    if ((e.target as HTMLElement).closest('button, a, [role="button"]')) return;
+    setIsDragging(true);
+    dragStartRef.current = { x: e.clientX, y: e.clientY, panX: pan.x, panY: pan.y };
+  }, [pan]);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging) return;
+    setPan({
+      x: dragStartRef.current.panX + e.clientX - dragStartRef.current.x,
+      y: dragStartRef.current.panY + e.clientY - dragStartRef.current.y,
+    });
+  }, [isDragging]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, handleMouseMove, handleMouseUp]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length !== 1) return;
+    if ((e.target as HTMLElement).closest('button, a, [role="button"]')) return;
+    setIsDragging(true);
+    dragStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, panX: pan.x, panY: pan.y };
+  }, [pan]);
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    e.preventDefault();
+    setPan({
+      x: dragStartRef.current.panX + e.touches[0].clientX - dragStartRef.current.x,
+      y: dragStartRef.current.panY + e.touches[0].clientY - dragStartRef.current.y,
+    });
+  }, [isDragging]);
+
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('touchmove', handleTouchMove, { passive: false });
+      window.addEventListener('touchend', handleTouchEnd);
+    }
+    return () => {
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isDragging, handleTouchMove, handleTouchEnd]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -174,7 +352,7 @@ export default function AdminRedePage() {
       const supabase = createClient();
       const { data, error: e } = await supabase
         .from('profiles')
-        .select('id, full_name, email, sponsor_id, referral_code, role')
+        .select('id, full_name, email, sponsor_id, referral_code, role, avatar_url')
         .order('created_at', { ascending: true });
       if (e) throw e;
       setProfiles(data ?? []);
@@ -211,62 +389,126 @@ export default function AdminRedePage() {
   return (
     <div className="py-6">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-white font-display">Rede em mapa</h1>
             <p className="mt-2 text-sm text-gray-400">
               {viewMode === 'organogram'
-                ? 'Visualização em organograma. Estrutura hierárquica de indicados.'
-                : 'Estrutura em tópicos. Clique na seta para expandir ou recolher.'}
+                ? 'Visualização em organograma. Arraste para navegar.'
+                : viewMode === 'topic'
+                  ? 'Estrutura em tópicos. Clique na seta para expandir ou recolher.'
+                  : 'Avatares. Clique nos círculos para expandir ou recolher.'}
             </p>
             {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
           </div>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setViewMode('organogram')}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
-                viewMode === 'organogram'
-                  ? 'bg-primary-500/20 border-primary-500/50 text-primary-400'
-                  : 'border-white/10 text-gray-400 hover:bg-white/5 hover:text-gray-200'
-              }`}
-              title="Organograma"
-            >
-              <FiGitBranch className="w-4 h-4" />
-              Organograma
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('topic')}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
-                viewMode === 'topic'
-                  ? 'bg-primary-500/20 border-primary-500/50 text-primary-400'
-                  : 'border-white/10 text-gray-400 hover:bg-white/5 hover:text-gray-200'
-              }`}
-              title="Estrutura em tópicos"
-            >
-              <FiList className="w-4 h-4" />
-              Tópicos
-            </button>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setViewMode('organogram')}
+                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
+                  viewMode === 'organogram'
+                    ? 'bg-primary-500/20 border-primary-500/50 text-primary-400'
+                    : 'border-white/10 text-gray-400 hover:bg-white/5 hover:text-gray-200'
+                }`}
+                title="Organograma"
+              >
+                <FiGitBranch className="w-4 h-4" />
+                Organograma
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('topic')}
+                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
+                  viewMode === 'topic'
+                    ? 'bg-primary-500/20 border-primary-500/50 text-primary-400'
+                    : 'border-white/10 text-gray-400 hover:bg-white/5 hover:text-gray-200'
+                }`}
+                title="Estrutura em tópicos"
+              >
+                <FiList className="w-4 h-4" />
+                Tópicos
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('avatar')}
+                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
+                  viewMode === 'avatar'
+                    ? 'bg-primary-500/20 border-primary-500/50 text-primary-400'
+                    : 'border-white/10 text-gray-400 hover:bg-white/5 hover:text-gray-200'
+                }`}
+                title="Avatares"
+              >
+                <FiCircle className="w-4 h-4" />
+                Avatares
+              </button>
+            </div>
+            <div className="flex items-center gap-1 border border-white/10 rounded-lg overflow-hidden">
+              <button
+                type="button"
+                onClick={zoomOut}
+                disabled={zoom <= MIN_ZOOM}
+                className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                title="Diminuir zoom"
+              >
+                <FiMinus className="w-4 h-4" />
+              </button>
+              <span className="px-3 py-1.5 text-sm text-gray-300 min-w-[52px] text-center">
+                {Math.round(zoom * 100)}%
+              </span>
+              <button
+                type="button"
+                onClick={zoomIn}
+                disabled={zoom >= MAX_ZOOM}
+                className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                title="Aumentar zoom"
+              >
+                <FiPlus className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className={viewMode === 'organogram' ? 'overflow-x-auto py-6' : 'space-y-3'}>
-          {displayRoots.length === 0 ? (
-            <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center text-gray-400">
-              Nenhum membro na rede ainda.
-            </div>
-          ) : viewMode === 'organogram' ? (
-            <div className="flex justify-center min-w-max pb-8">
-              {displayRoots.map((node) => (
-                <OrganogramNode key={node.profile.id} node={node} />
-              ))}
-            </div>
-          ) : (
-            displayRoots.map((node) => (
-              <TopicNode key={node.profile.id} node={node} depth={0} defaultExpanded={true} />
-            ))
-          )}
+        <div
+          ref={viewportRef}
+          className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] min-h-[420px] select-none"
+          style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
+        >
+          <div
+            ref={transformWrapperRef}
+            className="absolute top-0 left-0 py-6 px-2 origin-top-left transition-transform will-change-transform"
+            style={{
+              transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+              minWidth: viewMode === 'organogram' ? '100%' : undefined,
+              minHeight: viewMode === 'avatar' ? 300 : undefined,
+            }}
+          >
+            {displayRoots.length === 0 ? (
+              <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center text-gray-400 w-full">
+                Nenhum membro na rede ainda.
+              </div>
+            ) : viewMode === 'organogram' ? (
+              <div className="flex justify-center min-w-max pb-8">
+                {displayRoots.map((node) => (
+                  <OrganogramNode key={node.profile.id} node={node} />
+                ))}
+              </div>
+            ) : viewMode === 'avatar' ? (
+              <div className="flex justify-center min-w-max pb-8">
+                {displayRoots.map((node) => (
+                  <AvatarNode key={node.profile.id} node={node} defaultExpanded={true} />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3 max-w-3xl">
+                {displayRoots.map((node) => (
+                  <TopicNode key={node.profile.id} node={node} depth={0} defaultExpanded={true} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

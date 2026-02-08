@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { FiDollarSign } from 'react-icons/fi';
+import { functions } from '@/lib/supabase-functions';
 
 export default function SaquePage() {
-  const { user } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const router = useRouter();
   const [saldo, setSaldo] = useState(0);
   const [valorMinimo, setValorMinimo] = useState(50);
@@ -21,19 +22,19 @@ export default function SaquePage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!user || user.tipo === 'admin') {
+    if (authLoading) return;
+    if (!user || profile?.role === 'admin') {
       router.push('/login');
       return;
     }
-    setSaldo(user.saldo || 0);
+    setSaldo(Number(profile?.wallet_balance ?? 0));
     fetchConfig();
-  }, [user, router]);
+  }, [authLoading, user, profile, router]);
 
   const fetchConfig = async () => {
     try {
-      const response = await fetch('/api/config/bonus');
-      const data = await response.json();
-      setValorMinimo(data.valorMinimoSaque || 50);
+      const data = await functions.bonusConfig.get();
+      setValorMinimo(data.valorMinimoSaque ?? 50);
     } catch (error) {
       console.error('Erro ao buscar configuração:', error);
     }
@@ -42,58 +43,27 @@ export default function SaquePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-
     const valor = parseFloat(formData.valor);
-    
     if (valor < valorMinimo) {
       alert(`Valor mínimo de saque é R$ ${valorMinimo.toFixed(2)}`);
       return;
     }
-
     if (valor > saldo) {
       alert('Saldo insuficiente');
       return;
     }
-
     setLoading(true);
     try {
-      const dadosPagamento = formData.metodoPagamento === 'pix'
-        ? { pix: formData.pix }
-        : {
-            banco: formData.banco,
-            agencia: formData.agencia,
-            conta: formData.conta,
-          };
-
-      const response = await fetch('/api/saques', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          usuarioId: user.id,
-          valor,
-          metodoPagamento: formData.metodoPagamento,
-          dadosPagamento,
-        }),
+      await functions.withdrawals.create({
+        valor,
+        metodoPagamento: formData.metodoPagamento,
+        dadosPagamento: formData.metodoPagamento === 'pix' ? { chave: formData.pix } : {},
       });
-
-      if (!response.ok) {
-        const error = await response.json();
-        alert(error.error || 'Erro ao solicitar saque');
-        return;
-      }
-
       alert('Saque solicitado com sucesso! Aguarde a aprovação.');
-      setFormData({
-        valor: '',
-        metodoPagamento: 'pix',
-        pix: user.dadosBancarios?.pix || '',
-        banco: '',
-        agencia: '',
-        conta: '',
-      });
+      setFormData({ valor: '', metodoPagamento: 'pix', pix: '', banco: '', agencia: '', conta: '' });
       window.location.reload();
-    } catch (error) {
-      alert('Erro ao solicitar saque');
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Erro ao solicitar saque');
     } finally {
       setLoading(false);
     }

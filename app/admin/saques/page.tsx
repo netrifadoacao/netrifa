@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { FiCheckCircle, FiXCircle, FiDollarSign } from 'react-icons/fi';
+import { functions } from '@/lib/supabase-functions';
 
 interface Saque {
   id: string;
@@ -19,24 +20,24 @@ interface Saque {
 }
 
 export default function SaquesPage() {
-  const { user } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const router = useRouter();
   const [saques, setSaques] = useState<Saque[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user || user.tipo !== 'admin') {
+    if (authLoading) return;
+    if (!user || profile?.role !== 'admin') {
       router.push('/login');
       return;
     }
     fetchSaques();
-  }, [user, router]);
+  }, [authLoading, user, profile, router]);
 
   const fetchSaques = async () => {
     try {
-      const response = await fetch('/api/saques');
-      const data = await response.json();
-      setSaques(data);
+      const data = await functions.withdrawals.list();
+      setSaques(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao buscar saques:', error);
     } finally {
@@ -46,15 +47,7 @@ export default function SaquesPage() {
 
   const handleAprovar = async (saqueId: string) => {
     try {
-      const response = await fetch(`/api/saques/${saqueId}/aprovar`, {
-        method: 'PUT',
-      });
-
-      if (!response.ok) {
-        alert('Erro ao aprovar saque');
-        return;
-      }
-
+      await functions.withdrawals.approve(saqueId);
       alert('Saque aprovado com sucesso!');
       fetchSaques();
     } catch (error) {
@@ -64,17 +57,8 @@ export default function SaquesPage() {
 
   const handlePagar = async (saqueId: string) => {
     if (!confirm('Tem certeza que deseja marcar este saque como pago? O saldo será debitado.')) return;
-
     try {
-      const response = await fetch(`/api/saques/${saqueId}/pagar`, {
-        method: 'PUT',
-      });
-
-      if (!response.ok) {
-        alert('Erro ao marcar saque como pago');
-        return;
-      }
-
+      await functions.withdrawals.pay(saqueId);
       alert('Saque marcado como pago!');
       fetchSaques();
     } catch (error) {
@@ -84,17 +68,8 @@ export default function SaquesPage() {
 
   const handleRecusar = async (saqueId: string) => {
     if (!confirm('Tem certeza que deseja recusar este saque?')) return;
-
     try {
-      const response = await fetch(`/api/saques/${saqueId}/recusar`, {
-        method: 'PUT',
-      });
-
-      if (!response.ok) {
-        alert('Erro ao recusar saque');
-        return;
-      }
-
+      await functions.withdrawals.reject(saqueId);
       alert('Saque recusado');
       fetchSaques();
     } catch (error) {

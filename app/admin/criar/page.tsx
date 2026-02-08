@@ -16,7 +16,7 @@ interface Produto {
 }
 
 export default function CriarPage() {
-  const { user, profile } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const router = useRouter();
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(false);
@@ -28,12 +28,13 @@ export default function CriarPage() {
   });
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user || profile?.role !== 'admin') {
       router.push('/login');
       return;
     }
     fetchProdutos();
-  }, [user, profile, router]);
+  }, [authLoading, user, profile, router]);
 
   const fetchProdutos = async () => {
     try {

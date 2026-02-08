@@ -1,11 +1,12 @@
--- Tabela de Perfis Pública (Espelho do auth.users)
+create extension if not exists pgcrypto;
+
 create table public.profiles (
   id uuid not null references auth.users(id) on delete cascade primary key,
   email text not null,
   full_name text,
   sponsor_id uuid references public.profiles(id),
   role text default 'member' check (role in ('admin', 'member')),
-  referral_code text unique default encode(gen_random_bytes(6), 'hex'),
+  referral_code text unique default encode(extensions.gen_random_bytes(6), 'hex'),
   wallet_balance decimal(10,2) default 0.00,
   created_at timestamptz default now()
 );

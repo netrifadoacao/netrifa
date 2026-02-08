@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 
 export default function DadosPage() {
-  const { user, updateUser } = useAuth();
+  const { user, profile, refreshProfile, loading: authLoading } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -19,49 +20,33 @@ export default function DadosPage() {
   });
 
   useEffect(() => {
-    if (!user || user.tipo === 'admin') {
+    if (authLoading) return;
+    if (!user || profile?.role === 'admin') {
       router.push('/login');
       return;
     }
-    setFormData({
-      nome: user.nome || '',
-      email: user.email || '',
-      telefone: user.telefone || '',
-      banco: user.dadosBancarios?.banco || '',
-      agencia: user.dadosBancarios?.agencia || '',
-      conta: user.dadosBancarios?.conta || '',
-      pix: user.dadosBancarios?.pix || '',
-    });
-  }, [user, router]);
+    if (profile) {
+      setFormData((prev) => ({
+        ...prev,
+        nome: profile.full_name || '',
+        email: profile.email || '',
+        telefone: profile.phone || '',
+      }));
+    }
+  }, [authLoading, user, profile, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-
     setLoading(true);
     try {
-      const response = await fetch(`/api/usuarios/${user.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nome: formData.nome,
-          email: formData.email,
-          telefone: formData.telefone,
-          dadosBancarios: {
-            banco: formData.banco,
-            agencia: formData.agencia,
-            conta: formData.conta,
-            pix: formData.pix,
-          },
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Erro ao atualizar dados');
-      }
-
-      const updatedUser = await response.json();
-      updateUser(updatedUser);
+      const supabase = createClient();
+      const { error } = await supabase.from('profiles').update({
+        full_name: formData.nome,
+        phone: formData.telefone || null,
+      }).eq('id', user.id);
+      if (error) throw error;
+      await refreshProfile();
       alert('Dados atualizados com sucesso!');
     } catch (error) {
       alert('Erro ao atualizar dados');

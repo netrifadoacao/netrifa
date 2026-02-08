@@ -12,16 +12,22 @@ interface UserProfile {
   referral_code?: string;
   wallet_balance?: number;
   sponsor_id?: string;
+  phone?: string;
 }
 
 interface AuthContextType {
   user: SupabaseUser | null;
   profile: UserProfile | null;
-  login: (email: string, senha: string) => Promise<void>;
+  login: (email: string, senha: string) => Promise<{ session: { user: { id: string } } } | null>;
+  loginAndGetRole: (email: string, senha: string) => Promise<'admin' | 'member' | null>;
   register: (data: any) => Promise<void>;
   logout: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
   loading: boolean;
 }
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -48,14 +54,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        // Apenas busca o perfil se ainda não tiver ou se o usuário mudou
-        if (!profile || profile.id !== session.user.id) {
-           await fetchProfile(session.user.id);
-        }
+        await fetchProfile(session.user.id);
       } else {
         setProfile(null);
       }
-      setLoading(false);
+      if (event !== 'INITIAL_SESSION') {
+        setLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -80,11 +85,62 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const login = async (email: string, senha: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password: senha,
     });
     if (error) throw error;
+    return data?.session ? { session: { user: { id: data.session.user.id } } } : null;
+  };
+
+  const loginAndGetRole = async (email: string, senha: string): Promise<'admin' | 'member' | null> => {
+    const base = SUPABASE_URL.replace(/\/$/, '');
+    const tokenUrl = `${base}/auth/v1/token?grant_type=password`;
+    const tokenRes = await fetch(tokenUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password: senha,
+        gotrue_meta_security: {},
+      }),
+    });
+    const tokenData = await tokenRes.json().catch(() => ({}));
+    if (!tokenRes.ok) {
+      const msg = tokenData?.msg ?? tokenData?.error_description ?? tokenData?.error ?? 'Falha no login';
+      throw new Error(typeof msg === 'string' ? msg : 'Falha no login');
+    }
+    const accessToken = tokenData.access_token;
+    const refreshToken = tokenData.refresh_token;
+    const userId = tokenData?.user?.id;
+    if (!accessToken || !userId) return null;
+
+    const profileUrl = `${base}/rest/v1/profiles?id=eq.${userId}&select=role`;
+    const profileRes = await fetch(profileUrl, {
+      method: 'GET',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${accessToken}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+    const profileJson = await profileRes.json().catch(() => []);
+    const profileRow = Array.isArray(profileJson) && profileJson.length > 0 ? profileJson[0] : null;
+    const role = profileRow?.role === 'admin' ? 'admin' : profileRow?.role ? 'member' : null;
+
+    setUser(tokenData.user ?? null);
+    if (profileRow) setProfile({ role: profileRow.role, id: userId, email: tokenData.user?.email ?? '' } as UserProfile);
+    const sessionPayload = { access_token: accessToken, refresh_token: refreshToken ?? '' };
+    await Promise.race([
+      supabase.auth.setSession(sessionPayload),
+      new Promise<void>((resolve) => setTimeout(resolve, 2500)),
+    ]);
+    return role;
   };
 
   const register = async (data: any) => {
@@ -95,7 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         data: {
           full_name: data.nome,
           sponsor_referral_code: data.patrocinadorLink,
-          phone: data.telefone
+          phone: data.telefone ?? null
         }
       }
     });
@@ -109,7 +165,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, profile, login, loginAndGetRole, register, logout, refreshProfile: async () => { if (user?.id) await fetchProfile(user.id); }, loading }}>
       {children}
     </AuthContext.Provider>
   );

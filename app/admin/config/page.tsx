@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { FiSettings, FiSave } from 'react-icons/fi';
+import { functions } from '@/lib/supabase-functions';
 
 interface ConfigBonus {
   indicacaoDireta: number;
@@ -16,7 +17,7 @@ interface ConfigBonus {
 }
 
 export default function ConfigPage() {
-  const { user } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<ConfigBonus>({
@@ -30,18 +31,18 @@ export default function ConfigPage() {
   });
 
   useEffect(() => {
-    if (!user || user.tipo !== 'admin') {
+    if (authLoading) return;
+    if (!user || profile?.role !== 'admin') {
       router.push('/login');
       return;
     }
     fetchConfig();
-  }, [user, router]);
+  }, [authLoading, user, profile, router]);
 
   const fetchConfig = async () => {
     try {
-      const response = await fetch('/api/config/bonus');
-      const data = await response.json();
-      setFormData(data);
+      const data = await functions.bonusConfig.get();
+      setFormData((prev) => ({ ...prev, ...data }));
     } catch (error) {
       console.error('Erro ao buscar configurações:', error);
     }
@@ -50,19 +51,8 @@ export default function ConfigPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      const response = await fetch('/api/config/bonus', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        alert('Erro ao salvar configurações');
-        return;
-      }
-
+      await functions.bonusConfig.update(formData);
       alert('Configurações salvas com sucesso!');
     } catch (error) {
       alert('Erro ao salvar configurações');

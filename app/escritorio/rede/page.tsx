@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { FiUsers, FiCopy } from 'react-icons/fi';
+import { functions } from '@/lib/supabase-functions';
 
 interface RedeItem {
   id: string;
@@ -14,26 +15,26 @@ interface RedeItem {
 }
 
 export default function RedePage() {
-  const { user } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const router = useRouter();
   const [rede, setRede] = useState<RedeItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [linkIndicacao, setLinkIndicacao] = useState('');
 
   useEffect(() => {
-    if (!user || user.tipo === 'admin') {
+    if (authLoading) return;
+    if (!user || profile?.role === 'admin') {
       router.push('/login');
       return;
     }
-    setLinkIndicacao(`${window.location.origin}/register?ref=${user.linkIndicacao}`);
+    if (profile?.referral_code) setLinkIndicacao(`${window.location.origin}/register?ref=${profile.referral_code}`);
     fetchRede();
-  }, [user, router]);
+  }, [authLoading, user, profile, router]);
 
   const fetchRede = async () => {
     if (!user) return;
     try {
-      const response = await fetch(`/api/rede/${user.id}`);
-      const data = await response.json();
+      const data = await functions.network(user.id);
       setRede(data.rede || []);
     } catch (error) {
       console.error('Erro ao buscar rede:', error);
