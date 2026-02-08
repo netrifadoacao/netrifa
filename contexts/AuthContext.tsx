@@ -202,7 +202,15 @@ export function AuthProvider({
       : { id: userId, email: tokenData.user?.email ?? '', role: role ?? undefined };
     setProfile(profileToSet);
     setProfileLoading(false);
-    setSession(null);
+    const sessionFromToken: Session = {
+      access_token: accessToken,
+      refresh_token: refreshToken ?? '',
+      token_type: 'bearer',
+      user: tokenData.user as Session['user'],
+      expires_at: tokenData.expires_at ?? Math.floor(Date.now() / 1000) + (tokenData.expires_in ?? 3600),
+      expires_in: tokenData.expires_in ?? 3600,
+    };
+    setSession(sessionFromToken);
     supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken ?? '' }).then(({ data: { session: s } }) => {
       if (s) setSession(s);
     }).catch(() => {});
