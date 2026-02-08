@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import toast from 'react-hot-toast';
 import { useRouter, usePathname } from 'next/navigation';
 import { FiShoppingBag, FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import { useFunctions } from '@/lib/supabase-functions';
@@ -57,11 +58,11 @@ export default function CriarPage() {
         descricao: formData.descricao,
         preco: parseFloat(formData.preco),
       });
-      alert('Produto criado com sucesso!');
+      toast.success('Produto criado com sucesso!');
       setFormData({ nome: '', descricao: '', preco: '', tipo: 'digital' });
       fetchProdutos();
     } catch (error) {
-      alert('Erro ao criar produto');
+      toast.error('Erro ao criar produto');
     } finally {
       setLoading(false);
     }
@@ -72,7 +73,7 @@ export default function CriarPage() {
       await functions.products.update(produtoId, { ativo: !ativo });
       fetchProdutos();
     } catch (error) {
-      alert('Erro ao atualizar produto');
+      toast.error('Erro ao atualizar produto');
     }
   };
 

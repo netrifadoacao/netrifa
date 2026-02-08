@@ -29,10 +29,31 @@ serve(async (req) => {
       }))
       return new Response(JSON.stringify({ profiles: list }), { headers: { ...cors, 'Content-Type': 'application/json' } })
     }
+    type P = { id: string; full_name: string | null; email: string; sponsor_id: string | null; referral_code?: string | null; role?: string | null; avatar_url?: string | null }
+    const list = (profiles ?? []) as P[]
+    if (!isAdmin && userId === user.id) {
+      const me = list.find((p) => p.id === user.id)
+      const upline = me?.sponsor_id ? list.find((p) => p.id === me.sponsor_id) ?? null : null
+      const buildDown = (sid: string, nivel: number): { profile: P; children: unknown[] }[] => {
+        if (nivel > 5) return []
+        return list
+          .filter((p) => p.sponsor_id === sid)
+          .map((p) => ({ profile: p, children: buildDown(p.id, nivel + 1) }))
+      }
+      const downline = me ? buildDown(user.id, 1) : []
+      return new Response(
+        JSON.stringify({
+          upline: upline ? { id: upline.id, full_name: upline.full_name, email: upline.email, sponsor_id: upline.sponsor_id, referral_code: upline.referral_code ?? null, role: upline.role ?? null, avatar_url: upline.avatar_url ?? null } : null,
+          me: me ? { id: me.id, full_name: me.full_name, email: me.email, sponsor_id: me.sponsor_id, referral_code: me.referral_code ?? null, role: me.role ?? null, avatar_url: me.avatar_url ?? null } : null,
+          downline,
+        }),
+        { headers: { ...cors, 'Content-Type': 'application/json' } }
+      )
+    }
     const build = (sid: string | null, nivel: number): unknown[] => {
       if (nivel > 5) return []
-      const indicados = (profiles ?? []).filter((p: { sponsor_id: string | null }) => p.sponsor_id === sid)
-      return indicados.map((p: { id: string; full_name: string; email: string }) => ({
+      const indicados = list.filter((p) => p.sponsor_id === sid)
+      return indicados.map((p) => ({
         id: p.id,
         nome: p.full_name,
         email: p.email,

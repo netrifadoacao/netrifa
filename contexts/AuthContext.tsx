@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
@@ -13,6 +13,11 @@ interface UserProfile {
   wallet_balance?: number;
   sponsor_id?: string;
   phone?: string;
+  bank_name?: string | null;
+  bank_agency?: string | null;
+  bank_account?: string | null;
+  pix_key?: string | null;
+  avatar_url?: string | null;
 }
 
 interface AuthContextType {
@@ -25,12 +30,24 @@ interface AuthContextType {
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   loading: boolean;
+  profileLoading: boolean;
 }
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 const LOADING_TIMEOUT_MS = 2500;
+
+function decodeJwtPayload(token: string): Record<string, unknown> | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(atob(base64)) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -50,6 +67,7 @@ export function AuthProvider({
   const [profile, setProfile] = useState<UserProfile | null>(initialProfile ?? null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(!initialUser);
+  const [profileLoading, setProfileLoading] = useState(!initialUser || initialProfile == null);
   const resolved = useRef(false);
   const supabase = createClient();
 
@@ -69,14 +87,15 @@ export function AuthProvider({
       setSession(s ?? null);
       setUser(s?.user ?? null);
       if (s?.user) {
-        const sameUser = initialUser?.id === s.user.id && initialProfile != null;
-        if (sameUser) {
+        if (initialUser?.id === s.user.id && initialProfile != null) {
           setProfile(initialProfile);
-        } else {
-          await fetchProfile(s.user.id);
+          setProfileLoading(false);
         }
+        setProfileLoading(true);
+        await fetchProfile(s.user.id);
       } else {
         setProfile(null);
+        setProfileLoading(false);
       }
       setLoading(false);
     };
@@ -87,9 +106,11 @@ export function AuthProvider({
       setSession(s ?? null);
       setUser(s?.user ?? null);
       if (s?.user) {
+        setProfileLoading(true);
         await fetchProfile(s.user.id);
       } else {
         setProfile(null);
+        setProfileLoading(false);
       }
       setLoading(false);
     });
@@ -97,14 +118,13 @@ export function AuthProvider({
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
-      
       if (error) {
         console.error('Erro ao buscar perfil:', error);
       } else {
@@ -112,8 +132,14 @@ export function AuthProvider({
       }
     } catch (err) {
       console.error('Exceção ao buscar perfil:', err);
+    } finally {
+      setProfileLoading(false);
     }
-  };
+  }, []);
+
+  const refreshProfile = useCallback(async () => {
+    if (user?.id) await fetchProfile(user.id);
+  }, [user?.id, fetchProfile]);
 
   const login = async (email: string, senha: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -150,27 +176,37 @@ export function AuthProvider({
     const userId = tokenData?.user?.id;
     if (!accessToken || !userId) return null;
 
-    const profileUrl = `${base}/rest/v1/profiles?id=eq.${userId}&select=role`;
-    const profileRes = await fetch(profileUrl, {
-      method: 'GET',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${accessToken}`,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-    });
-    const profileJson = await profileRes.json().catch(() => []);
-    const profileRow = Array.isArray(profileJson) && profileJson.length > 0 ? profileJson[0] : null;
-    const role = profileRow?.role === 'admin' ? 'admin' : profileRow?.role ? 'member' : null;
+    const payload = decodeJwtPayload(accessToken);
+    const roleFromToken = payload?.user_role === 'admin' ? 'admin' : payload?.user_role === 'member' ? 'member' : null;
 
     setUser(tokenData.user ?? null);
-    if (profileRow) setProfile({ role: profileRow.role, id: userId, email: tokenData.user?.email ?? '' } as UserProfile);
-    const sessionPayload = { access_token: accessToken, refresh_token: refreshToken ?? '' };
-    await Promise.race([
-      supabase.auth.setSession(sessionPayload),
-      new Promise<void>((resolve) => setTimeout(resolve, 2500)),
+
+    const fullProfileRes = await Promise.race([
+      fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}&select=*`, {
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${accessToken}`,
+          Accept: 'application/json',
+        },
+      }).then(async (r) => {
+        if (!r.ok) return null;
+        const arr = await r.json().catch(() => null);
+        return Array.isArray(arr) && arr[0] ? (arr[0] as UserProfile) : null;
+      }),
+      new Promise<UserProfile | null>((resolve) => setTimeout(() => resolve(null), 5000)),
     ]);
+
+    const role = roleFromToken ?? (fullProfileRes?.role === 'admin' ? 'admin' : fullProfileRes?.role ? 'member' : null);
+    const profileToSet: UserProfile = fullProfileRes
+      ? { ...fullProfileRes, email: fullProfileRes.email ?? tokenData.user?.email ?? '', role: (fullProfileRes.role as 'admin' | 'member') ?? role ?? undefined }
+      : { id: userId, email: tokenData.user?.email ?? '', role: role ?? undefined };
+    setProfile(profileToSet);
+    setProfileLoading(false);
+    setSession(null);
+    supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken ?? '' }).then(({ data: { session: s } }) => {
+      if (s) setSession(s);
+    }).catch(() => {});
+    if (role) fetchProfile(userId).catch(() => {});
     return role;
   };
 
@@ -189,34 +225,43 @@ export function AuthProvider({
     if (error) throw error;
   };
 
-  const logout = async () => {
-    try {
-      await fetch(`${typeof window !== 'undefined' ? window.location.origin : ''}/auth/logout`, { method: 'POST' });
-    } catch (_) {}
+  const logout = useCallback(async () => {
     try {
       await supabase.auth.signOut();
     } catch (_) {}
+    try {
+      await fetch(`${typeof window !== 'undefined' ? window.location.origin : ''}/auth/logout`, { method: 'POST' });
+    } catch (_) {}
+    if (typeof window !== 'undefined') {
+      const localKeys: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith('sb-') || k.startsWith('supabase.') || k.includes('supabase'))) localKeys.push(k);
+      }
+      localKeys.forEach((k) => localStorage.removeItem(k));
+      const sessionKeys: string[] = [];
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const k = sessionStorage.key(i);
+        if (k && (k.startsWith('sb-') || k.startsWith('supabase.') || k.includes('supabase'))) sessionKeys.push(k);
+      }
+      sessionKeys.forEach((k) => sessionStorage.removeItem(k));
+      const cookies = document.cookie.split(';');
+      for (const c of cookies) {
+        const name = c.trim().split('=')[0].trim();
+        if (!name) continue;
+        if (name.startsWith('sb-') || name.includes('supabase')) {
+          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
+        }
+      }
+    }
     setUser(null);
     setProfile(null);
     setSession(null);
-    if (typeof window !== 'undefined') {
-      const keys: string[] = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && (k.startsWith('sb-') || k.includes('supabase'))) keys.push(k);
-      }
-      keys.forEach((k) => localStorage.removeItem(k));
-      document.cookie.split(';').forEach((c) => {
-        const name = c.trim().split('=')[0];
-        if (name.startsWith('sb-')) {
-          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-        }
-      });
-    }
-  };
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, profile, session, login, loginAndGetRole, register, logout, refreshProfile: async () => { if (user?.id) await fetchProfile(user.id); }, loading }}>
+    <AuthContext.Provider value={{ user, profile, session, login, loginAndGetRole, register, logout, refreshProfile, loading, profileLoading }}>
       {children}
     </AuthContext.Provider>
   );

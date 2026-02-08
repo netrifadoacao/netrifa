@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import toast from 'react-hot-toast';
 import { useRouter, usePathname } from 'next/navigation';
 import { FiSettings, FiSave } from 'react-icons/fi';
 import { useFunctions } from '@/lib/supabase-functions';
@@ -56,9 +57,9 @@ export default function ConfigPage() {
     setLoading(true);
     try {
       await functions.bonusConfig.update(formData as unknown as Record<string, number>);
-      alert('Configurações salvas com sucesso!');
+      toast.success('Configurações salvas com sucesso!');
     } catch (error) {
-      alert('Erro ao salvar configurações');
+      toast.error('Erro ao salvar configurações');
     } finally {
       setLoading(false);
     }

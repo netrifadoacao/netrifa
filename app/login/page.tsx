@@ -26,15 +26,19 @@ export default function LoginPage() {
   const [senha, setSenha] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { loginAndGetRole, logout } = useAuth();
+  const { loginAndGetRole, user, profile, loading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const patrocinadorLink = searchParams.get('ref');
 
   useEffect(() => {
-    clearAuthStorage();
-    logout();
-  }, []);
+    if (authLoading) return;
+    if (user && (profile?.role === 'admin' || profile?.role === 'member')) {
+      router.replace(profile.role === 'admin' ? '/admin' : '/escritorio');
+      return;
+    }
+    if (!user) clearAuthStorage();
+  }, [authLoading, user, profile?.role, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,24 +48,17 @@ export default function LoginPage() {
       setLoading(false);
     };
     try {
-      const role = await Promise.race([
-        loginAndGetRole(email, senha),
-        new Promise<'admin' | 'member' | null>((_, reject) =>
-          setTimeout(() => reject(new Error('timeout')), 10000)
-        ),
-      ]);
+      const role = await loginAndGetRole(email, senha);
       if (role === 'admin') {
         router.replace('/admin');
-      } else {
+        return;
+      }
+      if (role === 'member') {
         router.replace('/escritorio');
+        return;
       }
     } catch (err: unknown) {
-      if (err instanceof Error && err.message === 'timeout') {
-        setError('Demorou demais. Tente novamente.');
-        router.replace('/');
-      } else {
-        setError(err instanceof Error ? err.message : 'Erro ao fazer login');
-      }
+      setError(err instanceof Error ? err.message : 'Erro ao fazer login');
     } finally {
       done();
     }

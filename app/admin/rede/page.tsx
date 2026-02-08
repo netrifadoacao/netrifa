@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { useFunctions } from '@/lib/supabase-functions';
 import { FiChevronDown, FiChevronRight, FiUser, FiMail, FiGitBranch, FiList, FiCircle, FiPlus, FiMinus } from 'react-icons/fi';
+import { getAvatarDisplayUrl } from '@/lib/avatar';
 
 const AvatarTreeChart = dynamic(() => import('@/components/AvatarTreeChart'), { ssr: false });
 
@@ -65,7 +66,7 @@ function NodeCard({ profile: p, isAdmin }: { profile: Profile; isAdmin: boolean 
     >
       <div className={`flex-shrink-0 w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border-2 ${isAdmin ? 'border-steel-500 bg-steel-800' : 'border-steel-600 bg-steel-800'}`}>
         {p.avatar_url ? (
-          <img src={p.avatar_url} alt={p.full_name || ''} className="w-full h-full object-cover" />
+          <img src={getAvatarDisplayUrl(p.avatar_url) ?? ''} alt={p.full_name || ''} className="w-full h-full object-cover" />
         ) : (
           <span className="text-steel-300 font-bold text-sm">{initials}</span>
         )}
@@ -145,7 +146,7 @@ function TopicNode({
         </button>
         <div className={`flex-shrink-0 w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border-2 ${isAdmin ? 'border-steel-500 bg-steel-800' : 'border-steel-600 bg-steel-800'}`}>
           {p.avatar_url ? (
-            <img src={p.avatar_url} alt={p.full_name || ''} className="w-full h-full object-cover" />
+            <img src={getAvatarDisplayUrl(p.avatar_url) ?? ''} alt={p.full_name || ''} className="w-full h-full object-cover" />
           ) : (
             <span className="text-steel-300 font-bold text-sm">{initials}</span>
           )}

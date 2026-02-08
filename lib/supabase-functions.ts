@@ -18,10 +18,10 @@ export async function invokeFunction<T = unknown>(
   accessToken?: string | null
 ): Promise<T> {
   let token = accessToken
-  if (token === undefined) {
+  if (token == null) {
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
-    token = session?.access_token
+    token = session?.access_token ?? undefined
   }
   const base = getFunctionsUrl()
   const url = new URL(`${base}/${name}`)
@@ -92,7 +92,14 @@ function createFunctions(accessToken: string | null | undefined) {
       reject: (compraId: string) => invokeFunction('orders', { method: 'PATCH', body: { orderId: compraId, action: 'reject' } }, token),
     },
     network: (userId?: string, opts?: { flat?: boolean }) =>
-      invokeFunction<{ rede: unknown[]; niveis: number; profiles?: NetworkProfile[] }>('network', {
+      invokeFunction<{
+        rede?: unknown[];
+        niveis?: number;
+        profiles?: NetworkProfile[];
+        upline?: NetworkProfile | null;
+        me?: NetworkProfile | null;
+        downline?: { profile: NetworkProfile; children: unknown[] }[];
+      }>('network', {
         params: { ...(userId ? { id: userId } : {}), ...(opts?.flat ? { flat: 'true' } : {}) },
       }, token),
     bonus: (userId?: string) => invokeFunction('bonus', { params: userId ? { id: userId } : {} }, token),
@@ -109,8 +116,8 @@ function createFunctions(accessToken: string | null | undefined) {
       reject: (saqueId: string) => invokeFunction('withdrawals', { method: 'PATCH', body: { id: saqueId, action: 'reject' }, params: { id: saqueId } }, token),
     },
     profile: (userId?: string) => invokeFunction<{ id: string; email: string; nome?: string; saldo: number; referral_code?: string }>('profile', { params: userId ? { id: userId } : {} }, token),
-    profileUpdate: (body: { nome?: string; full_name?: string; telefone?: string; phone?: string }) =>
-      invokeFunction('profile', { method: 'PATCH', body: { full_name: body.nome ?? body.full_name, phone: body.telefone ?? body.phone } }, token),
+    profileUpdate: (body: { nome?: string; full_name?: string; telefone?: string; phone?: string; banco?: string; agencia?: string; conta?: string; pix?: string; avatar_url?: string }) =>
+      invokeFunction('profile', { method: 'PATCH', body: { full_name: body.nome ?? body.full_name, phone: body.telefone ?? body.phone, banco: body.banco, agencia: body.agencia, conta: body.conta, pix: body.pix, avatar_url: body.avatar_url } }, token),
   }
 }
 

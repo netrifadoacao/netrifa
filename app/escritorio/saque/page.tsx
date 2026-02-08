@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import toast from 'react-hot-toast';
 import { useRouter, usePathname } from 'next/navigation';
 import { FiDollarSign } from 'react-icons/fi';
 import { useFunctions } from '@/lib/supabase-functions';
@@ -48,11 +49,11 @@ export default function SaquePage() {
     if (!user) return;
     const valor = parseFloat(formData.valor);
     if (valor < valorMinimo) {
-      alert(`Valor mínimo de saque é R$ ${valorMinimo.toFixed(2)}`);
+      toast(`Valor mínimo de saque é R$ ${valorMinimo.toFixed(2)}`, { icon: '⚠️' });
       return;
     }
     if (valor > saldo) {
-      alert('Saldo insuficiente');
+      toast('Saldo insuficiente', { icon: '⚠️' });
       return;
     }
     setLoading(true);
@@ -62,11 +63,11 @@ export default function SaquePage() {
         metodoPagamento: formData.metodoPagamento,
         dadosPagamento: formData.metodoPagamento === 'pix' ? { chave: formData.pix } : {},
       });
-      alert('Saque solicitado com sucesso! Aguarde a aprovação.');
+      toast.success('Saque solicitado com sucesso! Aguarde a aprovação.');
       setFormData({ valor: '', metodoPagamento: 'pix', pix: '', banco: '', agencia: '', conta: '' });
       window.location.reload();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Erro ao solicitar saque');
+      toast.error(err instanceof Error ? err.message : 'Erro ao solicitar saque');
     } finally {
       setLoading(false);
     }

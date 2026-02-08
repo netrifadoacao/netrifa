@@ -1,6 +1,7 @@
 'use client';
 
 import { Tree, TreeNode } from 'react-organizational-chart';
+import { getAvatarDisplayUrl } from '@/lib/avatar';
 
 interface Profile {
   id: string;
@@ -68,7 +69,7 @@ function AvatarCard({
         }`}
       >
         {p.avatar_url ? (
-          <img src={p.avatar_url} alt={p.full_name || ''} className="absolute inset-0 object-cover w-full h-full" />
+          <img src={getAvatarDisplayUrl(p.avatar_url) ?? ''} alt={p.full_name || ''} className="absolute inset-0 object-cover w-full h-full" />
         ) : (
           <span className="text-steel-300 font-bold flex items-center justify-center w-full h-full" style={{ fontSize: size * 0.35 }}>{initials}</span>
         )}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import toast from 'react-hot-toast';
 import { useRouter, usePathname } from 'next/navigation';
 import { FiCheckCircle, FiXCircle, FiDollarSign } from 'react-icons/fi';
 import { useFunctions } from '@/lib/supabase-functions';
@@ -52,10 +53,10 @@ export default function SaquesPage() {
   const handleAprovar = async (saqueId: string) => {
     try {
       await functions.withdrawals.approve(saqueId);
-      alert('Saque aprovado com sucesso!');
+      toast.success('Saque aprovado com sucesso!');
       fetchSaques();
     } catch (error) {
-      alert('Erro ao aprovar saque');
+      toast.error('Erro ao aprovar saque');
     }
   };
 
@@ -63,10 +64,10 @@ export default function SaquesPage() {
     if (!confirm('Tem certeza que deseja marcar este saque como pago? O saldo será debitado.')) return;
     try {
       await functions.withdrawals.pay(saqueId);
-      alert('Saque marcado como pago!');
+      toast.success('Saque marcado como pago!');
       fetchSaques();
     } catch (error) {
-      alert('Erro ao marcar saque como pago');
+      toast.error('Erro ao marcar saque como pago');
     }
   };
 
@@ -74,10 +75,10 @@ export default function SaquesPage() {
     if (!confirm('Tem certeza que deseja recusar este saque?')) return;
     try {
       await functions.withdrawals.reject(saqueId);
-      alert('Saque recusado');
+      toast.success('Saque recusado');
       fetchSaques();
     } catch (error) {
-      alert('Erro ao recusar saque');
+      toast.error('Erro ao recusar saque');
     }
   };
 

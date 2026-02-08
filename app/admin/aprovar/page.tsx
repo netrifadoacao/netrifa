@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import toast from 'react-hot-toast';
 import { useRouter, usePathname } from 'next/navigation';
 import { FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import { useFunctions } from '@/lib/supabase-functions';
@@ -50,10 +51,10 @@ export default function AprovarPage() {
   const handleAprovar = async (compraId: string) => {
     try {
       await functions.orders.approve(compraId);
-      alert('Compra aprovada com sucesso!');
+      toast.success('Compra aprovada com sucesso!');
       fetchCompras();
     } catch (error) {
-      alert('Erro ao aprovar compra');
+      toast.error('Erro ao aprovar compra');
     }
   };
 
@@ -61,10 +62,10 @@ export default function AprovarPage() {
     if (!confirm('Tem certeza que deseja reprovar esta compra?')) return;
     try {
       await functions.orders.reject(compraId);
-      alert('Compra reprovada');
+      toast.success('Compra reprovada');
       fetchCompras();
     } catch (error) {
-      alert('Erro ao reprovar compra');
+      toast.error('Erro ao reprovar compra');
     }
   };
 

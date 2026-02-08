@@ -57,7 +57,7 @@ function DadosSkeleton() {
   );
 }
 
-export default function DadosPage() {
+export default function AdminDadosPage() {
   const { user, profile, session, refreshProfile, loading: authLoading } = useAuth();
   const functions = useFunctions();
   const router = useRouter();
@@ -84,7 +84,11 @@ export default function DadosPage() {
 
   useEffect(() => {
     if (authLoading) return;
-    if (!user || profile?.role === 'admin') {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    if (profile && profile.role !== 'admin') {
       router.push('/login');
       return;
     }
@@ -181,7 +185,7 @@ export default function DadosPage() {
   };
 
   if (authLoading) return <DadosSkeleton />;
-  if (!user || profile?.role === 'admin') return null;
+  if (!user || (profile && profile.role !== 'admin')) return null;
 
   return (
     <>

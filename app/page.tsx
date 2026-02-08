@@ -29,20 +29,27 @@ export default function LandingPage() {
   const [buying, setBuying] = useState(false);
   const isAdmin = profile?.role === 'admin';
 
+  const fetchProdutos = useCallback(async () => {
+    try {
+      const data = await functions.products.list();
+      setProdutos((data ?? []).map((p) => ({ id: p.id, nome: p.name, descricao: p.description ?? '', preco: p.price, tipo: 'digital', ativo: p.active })).slice(0, 6));
+    } catch (error) {
+      console.error('Erro ao buscar produtos:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [functions]);
+
   useEffect(() => {
     fetchProdutos();
-  }, []);
+  }, [fetchProdutos]);
 
   useEffect(() => {
     if (authLoading) return;
-    if (user && profile) {
-      if (profile.role === 'admin') {
-        router.replace('/admin');
-      } else {
-        router.replace('/escritorio');
-      }
+    if (user && (profile?.role === 'admin' || profile?.role === 'member')) {
+      router.replace(profile.role === 'admin' ? '/admin' : '/escritorio');
     }
-  }, [authLoading, user, profile, router]);
+  }, [authLoading, user, profile?.role, router]);
 
   const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
 
@@ -53,16 +60,13 @@ export default function LandingPage() {
     return () => window.removeEventListener('scroll', onScroll);
   }, [mobileMenuOpen]);
 
-  const fetchProdutos = async () => {
-    try {
-      const data = await functions.products.list();
-      setProdutos((data ?? []).map((p) => ({ id: p.id, nome: p.name, descricao: p.description ?? '', preco: p.price, tipo: 'digital', ativo: p.active })).slice(0, 6));
-    } catch (error) {
-      console.error('Erro ao buscar produtos:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (!authLoading && user && (profile?.role === 'admin' || profile?.role === 'member')) {
+    return (
+      <div className="min-h-screen bg-rich-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-steel-500 border-t-transparent" />
+      </div>
+    );
+  }
 
   const handleComprar = async (produto: Produto) => {
     if (!user) {
