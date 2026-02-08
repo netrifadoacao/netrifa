@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FiShoppingBag, FiArrowRight, FiStar, FiUsers, FiTrendingUp, FiZap, FiCheckCircle, FiMenu, FiX } from 'react-icons/fi';
 import { useFunctions } from '@/lib/supabase-functions';
+import HeroBackground from '@/components/HeroBackground';
 
 interface Produto {
   id: string;
@@ -223,7 +224,8 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-20 pb-32">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-20"></div>
+        <HeroBackground />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-[0.07]" aria-hidden></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
             <div className="inline-flex items-center space-x-2 px-4 py-2 glass glass-gold-edge rounded-full mb-8 transition-all duration-300 hover:shadow-glass-gold">
@@ -291,8 +293,8 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="absolute top-20 left-10 w-96 h-96 bg-steel-800 rounded-full blur-[100px] opacity-30"></div>
-        <div className="absolute top-40 right-10 w-96 h-96 bg-steel-800 rounded-full blur-[100px] opacity-30" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-20 left-10 w-96 h-96 bg-gold-600/20 rounded-full blur-[120px] opacity-60 pointer-events-none" aria-hidden></div>
+        <div className="absolute top-40 right-10 w-96 h-96 bg-gold-500/15 rounded-full blur-[120px] opacity-50 pointer-events-none" aria-hidden></div>
       </section>
 
       {/* Products Section */}
