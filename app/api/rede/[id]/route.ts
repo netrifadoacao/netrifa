@@ -7,12 +7,10 @@ export async function GET(
 ) {
   try {
     const users = readJsonFile<any>('users.json');
-    
-    function buscarRede(usuarioId: string, nivel: number = 1): any {
+
+    const buscarRede = (usuarioId: string, nivel: number = 1): any => {
       if (nivel > 5) return null;
-      
       const indicados = users.filter((u: any) => u.patrocinadorId === usuarioId);
-      
       return indicados.map((indicado: any) => ({
         id: indicado.id,
         nome: indicado.nome,
@@ -20,8 +18,8 @@ export async function GET(
         nivel,
         indicados: buscarRede(indicado.id, nivel + 1)
       })).filter((item: any) => item !== null);
-    }
-    
+    };
+
     const rede = buscarRede(params.id);
     
     return NextResponse.json({ rede, niveis: 5 });
