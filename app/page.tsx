@@ -106,7 +106,7 @@ export default function LandingPage() {
                   />
                 </div>
               </div>
-              <span className="brand-logo-text-glass font-semibold text-xl sm:text-2xl group-hover:opacity-95 transition-opacity">
+              <span className="brand-logo-text font-semibold text-xl sm:text-2xl group-hover:opacity-95 transition-opacity">
                 Golden Rifas
               </span>
             </Link>

@@ -87,7 +87,7 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
                   </div>
                 </div>
                 <div className="hidden sm:block">
-                  <span className="brand-logo-text-glass font-semibold text-lg">Golden Rifas</span>
+                  <span className="brand-logo-text font-semibold text-lg">Golden Rifas</span>
                   <span className="block text-xs text-steel-400 font-normal mt-0.5">{tipo === 'admin' ? 'Painel Administrativo' : 'Escritório Virtual'}</span>
                 </div>
               </div>
