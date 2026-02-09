@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import toast from 'react-hot-toast';
 import { useRouter, usePathname } from 'next/navigation';
-import { FiCheckCircle, FiXCircle, FiDollarSign } from 'react-icons/fi';
+import { FiCheckCircle, FiXCircle, FiDollarSign, FiX } from 'react-icons/fi';
 import { useFunctions } from '@/lib/supabase-functions';
 
 interface Saque {
@@ -20,6 +20,8 @@ interface Saque {
   usuario?: { nome: string; email: string };
 }
 
+type ModalTipo = 'pagar' | 'recusar' | null;
+
 export default function SaquesPage() {
   const { user, profile, loading: authLoading } = useAuth();
   const functions = useFunctions();
@@ -27,6 +29,7 @@ export default function SaquesPage() {
   const pathname = usePathname();
   const [saques, setSaques] = useState<Saque[]>([]);
   const [loading, setLoading] = useState(true);
+  const [modal, setModal] = useState<{ tipo: ModalTipo; saque: Saque } | null>(null);
 
   useEffect(() => {
     if (pathname !== '/admin/saques') return;
@@ -61,10 +64,10 @@ export default function SaquesPage() {
   };
 
   const handlePagar = async (saqueId: string) => {
-    if (!confirm('Tem certeza que deseja marcar este saque como pago? O saldo será debitado.')) return;
     try {
       await functions.withdrawals.pay(saqueId);
       toast.success('Saque marcado como pago!');
+      setModal(null);
       fetchSaques();
     } catch (error) {
       toast.error('Erro ao marcar saque como pago');
@@ -72,10 +75,10 @@ export default function SaquesPage() {
   };
 
   const handleRecusar = async (saqueId: string) => {
-    if (!confirm('Tem certeza que deseja recusar este saque?')) return;
     try {
       await functions.withdrawals.reject(saqueId);
       toast.success('Saque recusado');
+      setModal(null);
       fetchSaques();
     } catch (error) {
       toast.error('Erro ao recusar saque');
@@ -184,7 +187,7 @@ export default function SaquesPage() {
                             Aprovar
                           </button>
                           <button
-                            onClick={() => handleRecusar(saque.id)}
+                            onClick={() => setModal({ tipo: 'recusar', saque })}
                             className="inline-flex items-center px-3 py-2 text-sm leading-4 font-medium rounded-lg btn-silver-metallic transition-all"
                           >
                             <FiXCircle className="mr-1" />
@@ -194,7 +197,7 @@ export default function SaquesPage() {
                       )}
                       {saque.status === 'aprovado' && (
                         <button
-                          onClick={() => handlePagar(saque.id)}
+                          onClick={() => setModal({ tipo: 'pagar', saque })}
                           className="inline-flex items-center px-3 py-2 text-sm leading-4 font-medium rounded-lg btn-gold-metallic transition-all"
                         >
                           <FiDollarSign className="mr-1" />
@@ -209,6 +212,66 @@ export default function SaquesPage() {
           </ul>
         </div>
       </div>
+
+      {modal && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4"
+          onClick={() => setModal(null)}
+        >
+          <div
+            className="glass-strong rounded-2xl max-w-md w-full p-6 border border-white/20 text-white"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-display text-xl font-bold text-white">
+                {modal.tipo === 'pagar' ? 'Confirmar pagamento' : 'Confirmar recusa'}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setModal(null)}
+                className="p-2 rounded-lg text-steel-400 hover:bg-white/5 hover:text-white transition-colors"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+            {modal.tipo === 'pagar' ? (
+              <>
+                <p className="text-steel-300 text-sm mb-2">
+                  Tem certeza que deseja marcar este saque como pago? O saldo do usuário será debitado.
+                </p>
+                <p className="text-sm text-gray-400 mb-4">
+                  <span className="text-white font-medium">{modal.saque.usuario?.nome}</span> ({modal.saque.usuario?.email}) — R$ {modal.saque.valor.toFixed(2)}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-steel-300 text-sm mb-2">
+                  Tem certeza que deseja recusar este saque?
+                </p>
+                <p className="text-sm text-gray-400 mb-4">
+                  <span className="text-white font-medium">{modal.saque.usuario?.nome}</span> — R$ {modal.saque.valor.toFixed(2)}
+                </p>
+              </>
+            )}
+            <div className="flex gap-3 mt-6">
+              <button
+                type="button"
+                onClick={() => setModal(null)}
+                className="flex-1 py-2.5 px-4 rounded-xl border border-white/20 text-steel-300 hover:bg-white/5 font-medium transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => modal.tipo === 'pagar' ? handlePagar(modal.saque.id) : handleRecusar(modal.saque.id)}
+                className={`flex-1 py-2.5 px-4 rounded-xl font-semibold transition-all ${modal.tipo === 'pagar' ? 'btn-gold-metallic' : 'bg-red-500/20 border border-red-500/50 text-red-300 hover:bg-red-500/30'}`}
+              >
+                {modal.tipo === 'pagar' ? 'Sim, marcar como pago' : 'Sim, recusar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

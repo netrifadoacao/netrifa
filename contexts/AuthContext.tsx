@@ -124,18 +124,33 @@ export function AuthProvider({
 
   const fetchProfile = useCallback(async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      if (error) {
-        console.error('Erro ao buscar perfil:', error);
+      const res = await fetch('/api/me/profile', { credentials: 'include' });
+      if (res.ok) {
+        const data = await res.json();
+        setProfile({
+          id: data.id,
+          email: data.email ?? '',
+          full_name: data.full_name ?? undefined,
+          role: data.role === 'admin' || data.role === 'member' ? data.role : undefined,
+          referral_code: data.referral_code ?? undefined,
+          wallet_balance: Number(data.wallet_balance ?? 0),
+          sponsor_id: data.sponsor_id ?? undefined,
+          phone: data.phone ?? undefined,
+          bank_name: data.bank_name ?? undefined,
+          bank_agency: data.bank_agency ?? undefined,
+          bank_account: data.bank_account ?? undefined,
+          pix_key: data.pix_key ?? undefined,
+          avatar_url: data.avatar_url ?? undefined,
+        });
       } else {
-        setProfile(data);
+        const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+        if (!error && data) setProfile(data);
       }
     } catch (err) {
-      console.error('Exceção ao buscar perfil:', err);
+      try {
+        const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+        if (!error && data) setProfile(data);
+      } catch (_) {}
     } finally {
       setProfileLoading(false);
     }

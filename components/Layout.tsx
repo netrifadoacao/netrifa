@@ -78,10 +78,11 @@ export default function Layout({ children, tipo = 'usuario' }: LayoutProps) {
     { href: '/admin', icon: FiHome, label: 'Home' },
     { href: '/admin/dados', icon: FiUser, label: 'Dados' },
     { href: '/admin/rede', icon: FiUsers, label: 'Rede' },
-    { href: '/admin/usuarios', icon: FiUserPlus, label: 'Aprovar usuários' },
+    { href: '/admin/usuarios', icon: FiUserPlus, label: 'Aprovar' },
     { href: '/admin/criar', icon: FiShoppingBag, label: 'Produtos' },
+    { href: '/admin/extratos', icon: FiFileText, label: 'Caixa' },
     { href: '/admin/saques', icon: FiDollarSign, label: 'Saques' },
-    { href: '/admin/config', icon: FiSettings, label: 'Bônus' },
+    { href: '/admin/config', icon: FiSettings, label: 'Config' },
   ];
 
   const menuItems = tipo === 'admin' ? menuItemsAdmin : menuItemsUsuario;

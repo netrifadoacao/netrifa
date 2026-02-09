@@ -76,5 +76,30 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: updateError.message }, { status: 500 })
   }
   await admin.from('profiles').update({ role: 'member' }).eq('id', userId)
+
+  const { data: configRow } = await admin
+    .from('app_config')
+    .select('value')
+    .eq('key', 'valor_adesao')
+    .single()
+  const valorAdesao = Number(configRow?.value ?? 250)
+  const { data: existingOrder } = await admin
+    .from('orders')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('amount', valorAdesao)
+    .eq('status', 'paid')
+    .limit(1)
+    .maybeSingle()
+  if (!existingOrder) {
+    const { data: newOrder, error: insertErr } = await admin
+      .from('orders')
+      .insert({ user_id: userId, product_id: null, amount: valorAdesao, status: 'pending' })
+      .select('id')
+      .single()
+    if (!insertErr && newOrder?.id) {
+      await admin.from('orders').update({ status: 'paid' }).eq('id', newOrder.id)
+    }
+  }
   return NextResponse.json({ ok: true, userId })
 }

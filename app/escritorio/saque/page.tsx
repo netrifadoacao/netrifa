@@ -8,7 +8,7 @@ import { FiDollarSign, FiX } from 'react-icons/fi';
 import { useFunctions } from '@/lib/supabase-functions';
 
 export default function SaquePage() {
-  const { user, profile, loading: authLoading } = useAuth();
+  const { user, profile, refreshProfile, loading: authLoading } = useAuth();
   const functions = useFunctions();
   const router = useRouter();
   const pathname = usePathname();
@@ -34,10 +34,19 @@ export default function SaquePage() {
       router.push('/login');
       return;
     }
-    setSaldo(Number(profile?.wallet_balance ?? 0));
+    refreshProfile().then(() => {});
+  }, [pathname, authLoading, user, profile?.role, router]);
+
+  useEffect(() => {
+    if (!profile) return;
+    setSaldo(Number(profile.wallet_balance ?? 0));
+  }, [profile?.wallet_balance, profile?.id]);
+
+  useEffect(() => {
+    if (pathname !== '/escritorio/saque' || !user) return;
     fetchConfig();
     fetchWithdrawals();
-  }, [pathname, authLoading, user, profile, router]);
+  }, [pathname, user]);
 
   const fetchConfig = async () => {
     try {

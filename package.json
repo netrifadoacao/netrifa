@@ -10,7 +10,11 @@
     "seed:remote": "node scripts/seed-remote.js",
     "seed:extra": "node scripts/seed-extra-remote.js",
     "seed:demo": "node scripts/seed-demo-remote.js",
-    "backfill:sponsor": "node scripts/backfill-default-sponsor.js"
+    "backfill:sponsor": "node scripts/backfill-default-sponsor.js",
+    "backfill:bonus": "node scripts/backfill-bonus-history.js",
+    "backfill:adesao": "node scripts/backfill-adesao-orders.js",
+    "fix:uplines": "node scripts/forcar-upline-admin.js",
+    "verificar:bonus": "node scripts/verificar-bonus-e-uplines.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",

@@ -64,7 +64,7 @@ export default function EscritorioDashboard() {
     }
     setLoading(true);
     Promise.all([
-      functions.profile(user.id).then((p) => (p as { saldo?: number }).saldo ?? 0),
+      fetch('/api/me/profile', { credentials: 'include' }).then((r) => (r.ok ? r.json() : {})).then((p: { saldo?: number; wallet_balance?: number }) => Number(p?.saldo ?? p?.wallet_balance ?? 0)),
       functions.network(user.id).then((data) => {
         const rede = data.rede;
         if (Array.isArray(rede)) return 1 + countRede(rede as RedeNode[]);
@@ -73,7 +73,7 @@ export default function EscritorioDashboard() {
         if (!me) return 0;
         return 1 + countDownline(downline);
       }),
-      functions.bonus(user.id).then((list) => {
+      fetch('/api/me/bonus', { credentials: 'include' }).then((r) => (r.ok ? r.json() : [])).then((list) => {
         const arr = Array.isArray(list) ? list : [];
         const total = arr.reduce((acc: number, b: BonusRow) => acc + (b.valor ?? 0), 0);
         setTotalGanhos(total);
@@ -89,7 +89,7 @@ export default function EscritorioDashboard() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [pathname, authLoading, user, profile, router, functions]);
+  }, [pathname, authLoading, user?.id, profile?.role, router]);
 
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString('pt-BR', {

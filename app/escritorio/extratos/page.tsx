@@ -1,10 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
-import { FiFileText, FiTrendingUp } from 'react-icons/fi';
-import { useFunctions } from '@/lib/supabase-functions';
+import { FiFileText, FiTrendingUp, FiFilter } from 'react-icons/fi';
 
 interface Bonus {
   id: string;
@@ -18,12 +17,12 @@ interface Bonus {
 
 export default function ExtratosPage() {
   const { user, profile, loading: authLoading } = useAuth();
-  const functions = useFunctions();
   const router = useRouter();
   const pathname = usePathname();
   const [bonus, setBonus] = useState<Bonus[]>([]);
   const [loading, setLoading] = useState(true);
-  const [totalGanhos, setTotalGanhos] = useState(0);
+  const [filtroDataInicio, setFiltroDataInicio] = useState('');
+  const [filtroDataFim, setFiltroDataFim] = useState('');
 
   useEffect(() => {
     if (pathname !== '/escritorio/extratos') return;
@@ -34,15 +33,15 @@ export default function ExtratosPage() {
     }
     setLoading(true);
     fetchBonus();
-  }, [pathname, authLoading, user, profile, router]);
+  }, [pathname, authLoading, user?.id, profile?.role, router]);
 
   const fetchBonus = async () => {
     if (!user) return;
     try {
-      const data = await functions.bonus(user.id);
-      setBonus(Array.isArray(data) ? data : []);
-      const total = (Array.isArray(data) ? data : []).reduce((acc: number, b: Bonus) => acc + (b.valor ?? 0), 0);
-      setTotalGanhos(total);
+      const res = await fetch('/api/me/bonus', { credentials: 'include' });
+      const data = res.ok ? await res.json() : [];
+      const arr = Array.isArray(data) ? data : [];
+      setBonus(arr);
     } catch (error) {
       console.error('Erro ao buscar bônus:', error);
     } finally {
@@ -60,6 +59,29 @@ export default function ExtratosPage() {
       minute: '2-digit',
     });
   };
+
+  const ordenadosPorData = useMemo(() => {
+    return [...bonus].sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
+  }, [bonus]);
+
+  const filtrados = useMemo(() => {
+    return ordenadosPorData.filter((item) => {
+      const d = new Date(item.data);
+      if (filtroDataInicio) {
+        const ini = new Date(filtroDataInicio);
+        ini.setHours(0, 0, 0, 0);
+        if (d < ini) return false;
+      }
+      if (filtroDataFim) {
+        const fim = new Date(filtroDataFim);
+        fim.setHours(23, 59, 59, 999);
+        if (d > fim) return false;
+      }
+      return true;
+    });
+  }, [ordenadosPorData, filtroDataInicio, filtroDataFim]);
+
+  const totalGanhos = useMemo(() => filtrados.reduce((acc: number, b: Bonus) => acc + (b.valor ?? 0), 0), [filtrados]);
 
   if (loading) {
     return (
@@ -91,14 +113,34 @@ export default function ExtratosPage() {
           </div>
         </div>
 
+        <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6 flex flex-wrap items-center gap-4">
+          <FiFilter className="w-5 h-5 text-steel-400" />
+          <div className="flex flex-wrap gap-3 items-center">
+            <label className="text-sm text-gray-400">De</label>
+            <input
+              type="date"
+              value={filtroDataInicio}
+              onChange={(e) => setFiltroDataInicio(e.target.value)}
+              className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-white text-sm"
+            />
+            <label className="text-sm text-gray-400">Até</label>
+            <input
+              type="date"
+              value={filtroDataFim}
+              onChange={(e) => setFiltroDataFim(e.target.value)}
+              className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-white text-sm"
+            />
+          </div>
+        </div>
+
         <div className="bg-white/5 backdrop-blur-md border border-white/10 shadow-lg overflow-hidden sm:rounded-xl">
           <ul className="divide-y divide-white/10">
-            {bonus.length === 0 ? (
+            {filtrados.length === 0 ? (
               <li className="px-6 py-4 text-center text-gray-400">
-                Nenhum bônus registrado ainda.
+                Nenhum ganho no período ou ainda sem registros.
               </li>
             ) : (
-              bonus.map((item) => (
+              filtrados.map((item) => (
                 <li key={item.id} className="px-6 py-4 hover:bg-white/5 transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
@@ -107,7 +149,7 @@ export default function ExtratosPage() {
                       </div>
                       <div>
                         <p className="text-sm font-medium text-white">
-                          Bônus {item.tipo === 'direto' ? 'Direto' : `Rede - Nível ${item.nivel}`}
+                          Bônus {item.tipo === 'direto' ? 'Direto' : `Rede - Nível ${item.nivel ?? '—'}`}
                         </p>
                         <p className="text-sm text-gray-400">
                           {item.origemUsuario?.nome && `Origem: ${item.origemUsuario.nome}`}

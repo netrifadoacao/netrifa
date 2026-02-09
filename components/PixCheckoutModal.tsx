@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { buildPixPayload } from '@/utils/pixPayload';
-import { FiX } from 'react-icons/fi';
+import { FiX, FiCopy } from 'react-icons/fi';
 import { SiWhatsapp } from 'react-icons/si';
 
 const CHAVE_PIX = process.env.NEXT_PUBLIC_CHAVE_PIX_RECEBIMENTO || '81622570200';
@@ -22,6 +22,17 @@ export default function PixCheckoutModal({
 }) {
   const [secondsLeft, setSecondsLeft] = useState(EXPIRES_SEC);
   const [expired, setExpired] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const copyPixCode = async () => {
+    try {
+      await navigator.clipboard.writeText(payload);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
+  };
 
   const payload = buildPixPayload({
     chavePix: CHAVE_PIX,
@@ -63,6 +74,14 @@ export default function PixCheckoutModal({
             <div className="flex justify-center my-4 p-4 bg-white rounded-xl">
               <QRCodeSVG value={payload} size={220} level="M" includeMargin />
             </div>
+            <button
+              type="button"
+              onClick={copyPixCode}
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl border border-gold-500/50 text-gold-300 hover:bg-gold-500/10 font-medium transition-colors mb-2"
+            >
+              <FiCopy className="w-4 h-4" />
+              {copied ? 'Código PIX copiado!' : 'Copiar código PIX (copia e cola)'}
+            </button>
             <p className="text-steel-500 text-xs text-center mb-2">Chave PIX (CPF): {CHAVE_PIX}</p>
             <p className="text-center text-steel-400 text-sm">
               Este QR expira em <span className="font-bold text-gold-300">{secondsLeft}s</span>.
