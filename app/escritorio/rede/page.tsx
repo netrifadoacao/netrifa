@@ -4,10 +4,10 @@ import { useEffect, useState, useCallback, useRef, useLayoutEffect } from 'react
 import dynamic from 'next/dynamic';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
-import { useFunctions } from '@/lib/supabase-functions';
 import toast from 'react-hot-toast';
-import { FiChevronDown, FiChevronRight, FiMail, FiGitBranch, FiList, FiCircle, FiPlus, FiMinus, FiCopy } from 'react-icons/fi';
+import { FiChevronDown, FiChevronRight, FiMail, FiGitBranch, FiList, FiCircle, FiPlus, FiMinus, FiCopy, FiUser, FiArrowRight } from 'react-icons/fi';
 import { getAvatarDisplayUrl } from '@/lib/avatar';
+import type { NetworkActivityItem } from '@/lib/supabase-functions';
 
 const AvatarTreeChart = dynamic(() => import('@/components/AvatarTreeChart'), { ssr: false });
 
@@ -45,25 +45,6 @@ function apiNodeToTree(node: ApiDownlineNode, depth: number): TreeProfileNode {
     children: node.children.map((c) => apiNodeToTree(c, depth + 1)),
     depth,
   };
-}
-
-type RedeNode = { id: string; nome?: string | null; email: string; nivel?: number; indicados?: RedeNode[] };
-
-function redeToTreeNodes(nodes: RedeNode[], depth: number): TreeProfileNode[] {
-  if (!Array.isArray(nodes)) return [];
-  return nodes.map((n) => ({
-    profile: {
-      id: n.id,
-      full_name: n.nome ?? null,
-      email: n.email,
-      sponsor_id: null,
-      referral_code: null,
-      role: null,
-      avatar_url: null,
-    },
-    children: redeToTreeNodes(n.indicados ?? [], depth + 1),
-    depth,
-  }));
 }
 
 function NodeCard({ profile: p, isAdmin, highlightMe }: { profile: Profile; isAdmin: boolean; highlightMe?: boolean }) {
@@ -201,6 +182,21 @@ function TopicNode({
 
 type ViewMode = 'organogram' | 'topic' | 'avatar';
 
+function formatActivityTime(iso: string): string {
+  const d = new Date(iso);
+  const now = new Date();
+  const diffMs = now.getTime() - d.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  const diffH = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+  if (diffMin < 1) return 'agora';
+  if (diffMin < 60) return `há ${diffMin} min`;
+  if (diffH < 24) return `há ${diffH}h`;
+  if (diffDays === 1) return 'ontem';
+  if (diffDays < 7) return `há ${diffDays} dias`;
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+}
+
 const MIN_ZOOM = 0.25;
 const MAX_ZOOM = 2;
 const ZOOM_STEP = 0.15;
@@ -208,7 +204,6 @@ const DEFAULT_ZOOM = 0.75;
 
 export default function RedePage() {
   const { user, profile, loading: authLoading } = useAuth();
-  const functions = useFunctions();
   const router = useRouter();
   const pathname = usePathname();
   const [displayRoots, setDisplayRoots] = useState<TreeProfileNode[]>([]);
@@ -219,9 +214,15 @@ export default function RedePage() {
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [linkIndicacao, setLinkIndicacao] = useState('');
+  const [networkActivity, setNetworkActivity] = useState<NetworkActivityItem[]>([]);
+  const activityListRef = useRef<HTMLDivElement>(null);
+  const activityScrollRef = useRef<{ interval: ReturnType<typeof setInterval> | null; pos: number }>({ interval: null, pos: 0 });
   const dragStartRef = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
   const viewportRef = useRef<HTMLDivElement>(null);
   const transformWrapperRef = useRef<HTMLDivElement>(null);
+
+  const ACTIVITY_SCROLL_DURATION_MS = 15000;
+  const ACTIVITY_CONTAINER_H = 220;
 
   const zoomIn = useCallback(() => setZoom((z) => Math.min(MAX_ZOOM, z + ZOOM_STEP)), []);
   const zoomOut = useCallback(() => setZoom((z) => Math.max(MIN_ZOOM, z - ZOOM_STEP)), []);
@@ -312,25 +313,9 @@ export default function RedePage() {
     if (profile?.referral_code) setLinkIndicacao(`${typeof window !== 'undefined' ? window.location.origin : ''}/register?ref=${profile.referral_code}`);
     setLoading(true);
     setError(null);
-    functions
-      .network(user.id)
+    fetch('/api/me/network', { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error('Erro ao carregar rede'))))
       .then((data) => {
-        const rede = data.rede;
-        if (Array.isArray(rede)) {
-          const meProfile: Profile = {
-            id: profile?.id ?? user.id,
-            full_name: profile?.full_name ?? (user.user_metadata?.full_name as string | undefined) ?? null,
-            email: user.email ?? '',
-            sponsor_id: null,
-            referral_code: profile?.referral_code ?? null,
-            role: profile?.role ?? null,
-            avatar_url: profile?.avatar_url ?? null,
-          };
-          const downlineNodes = redeToTreeNodes(rede as RedeNode[], 0);
-          const meNode: TreeProfileNode = { profile: meProfile, children: downlineNodes, depth: 0 };
-          setDisplayRoots([meNode]);
-          return;
-        }
         const upline = data.upline ?? null;
         const me = data.me ?? null;
         const downline = (data.downline ?? []) as ApiDownlineNode[];
@@ -370,7 +355,53 @@ export default function RedePage() {
         setDisplayRoots([]);
       })
       .finally(() => setLoading(false));
-  }, [pathname, authLoading, user, profile, router, functions]);
+  }, [pathname, authLoading, user, profile, router]);
+
+  useEffect(() => {
+    if (pathname !== '/escritorio/rede' || !user) return;
+    fetch('/api/me/network-activity', { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : { networkActivity: [] }))
+      .then((data) => setNetworkActivity(data.networkActivity ?? []))
+      .catch(() => {});
+  }, [pathname, user]);
+
+  useEffect(() => {
+    const el = activityListRef.current;
+    if (!el || networkActivity.length === 0) return;
+    const containerH = ACTIVITY_CONTAINER_H;
+    const stepMs = 40;
+    const run = () => {
+      const range = el.scrollHeight - containerH;
+      if (range <= 0) return;
+      let pos = -range;
+      el.style.transform = `translateY(${pos}px)`;
+      activityScrollRef.current.pos = pos;
+      const step = range / (ACTIVITY_SCROLL_DURATION_MS / stepMs);
+      activityScrollRef.current.interval = setInterval(() => {
+        const wrapper = activityListRef.current;
+        if (!wrapper) return;
+        pos += step;
+        if (pos >= 0) {
+          pos = 0;
+          if (activityScrollRef.current.interval) {
+            clearInterval(activityScrollRef.current.interval);
+            activityScrollRef.current.interval = null;
+          }
+        }
+        activityScrollRef.current.pos = pos;
+        wrapper.style.transform = `translateY(${pos}px)`;
+      }, stepMs);
+    };
+    const t = setTimeout(run, 150);
+    return () => {
+      clearTimeout(t);
+      if (activityScrollRef.current.interval) {
+        clearInterval(activityScrollRef.current.interval);
+        activityScrollRef.current.interval = null;
+      }
+      if (el) el.style.transform = '';
+    };
+  }, [networkActivity.length]);
 
   const copyLink = () => {
     navigator.clipboard.writeText(linkIndicacao);
@@ -524,6 +555,71 @@ export default function RedePage() {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+
+        <div className="card-gold rounded-xl p-4 mt-6 overflow-hidden">
+          <h3 className="text-sm font-semibold text-white mb-4">Últimas atividades na rede</h3>
+          <div className="h-[220px] overflow-hidden relative">
+            <div className="absolute inset-0 overflow-hidden pr-2">
+              <div ref={activityListRef} className="relative transition-none" style={{ willChange: 'transform' }}>
+                <div className="absolute left-[23px] top-0 bottom-0 w-px bg-gradient-to-b from-gold-500/40 via-white/10 to-transparent pointer-events-none" />
+                <ul className="space-y-0">
+                  {networkActivity.length === 0 ? (
+                    <li className="py-6 text-center text-sm text-steel-400">Nenhuma entrada recente na rede</li>
+                  ) : (
+                    networkActivity.map((item, index) => (
+                      <li key={item.orderId ?? `${item.createdAt}-${item.buyer?.id ?? index}`} className="flex gap-4 py-3 first:pt-0">
+                        <div className="relative flex-shrink-0 z-10">
+                          <div className="w-12 h-12 rounded-full overflow-hidden bg-steel-800 border-2 border-gold-500/30 ring-2 ring-rich-black shadow-lg flex items-center justify-center">
+                            {item.buyer?.avatar_url ? (
+                              <img src={getAvatarDisplayUrl(item.buyer.avatar_url) ?? ''} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <FiUser className="w-6 h-6 text-steel-400" />
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0 pt-0.5">
+                          <p className="text-sm text-white font-medium truncate">{item.buyer?.nome ?? '—'}</p>
+                          <p className="text-xs text-steel-400 truncate">{item.buyer?.email}</p>
+                          <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                            {item.upline && (
+                              <span className="inline-flex items-center gap-1.5 text-xs text-steel-300">
+                                <span className="inline-flex items-center gap-1">
+                                  {item.upline.avatar_url ? (
+                                    <img src={getAvatarDisplayUrl(item.upline.avatar_url) ?? ''} alt="" className="w-4 h-4 rounded-full object-cover flex-shrink-0" />
+                                  ) : (
+                                    <span className="w-4 h-4 rounded-full bg-steel-700 flex items-center justify-center flex-shrink-0">
+                                      <FiUser className="w-2.5 h-2.5 text-steel-400" />
+                                    </span>
+                                  )}
+                                  <span className="truncate max-w-[120px]">{item.upline.nome}</span>
+                                </span>
+                                <FiArrowRight className="w-3 h-3 text-gold-500/70 flex-shrink-0" />
+                                <span className="text-gold-400/90">upliner</span>
+                              </span>
+                            )}
+                            {item.position >= 1 && (
+                              <span className={`text-xs font-medium px-2 py-0.5 rounded-md ${item.isPresente ? 'bg-gold-500/20 text-gold-400 border border-gold-500/40' : 'bg-steel-700/80 text-steel-300 border border-steel-600'}`}>
+                                {item.isPresente ? 'Presente (2º/3º)' : `Direto · ${item.position}º`}
+                              </span>
+                            )}
+                            {item.bonusTotal > 0 && (
+                              <span className="text-xs text-emerald-400/90 font-medium">
+                                R$ {item.bonusTotal.toFixed(2)} bônus
+                              </span>
+                            )}
+                          </div>
+                          <p className="mt-1 text-[11px] text-steel-500">
+                            {formatActivityTime(item.createdAt)} · Pedido R$ {item.orderAmount.toFixed(2)}
+                          </p>
+                        </div>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>

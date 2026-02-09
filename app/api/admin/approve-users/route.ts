@@ -69,13 +69,37 @@ export async function POST(req: NextRequest) {
   if (!userId || typeof userId !== 'string') {
     return NextResponse.json({ error: 'userId obrigatório' }, { status: 400 })
   }
+  const { data: profile } = await admin
+    .from('profiles')
+    .select('sponsor_id')
+    .eq('id', userId)
+    .single()
+  const referrerId = profile?.sponsor_id ?? null
+  let sponsorIdToSet: string | null = null
+  if (referrerId) {
+    const { data: siblings } = await admin
+      .from('profiles')
+      .select('id')
+      .eq('sponsor_id', referrerId)
+      .order('created_at', { ascending: true })
+    const list = siblings ?? []
+    const pos = list.findIndex((p: { id: string }) => p.id === userId)
+    if (pos === 1 || pos === 2) {
+      const firstId = list[0]?.id
+      if (firstId) sponsorIdToSet = firstId
+    }
+  }
   const { error: updateError } = await admin.auth.admin.updateUserById(userId, {
     email_confirm: true,
   })
   if (updateError) {
     return NextResponse.json({ error: updateError.message }, { status: 500 })
   }
-  await admin.from('profiles').update({ role: 'member' }).eq('id', userId)
+  if (sponsorIdToSet !== null) {
+    await admin.from('profiles').update({ role: 'member', sponsor_id: sponsorIdToSet }).eq('id', userId)
+  } else {
+    await admin.from('profiles').update({ role: 'member' }).eq('id', userId)
+  }
 
   const { data: configRow } = await admin
     .from('app_config')

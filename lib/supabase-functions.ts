@@ -114,6 +114,7 @@ function createFunctions(accessToken: string | null | undefined) {
       }>('network', {
         params: { ...(userId ? { id: userId } : {}), ...(opts?.flat ? { flat: 'true' } : {}) },
       }, token),
+    networkActivity: () => invokeFunction<{ networkActivity: NetworkActivityItem[] }>('network-activity', {}, token),
     bonus: (userId?: string) => invokeFunction('bonus', { params: userId ? { id: userId } : {} }, token),
     bonusConfig: {
       get: () => invokeFunction<Record<string, number>>('bonus-config', {}, token),

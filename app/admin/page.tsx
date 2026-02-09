@@ -164,6 +164,7 @@ export default function AdminHome() {
   const [newOrderIds, setNewOrderIds] = useState<Set<string>>(new Set());
   const activityListRef = useRef<HTMLDivElement>(null);
   const activityScrollRef = useRef<{ interval: ReturnType<typeof setInterval> | null; pos: number }>({ interval: null, pos: 0 });
+  const lastAnimatedFirstOrderIdRef = useRef<string | null>(null);
 
   const MAX_ACTIVITY_LENGTH = 10;
   const ACTIVITY_SCROLL_DURATION_MS = 15000;
@@ -192,6 +193,9 @@ export default function AdminHome() {
   useEffect(() => {
     const el = activityListRef.current;
     if (!el || networkActivity.length === 0) return;
+    const firstOrderId = networkActivity[0]?.orderId ?? null;
+    if (firstOrderId !== null && firstOrderId === lastAnimatedFirstOrderIdRef.current) return;
+    lastAnimatedFirstOrderIdRef.current = firstOrderId;
     const containerH = 220;
     const stepMs = 40;
     const run = () => {
@@ -205,7 +209,13 @@ export default function AdminHome() {
         const wrapper = activityListRef.current;
         if (!wrapper) return;
         pos += step;
-        if (pos >= 0) pos = -range;
+        if (pos >= 0) {
+          pos = 0;
+          if (activityScrollRef.current.interval) {
+            clearInterval(activityScrollRef.current.interval);
+            activityScrollRef.current.interval = null;
+          }
+        }
         activityScrollRef.current.pos = pos;
         wrapper.style.transform = `translateY(${pos}px)`;
       }, stepMs);
@@ -219,7 +229,7 @@ export default function AdminHome() {
       }
       if (el) el.style.transform = '';
     };
-  }, [networkActivity.length]);
+  }, [networkActivity.length, networkActivity[0]?.orderId]);
 
   useEffect(() => {
     if (!user || profile?.role !== 'admin' || pathname !== '/admin') return;

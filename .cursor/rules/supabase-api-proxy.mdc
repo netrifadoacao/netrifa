@@ -1,0 +1,12 @@
+---
+description: Usar API Next.js como proxy para Supabase; não chamar Edge Functions/URL Supabase direto no cliente
+alwaysApply: true
+---
+
+# Supabase e backend: usar Next.js como proxy
+
+- **Regra:** Dados e ações que dependem do Supabase (ou de tokens sensíveis) devem ser acessados via **rotas de API do Next.js** (`/api/...`), nunca chamando a URL do Supabase ou Edge Functions diretamente no cliente (browser).
+- **No cliente (React):** use `fetch('/api/me/...', { credentials: 'include' })` ou rotas em `app/api/` já existentes. Não use `invokeFunction()` ou `fetch(supabaseUrl/functions/v1/...)` para funcionalidades novas que possam ser feitas via API route.
+- **No servidor (API route):** use `createClient()` de `@/utils/supabase/server` para obter o usuário da sessão (cookies). Para queries que precisam ver dados além do usuário (ex.: listas globais, admin), use `createAdminClient()` de `@/utils/supabase/admin` **somente dentro da API route**.
+- **Por quê:** evita expor o token real do Supabase no frontend, evita 401/Invalid JWT e retrabalho. Padrão já usado em `/api/me/bonus`, `/api/me/profile`, `/api/me/network-activity`, `/api/admin/extrato`, etc.
+- Ao implementar uma feature que precise de dados do Supabase, **verifique primeiro** se já existe uma rota em `app/api/` que faça o que precisa. Se não existir, **crie uma nova rota em `app/api/`** que use o client de servidor/admin, em vez de criar chamada direta do cliente para Supabase ou Edge Function.

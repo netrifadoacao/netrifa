@@ -34,22 +34,10 @@ serve(async (req) => {
     if (!isAdmin && userId === user.id) {
       const me = list.find((p) => p.id === user.id)
       const upline = me?.sponsor_id ? list.find((p) => p.id === me.sponsor_id) ?? null : null
-      const getDirects = (sid: string): P[] => {
-        const direct = list.filter((p) => p.sponsor_id === sid)
-        const profile = list.find((p) => p.id === sid)
-        const sponsorId = profile?.sponsor_id
-        if (!sponsorId) return direct
-        const siblings = list.filter((p) => p.sponsor_id === sponsorId).sort((a, b) => (a.created_at || '').localeCompare(b.created_at || ''))
-        const pos = siblings.findIndex((p) => p.id === sid)
-        if (pos === 0 && siblings.length >= 2) {
-          const gifted = siblings.slice(1, 3)
-          return [...direct, ...gifted]
-        }
-        return direct
-      }
+      const getDirectsReal = (sid: string): P[] => list.filter((p) => p.sponsor_id === sid)
       const buildDown = (sid: string, nivel: number): { profile: P; children: unknown[] }[] => {
         if (nivel > 5) return []
-        return getDirects(sid).map((p) => ({ profile: p, children: buildDown(p.id, nivel + 1) }))
+        return getDirectsReal(sid).map((p) => ({ profile: p, children: buildDown(p.id, nivel + 1) }))
       }
       const downline = me ? buildDown(user.id, 1) : []
       return new Response(
