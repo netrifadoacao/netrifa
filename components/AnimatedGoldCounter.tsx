@@ -56,7 +56,9 @@ export default function AnimatedGoldCounter({
     return () => cancelAnimationFrame(rafId);
   }, [started, value, duration, decimals]);
 
-  const formatted = decimals > 0 ? display.toFixed(decimals) : Math.round(display).toLocaleString('pt-BR');
+  const formatted = decimals > 0
+    ? display.toLocaleString('pt-BR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+    : Math.round(display).toLocaleString('pt-BR');
 
   return (
     <span ref={ref} className={className}>

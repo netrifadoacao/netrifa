@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FiShoppingBag, FiArrowRight, FiUsers, FiTrendingUp, FiDollarSign, FiGift, FiMenu, FiX, FiVideo } from 'react-icons/fi';
+import { FiShoppingBag, FiArrowRight, FiUsers, FiTrendingUp, FiDollarSign, FiGift, FiMenu, FiX, FiEye } from 'react-icons/fi';
 import { SiWhatsapp } from 'react-icons/si';
 import { useFunctions } from '@/lib/supabase-functions';
 import HeroBackground from '@/components/HeroBackground';
@@ -114,7 +114,7 @@ export default function LandingPage() {
               <span className="brand-logo-text font-semibold text-xl sm:text-2xl group-hover:opacity-95 transition-opacity">AS Digital</span>
             </Link>
             <div className="hidden md:flex items-center space-x-2">
-              <Link href="#beneficios" className="px-4 py-2 text-steel-400 hover:text-white font-medium rounded-full hover:bg-white/5 transition-all duration-200">Benefícios</Link>
+              <Link href="#dia-do-milhao" className="px-4 py-2 text-steel-400 hover:text-white font-medium rounded-full hover:bg-white/5 transition-all duration-200">Benefícios</Link>
               <Link href="#fluxo-rede" className="px-4 py-2 text-steel-400 hover:text-white font-medium rounded-full hover:bg-white/5 transition-all duration-200">Fluxo da Rede</Link>
               <Link href="#como-funciona" className="px-4 py-2 text-steel-400 hover:text-white font-medium rounded-full hover:bg-white/5 transition-all duration-200">Como Entrar</Link>
               <Link href="#produtos" className="px-4 py-2 text-steel-400 hover:text-white font-medium rounded-full hover:bg-white/5 transition-all duration-200">Produtos</Link>
@@ -166,10 +166,6 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-[0.07]" aria-hidden />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <div className="inline-flex items-center space-x-2 px-4 py-2 glass glass-gold-edge rounded-full mb-6">
-              <FiUsers className="w-4 h-4 text-gold-300" />
-              <span className="text-sm font-semibold text-gold-200">Renda passiva e ganhos recorrentes na rede</span>
-            </div>
             <h1 className="font-display text-4xl md:text-6xl font-black mb-5 leading-tight text-white">
               Entre para a rede e
               <br />
@@ -218,63 +214,90 @@ export default function LandingPage() {
         <div className="absolute top-40 right-10 w-96 h-96 bg-gold-500/15 rounded-full blur-[120px] opacity-50 pointer-events-none" aria-hidden />
       </section>
 
-      <section id="dia-do-milhao" className="relative py-20 md:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-gold-950/40 via-rich-black to-rich-black" aria-hidden />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.06]" aria-hidden />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold-500/20 rounded-full blur-[140px] pointer-events-none" aria-hidden />
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-10">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold-500/20 border border-gold-400/50 text-gold-200 text-sm font-semibold mb-6">
-              <FiVideo className="w-4 h-4" />
-              Exclusivo para membros da rede
-            </span>
-            <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 leading-tight">
-              Dia do <span className="brand-logo-text">Milhão</span>
-            </h2>
-            <p className="text-xl sm:text-2xl text-steel-300 max-w-2xl mx-auto mb-12">
-              Uma live por mês. <strong className="text-white">R$ 5,00</strong> para entrar. <strong className="text-gold-300">Um sorteado leva tudo.</strong>
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <div className="glass-strong rounded-2xl p-6 border-2 border-gold-500/40 text-center">
-              <div className="text-4xl md:text-5xl font-black text-gold-300 mb-1">R$ 5</div>
-              <div className="text-steel-400 text-sm">por participação</div>
+      <section id="dia-do-milhao" className="relative py-12 md:py-16 overflow-y-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-gold-950/20 via-rich-black to-rich-black" aria-hidden />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.05]" aria-hidden />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-4 items-center min-h-[480px] md:min-h-[520px]">
+            <div className="lg:col-span-3 flex flex-col justify-center order-2 lg:order-1 text-center lg:text-right lg:pr-6">
+              <p className="font-display text-[11px] sm:text-xs font-bold text-gold-400/90 uppercase tracking-[0.2em] mb-5">
+                Uma live. Um sorteado. Todo o pot.
+              </p>
+              <h2 className="font-display text-3xl sm:text-4xl md:text-[2.5rem] font-black text-white mb-5 tracking-tight leading-[1.1]">
+                DIA DO MILHÃO
+              </h2>
+              <p className="text-xl sm:text-2xl text-steel-200 font-medium leading-snug mb-5">
+                Já pensou abrir o app e ver <span className="text-gold-300 font-bold">R$ 1.000.000</span> na tela?
+              </p>
+              <p className="text-steel-400 text-sm leading-relaxed max-w-xs ml-auto">
+                Todo mês um sorteado leva o pot inteiro. <span className="text-gold-200/90">R$ 5 para entrar.</span> O próximo nome pode ser o seu.
+              </p>
             </div>
-            <div className="glass-strong rounded-2xl p-6 border-2 border-gold-500/40 text-center">
-              <div className="text-4xl md:text-5xl font-black text-gold-300 mb-1">1x</div>
-              <div className="text-steel-400 text-sm">por mês</div>
+            <div className="lg:col-span-6 flex justify-center items-start order-1 lg:order-2 overflow-y-hidden min-h-[380px] md:min-h-[440px] pt-2">
+              <div className="relative w-[320px] sm:w-[400px] md:w-[440px] flex-shrink-0" style={{ marginBottom: '-200px' }}>
+                <div className="phone-glass-gold p-2.5 rounded-[2.75rem]">
+                  <div className="phone-screen rounded-[2.25rem] h-[620px] sm:h-[700px] md:h-[760px] flex flex-col overflow-hidden min-w-0">
+                    <div className="flex items-center justify-between px-4 pt-14 pb-2">
+                      <span className="text-xs text-gold-400/90 font-medium">Conta corrente</span>
+                      <div className="w-10 h-10 rounded-full border border-gold-500/30 flex items-center justify-center">
+                        <FiEye className="w-5 h-5 text-gold-400/80" />
+                      </div>
+                    </div>
+                    <div className="px-4 pt-4 pb-5 border-b border-gold-500/15 min-w-0">
+                      <p className="text-xs text-gold-400/70 mb-1">Saldo disponível</p>
+                      <div className="flex items-baseline gap-1 min-w-0 overflow-hidden">
+                        <span className="counter-gold text-2xl sm:text-3xl md:text-4xl font-black shrink-0">R$</span>
+                        <span className="counter-gold text-2xl sm:text-3xl md:text-4xl font-black tabular-nums leading-none min-w-0 overflow-hidden">
+                          <AnimatedGoldCounter value={1000000} duration={3500} decimals={2} />
+                        </span>
+                      </div>
+                    </div>
+                    <div className="px-4 py-3 flex gap-2">
+                      <div className="h-10 flex-1 rounded-xl border border-gold-500/30 bg-gold-500/5 flex items-center justify-center">
+                        <span className="text-[10px] text-gold-400/80">PIX</span>
+                      </div>
+                      <div className="h-10 flex-1 rounded-xl border border-gold-500/30 bg-gold-500/5 flex items-center justify-center">
+                        <span className="text-[10px] text-gold-400/80">Pagar</span>
+                      </div>
+                    </div>
+                    <div className="px-4 pt-3 pb-4 flex flex-col gap-3">
+                      {user ? (
+                        <Link href={isAdmin ? '/admin' : '/escritorio'} className="group flex items-center justify-center gap-2 w-full py-4 rounded-xl border border-gold-500/50 bg-gold-500/15 text-gold-200 font-bold text-sm transition-all duration-200 hover:bg-gold-400/30 hover:border-gold-400/60 hover:text-gold-100 hover:shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+                          <span>Meu Escritório</span>
+                          <FiArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                        </Link>
+                      ) : (
+                        <>
+                          <Link href="/register" className="group flex items-center justify-center gap-2 w-full py-4 rounded-xl border border-gold-500/50 bg-gold-500/15 text-gold-200 font-bold text-sm transition-all duration-200 hover:bg-gold-400/30 hover:border-gold-400/60 hover:text-gold-100 hover:shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+                            <span>Quero entrar na rede</span>
+                            <FiArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                          </Link>
+                          <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-center gap-2 w-full py-4 rounded-xl border border-gold-500/50 bg-gold-500/10 text-gold-200 font-bold text-sm transition-all duration-200 hover:bg-gold-400/25 hover:border-gold-400/60 hover:text-gold-100 hover:shadow-[0_0_18px_rgba(212,175,55,0.18)]">
+                            <SiWhatsapp className="w-5 h-5" />
+                            <span>Falar no WhatsApp</span>
+                          </a>
+                        </>
+                      )}
+                    </div>
+                    <div className="flex-1 min-h-[80px]" />
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="glass-strong rounded-2xl p-6 border-2 border-gold-500/40 text-center">
-              <div className="text-4xl md:text-5xl font-black text-gold-300 mb-1">1</div>
-              <div className="text-steel-400 text-sm">ganhador leva o pot</div>
+            <div className="lg:col-span-3 flex flex-col justify-center order-3 text-center lg:text-left lg:pl-6">
+              <p className="font-display text-[11px] sm:text-xs font-bold text-gold-400/90 uppercase tracking-[0.2em] mb-5">
+                Pode ser você.
+              </p>
+              <p className="text-xl sm:text-2xl text-white font-bold leading-snug mb-4">
+                E se o próximo nome sorteado fosse o seu?
+              </p>
+              <p className="text-steel-400 text-sm leading-relaxed max-w-xs">
+                Uma live por mês. Um ganhador leva tudo. Acima de 1 milhão, o que sobra vai para a <span className="text-gold-300">Virada do Milhão</span>. Dúvida? A gente responde.
+              </p>
+              <p className="text-gold-200/90 text-xs font-medium mt-6 uppercase tracking-wider">
+                R$ 5 · 1x por mês · 1 ganhador
+              </p>
             </div>
-          </div>
-          <div className="rounded-2xl p-6 md:p-8 bg-gradient-to-br from-gold-900/30 to-gold-950/20 border-2 border-gold-500/50 mb-12">
-            <p className="text-steel-300 text-center text-lg mb-4">
-              Todo membro da rede pode entrar na live pagando apenas <strong className="text-white">R$ 5,00</strong>. Uma vez por mês sorteamos <strong className="text-gold-300">um membro para levar todo o valor</strong> arrecadado. Quando o pot ultrapassar <strong className="text-white">um milhão</strong>, o que passar vai para a <strong className="text-gold-300">Virada do Milhão</strong>: sorteamos o acumulado para toda a rede, na mesma lógica.
-            </p>
-            <p className="text-gold-200 text-center font-semibold">
-              Pouco para entrar. Tudo para ganhar.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            {user ? (
-              <Link href={isAdmin ? '/admin' : '/escritorio'} className="group px-10 py-4 btn-gold-metallic font-bold text-lg rounded-full transition-all duration-200 flex items-center space-x-3 shadow-lg shadow-gold-500/20">
-                <span>Ver no Meu Escritório</span>
-                <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            ) : (
-              <>
-                <Link href="/register" className="group px-10 py-4 btn-gold-metallic font-bold text-lg rounded-full transition-all duration-200 flex items-center space-x-3 shadow-lg shadow-gold-500/20 hover:shadow-gold-500/30">
-                  <span>Entrar na rede e participar</span>
-                  <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Link>
-                <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="px-10 py-4 font-bold text-lg rounded-full border-2 border-gold-500/50 text-gold-200 hover:bg-gold-500/15 transition-all flex items-center gap-2">
-                  <SiWhatsapp className="w-5 h-5" />
-                  Dúvidas no WhatsApp
-                </a>
-              </>
-            )}
           </div>
         </div>
       </section>
