@@ -63,10 +63,6 @@ function DashboardSkeleton() {
             <StatSkeleton key={i} />
           ))}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-          <ChartSkeleton />
-          <ChartSkeleton />
-        </div>
         <div className="rounded-xl card-gold p-4 mb-10 animate-pulse overflow-hidden">
           <div className="flex justify-between mb-4">
             <div className="h-4 w-36 bg-white/10 rounded" />
@@ -83,6 +79,10 @@ function DashboardSkeleton() {
               </div>
             ))}
           </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+          <ChartSkeleton />
+          <ChartSkeleton />
         </div>
         <div className="mb-6">
           <div className="h-6 w-40 bg-white/10 rounded mb-4 animate-pulse" />

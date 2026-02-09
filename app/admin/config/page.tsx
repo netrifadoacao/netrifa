@@ -71,9 +71,9 @@ export default function ConfigPage() {
 
   return (
     <div className="py-6">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white font-display">Configuração de Bônus</h1>
+          <h1 className="text-3xl font-bold text-gold-400 font-display">Configuração de Bônus</h1>
           <p className="mt-2 text-sm text-gray-400">
             Configure os percentuais de bônus para cada nível da rede
           </p>
@@ -81,10 +81,10 @@ export default function ConfigPage() {
 
         <div className="bg-white/5 backdrop-blur-md border border-white/10 shadow-lg rounded-xl overflow-hidden">
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
-            <div className="border-b border-white/10 pb-4">
-              <h2 className="text-lg font-medium text-white mb-4">Percentuais de Bônus (%)</h2>
+            <div className="pb-4">
+              <h2 className="text-lg font-medium text-gold-400 mb-4">Percentuais de Bônus (%)</h2>
               
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <div>
                   <label htmlFor="indicacaoDireta" className="block text-sm font-medium text-gray-300">
                     Indicação Direta (1º nível)
@@ -189,9 +189,11 @@ export default function ConfigPage() {
               </div>
             </div>
 
-            <div className="border-t border-white/10 pt-4 space-y-4">
-              <div>
-                <label htmlFor="valorAdesao" className="block text-sm font-medium text-gray-300">
+            <div className="border-t border-white/10 pt-4 mt-4">
+              <h2 className="text-lg font-medium text-gold-400 mb-4">Valores e limites (R$)</h2>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div>
+                  <label htmlFor="valorAdesao" className="block text-sm font-medium text-gray-300">
                   Valor da Adesão (R$)
                 </label>
                 <input
@@ -235,6 +237,7 @@ export default function ConfigPage() {
                   onChange={(e) => setFormData({ ...formData, limiteMaximoSaque: parseFloat(e.target.value) })}
                 />
                 <p className="mt-1 text-xs text-gray-500">Ao atingir este total em saques, o membro é informado sobre a necessidade de reinvestir para continuar recebendo a renda da rede.</p>
+              </div>
               </div>
             </div>
 
