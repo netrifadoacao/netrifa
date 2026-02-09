@@ -145,7 +145,7 @@ export default function LandingPage() {
             <button onClick={closeMobileMenu} className="p-2 rounded-lg text-steel-400 hover:bg-white/5 hover:text-white"><FiX className="w-5 h-5" /></button>
           </div>
           <nav className="p-4 space-y-1 flex-1 overflow-y-auto">
-            <Link href="#beneficios" onClick={closeMobileMenu} className="block py-3 px-4 text-steel-400 hover:text-white hover:bg-white/5 font-medium rounded-xl transition-colors">Benefícios</Link>
+            <Link href="#dia-do-milhao" onClick={closeMobileMenu} className="block py-3 px-4 text-steel-400 hover:text-white hover:bg-white/5 font-medium rounded-xl transition-colors">Benefícios</Link>
             <Link href="#fluxo-rede" onClick={closeMobileMenu} className="block py-3 px-4 text-steel-400 hover:text-white hover:bg-white/5 font-medium rounded-xl transition-colors">Fluxo da Rede</Link>
             <Link href="#como-funciona" onClick={closeMobileMenu} className="block py-3 px-4 text-steel-400 hover:text-white hover:bg-white/5 font-medium rounded-xl transition-colors">Como Entrar</Link>
             <Link href="#produtos" onClick={closeMobileMenu} className="block py-3 px-4 text-steel-400 hover:text-white hover:bg-white/5 font-medium rounded-xl transition-colors">Produtos</Link>
@@ -214,7 +214,7 @@ export default function LandingPage() {
         <div className="absolute top-40 right-10 w-96 h-96 bg-gold-500/15 rounded-full blur-[120px] opacity-50 pointer-events-none" aria-hidden />
       </section>
 
-      <section id="dia-do-milhao" className="relative py-12 md:py-16 overflow-y-hidden">
+      <section id="dia-do-milhao" className="relative py-12 md:py-16 overflow-y-hidden scroll-mt-20">
         <div className="absolute inset-0 bg-gradient-to-b from-gold-950/20 via-rich-black to-rich-black" aria-hidden />
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.05]" aria-hidden />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -302,7 +302,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="beneficios" className="py-16 bg-rich-gray relative">
+      <section id="beneficios" className="py-16 bg-rich-gray relative scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="font-display text-3xl md:text-4xl font-black text-white mb-3">Por que entrar na rede?</h2>
@@ -327,7 +327,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="fluxo-rede" className="py-16 bg-rich-black relative">
+      <section id="fluxo-rede" className="py-16 bg-rich-black relative scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="font-display text-3xl md:text-4xl font-black text-white mb-3">Fluxo da rede e regra dos 3 primeiros</h2>
@@ -381,7 +381,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="como-funciona" className="py-16 bg-rich-gray relative">
+      <section id="como-funciona" className="py-16 bg-rich-gray relative scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="font-display text-3xl md:text-4xl font-black text-white mb-3">Como entrar na rede</h2>
@@ -406,7 +406,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="produtos" className="py-14 bg-rich-black relative">
+      <section id="produtos" className="py-14 bg-rich-black relative scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h2 className="font-display text-2xl md:text-3xl font-black text-white mb-2">Produtos em destaque</h2>
@@ -467,7 +467,7 @@ export default function LandingPage() {
             <div>
               <h3 className="text-white font-semibold mb-3">Rede</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="#beneficios" className="hover:text-white transition-colors">Benefícios</Link></li>
+                <li><Link href="#dia-do-milhao" className="hover:text-white transition-colors">Benefícios</Link></li>
                 <li><Link href="#dia-do-milhao" className="hover:text-white transition-colors">Dia do Milhão</Link></li>
                 <li><Link href="#fluxo-rede" className="hover:text-white transition-colors">Fluxo da rede</Link></li>
                 <li><Link href="#como-funciona" className="hover:text-white transition-colors">Como entrar</Link></li>
