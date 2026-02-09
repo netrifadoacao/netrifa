@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FiShoppingBag, FiArrowRight, FiUsers, FiTrendingUp, FiDollarSign, FiGift, FiMenu, FiX } from 'react-icons/fi';
+import { FiShoppingBag, FiArrowRight, FiUsers, FiTrendingUp, FiDollarSign, FiGift, FiMenu, FiX, FiVideo } from 'react-icons/fi';
 import { SiWhatsapp } from 'react-icons/si';
 import { useFunctions } from '@/lib/supabase-functions';
 import HeroBackground from '@/components/HeroBackground';
 import AnimatedGoldCounter from '@/components/AnimatedGoldCounter';
 
-const WHATSAPP_LINK = `https://wa.me/${process.env.NEXT_PUBLIC_NUMERO_WHATSAPP_INTEGRACAO || '5592984759201'}`;
+const WHATSAPP_LINK = `https://wa.me/${process.env.NEXT_PUBLIC_NUMERO_WHATSAPP_INTEGRACAO || '559286009714'}`;
 
 const MOCK_MEMBROS_REDE = 12480;
 const MOCK_FATURAMENTO_MILHOES = 2.85;
@@ -126,10 +126,6 @@ export default function LandingPage() {
               ) : (
                 <div className="flex items-center space-x-3 ml-4">
                   <Link href="/login" className="px-6 py-2.5 btn-silver-metallic font-medium rounded-full transition-all">Entrar</Link>
-                  <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="px-6 py-2.5 font-medium rounded-full transition-all bg-[#25D366]/20 border border-[#25D366]/50 text-white hover:bg-[#25D366]/35 hover:border-[#25D366]/70 hover:brightness-110 flex items-center space-x-2">
-                    <SiWhatsapp className="w-5 h-5" />
-                    <span>WhatsApp</span>
-                  </a>
                   <Link href="/register" className="px-6 py-2.5 btn-gold-metallic font-bold rounded-full transition-all duration-200 flex items-center space-x-2">Começar Agora</Link>
                 </div>
               )}
@@ -158,9 +154,6 @@ export default function LandingPage() {
             ) : (
               <div className="mt-4 space-y-2">
                 <Link href="/login" onClick={closeMobileMenu} className="block py-3 px-4 text-center btn-silver-metallic font-medium rounded-xl transition-colors">Entrar</Link>
-                <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu} className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium bg-[#25D366]/20 border border-[#25D366]/50 text-white hover:bg-[#25D366]/35 hover:border-[#25D366]/70 hover:brightness-110 transition-all">
-                  <SiWhatsapp className="w-5 h-5" /> WhatsApp
-                </a>
                 <Link href="/register" onClick={closeMobileMenu} className="block py-3 px-4 btn-gold-metallic font-semibold rounded-xl text-center transition-colors">Começar Agora</Link>
               </div>
             )}
@@ -225,6 +218,67 @@ export default function LandingPage() {
         <div className="absolute top-40 right-10 w-96 h-96 bg-gold-500/15 rounded-full blur-[120px] opacity-50 pointer-events-none" aria-hidden />
       </section>
 
+      <section id="dia-do-milhao" className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-gold-950/40 via-rich-black to-rich-black" aria-hidden />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.06]" aria-hidden />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold-500/20 rounded-full blur-[140px] pointer-events-none" aria-hidden />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-10">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold-500/20 border border-gold-400/50 text-gold-200 text-sm font-semibold mb-6">
+              <FiVideo className="w-4 h-4" />
+              Exclusivo para membros da rede
+            </span>
+            <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 leading-tight">
+              Dia do <span className="brand-logo-text">Milhão</span>
+            </h2>
+            <p className="text-xl sm:text-2xl text-steel-300 max-w-2xl mx-auto mb-12">
+              Uma live por mês. <strong className="text-white">R$ 5,00</strong> para entrar. <strong className="text-gold-300">Um sorteado leva tudo.</strong>
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            <div className="glass-strong rounded-2xl p-6 border-2 border-gold-500/40 text-center">
+              <div className="text-4xl md:text-5xl font-black text-gold-300 mb-1">R$ 5</div>
+              <div className="text-steel-400 text-sm">por participação</div>
+            </div>
+            <div className="glass-strong rounded-2xl p-6 border-2 border-gold-500/40 text-center">
+              <div className="text-4xl md:text-5xl font-black text-gold-300 mb-1">1x</div>
+              <div className="text-steel-400 text-sm">por mês</div>
+            </div>
+            <div className="glass-strong rounded-2xl p-6 border-2 border-gold-500/40 text-center">
+              <div className="text-4xl md:text-5xl font-black text-gold-300 mb-1">1</div>
+              <div className="text-steel-400 text-sm">ganhador leva o pot</div>
+            </div>
+          </div>
+          <div className="rounded-2xl p-6 md:p-8 bg-gradient-to-br from-gold-900/30 to-gold-950/20 border-2 border-gold-500/50 mb-12">
+            <p className="text-steel-300 text-center text-lg mb-4">
+              Todo membro da rede pode entrar na live pagando apenas <strong className="text-white">R$ 5,00</strong>. Uma vez por mês sorteamos <strong className="text-gold-300">um membro para levar todo o valor</strong> arrecadado. Quando o pot ultrapassar <strong className="text-white">um milhão</strong>, o que passar vai para a <strong className="text-gold-300">Virada do Milhão</strong>: sorteamos o acumulado para toda a rede, na mesma lógica.
+            </p>
+            <p className="text-gold-200 text-center font-semibold">
+              Pouco para entrar. Tudo para ganhar.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            {user ? (
+              <Link href={isAdmin ? '/admin' : '/escritorio'} className="group px-10 py-4 btn-gold-metallic font-bold text-lg rounded-full transition-all duration-200 flex items-center space-x-3 shadow-lg shadow-gold-500/20">
+                <span>Ver no Meu Escritório</span>
+                <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            ) : (
+              <>
+                <Link href="/register" className="group px-10 py-4 btn-gold-metallic font-bold text-lg rounded-full transition-all duration-200 flex items-center space-x-3 shadow-lg shadow-gold-500/20 hover:shadow-gold-500/30">
+                  <span>Entrar na rede e participar</span>
+                  <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="px-10 py-4 font-bold text-lg rounded-full border-2 border-gold-500/50 text-gold-200 hover:bg-gold-500/15 transition-all flex items-center gap-2">
+                  <SiWhatsapp className="w-5 h-5" />
+                  Dúvidas no WhatsApp
+                </a>
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+
       <section id="beneficios" className="py-16 bg-rich-gray relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -268,20 +322,26 @@ export default function LandingPage() {
             <div className="flex flex-col items-center">
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex flex-col items-center">
-                  <div className="w-16 h-16 rounded-full bg-gold-600/30 border-2 border-gold-400 flex items-center justify-center">
-                    <span className="text-gold-950 font-black">1º</span>
+                  <div className="coin-gold w-16 h-16">
+                    <div className="coin-face">
+                      <span className="text-gold-200 font-black text-lg">1º</span>
+                    </div>
                   </div>
                   <span className="text-xs text-steel-400 mt-1">1º indicado</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="w-16 h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
-                    <span className="text-white font-bold">2º</span>
+                  <div className="coin-silver w-16 h-16">
+                    <div className="coin-face">
+                      <span className="text-silver-200 font-bold text-lg">2º</span>
+                    </div>
                   </div>
                   <span className="text-xs text-steel-400 mt-1">2º indicado</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="w-16 h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
-                    <span className="text-white font-bold">3º</span>
+                  <div className="coin-silver w-16 h-16">
+                    <div className="coin-face">
+                      <span className="text-silver-200 font-bold text-lg">3º</span>
+                    </div>
                   </div>
                   <span className="text-xs text-steel-400 mt-1">3º indicado</span>
                 </div>
@@ -385,6 +445,7 @@ export default function LandingPage() {
               <h3 className="text-white font-semibold mb-3">Rede</h3>
               <ul className="space-y-2 text-sm">
                 <li><Link href="#beneficios" className="hover:text-white transition-colors">Benefícios</Link></li>
+                <li><Link href="#dia-do-milhao" className="hover:text-white transition-colors">Dia do Milhão</Link></li>
                 <li><Link href="#fluxo-rede" className="hover:text-white transition-colors">Fluxo da rede</Link></li>
                 <li><Link href="#como-funciona" className="hover:text-white transition-colors">Como entrar</Link></li>
               </ul>

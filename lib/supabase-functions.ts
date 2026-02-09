@@ -82,7 +82,7 @@ export type AdminDashboardResponse = {
   networkActivity?: NetworkActivityItem[]
 }
 
-export type NetworkProfile = { id: string; full_name: string | null; email: string; sponsor_id: string | null; referral_code?: string | null; role?: string | null; avatar_url?: string | null }
+export type NetworkProfile = { id: string; full_name: string | null; email: string; sponsor_id: string | null; referral_code?: string | null; role?: string | null; avatar_url?: string | null; created_at?: string | null }
 
 function createFunctions(accessToken: string | null | undefined) {
   const token = accessToken ?? undefined

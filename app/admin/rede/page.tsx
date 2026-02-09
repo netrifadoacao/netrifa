@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef, useLayoutEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { useFunctions } from '@/lib/supabase-functions';
-import { FiChevronDown, FiChevronRight, FiUser, FiMail, FiGitBranch, FiList, FiCircle, FiPlus, FiMinus } from 'react-icons/fi';
-import { getAvatarDisplayUrl } from '@/lib/avatar';
+import { FiChevronDown, FiGitBranch, FiCircle } from 'react-icons/fi';
+import type { RedeViewMode } from '@/components/AdminRedeFlow';
 
-const AvatarTreeChart = dynamic(() => import('@/components/AvatarTreeChart'), { ssr: false });
+const AdminRedeFlow = dynamic(() => import('@/components/AdminRedeFlow'), { ssr: false });
 
 interface Profile {
   id: string;
@@ -18,175 +18,10 @@ interface Profile {
   referral_code: string | null;
   role: string | null;
   avatar_url?: string | null;
+  created_at?: string | null;
 }
 
-function getInitials(p: Profile): string {
-  if (p.full_name?.trim()) {
-    const parts = p.full_name.trim().split(/\s+/);
-    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    return parts[0].slice(0, 2).toUpperCase();
-  }
-  if (p.email) return p.email[0].toUpperCase();
-  return '?';
-}
-
-function getFirstName(p: Profile): string {
-  if (p.full_name?.trim()) {
-    return p.full_name.trim().split(/\s+/)[0];
-  }
-  if (p.email) return p.email.split('@')[0] || '?';
-  return '?';
-}
-
-interface TreeProfileNode {
-  profile: Profile;
-  children: TreeProfileNode[];
-  depth: number;
-}
-
-function buildTree(profiles: Profile[], parentId: string | null): TreeProfileNode[] {
-  return profiles
-    .filter((p) => (parentId == null ? !p.sponsor_id : p.sponsor_id === parentId))
-    .map((p) => ({
-      profile: p,
-      children: buildTree(profiles, p.id),
-      depth: 0,
-    }));
-}
-
-function NodeCard({ profile: p, isAdmin }: { profile: Profile; isAdmin: boolean }) {
-  const initials = getInitials(p);
-  return (
-    <div
-      className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 min-w-[220px] ${
-        isAdmin
-          ? 'bg-steel-800 border-steel-600'
-          : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-steel-500/50'
-      }`}
-    >
-      <div className={`flex-shrink-0 w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border-2 ${isAdmin ? 'border-steel-500 bg-steel-800' : 'border-steel-600 bg-steel-800'}`}>
-        {p.avatar_url ? (
-          <img src={getAvatarDisplayUrl(p.avatar_url) ?? ''} alt={p.full_name || ''} className="w-full h-full object-cover" />
-        ) : (
-          <span className="text-steel-300 font-bold text-sm">{initials}</span>
-        )}
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="font-semibold text-white truncate">
-          {p.full_name || 'Sem nome'}
-          {isAdmin && <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-steel-700 text-steel-200">Admin</span>}
-        </p>
-        <p className="text-sm text-gray-400 truncate flex items-center gap-1">
-          <FiMail className="w-3 h-3 flex-shrink-0" />
-          {p.email}
-        </p>
-        {p.referral_code && (
-          <p className="text-xs text-steel-400 mt-0.5">Código: {p.referral_code}</p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function OrganogramNode({ node, depth = 0 }: { node: TreeProfileNode; depth?: number }) {
-  const hasChildren = node.children.length > 0;
-  const p = node.profile;
-  const isAdmin = p.role === 'admin';
-
-  return (
-    <div className="flex flex-col items-center">
-      <NodeCard profile={p} isAdmin={isAdmin} />
-      {hasChildren && (
-        <>
-          <div className="w-0.5 h-6 bg-white/20" />
-          <div className="flex border-t-2 border-white/20 pt-6 gap-8">
-            {node.children.map((child) => (
-              <div key={child.profile.id} className="flex flex-col items-center">
-                <OrganogramNode node={child} depth={depth + 1} />
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-function TopicNode({
-  node,
-  depth,
-  defaultExpanded,
-}: {
-  node: TreeProfileNode;
-  depth: number;
-  defaultExpanded?: boolean;
-}) {
-  const [expanded, setExpanded] = useState(defaultExpanded ?? depth < 2);
-  const hasChildren = node.children.length > 0;
-  const p = node.profile;
-  const isAdmin = p.role === 'admin';
-  const initials = getInitials(p);
-
-  return (
-    <div className="flex flex-col">
-      <div
-        className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${
-          isAdmin
-            ? 'bg-steel-800 border-steel-600'
-            : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-steel-500/50'
-        }`}
-        style={{ marginLeft: depth * 24 }}
-      >
-        <button
-          type="button"
-          onClick={() => hasChildren && setExpanded((e) => !e)}
-          className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 text-gray-400 hover:text-white"
-        >
-          {hasChildren ? expanded ? <FiChevronDown className="w-4 h-4" /> : <FiChevronRight className="w-4 h-4" /> : <span className="w-4" />}
-        </button>
-        <div className={`flex-shrink-0 w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border-2 ${isAdmin ? 'border-steel-500 bg-steel-800' : 'border-steel-600 bg-steel-800'}`}>
-          {p.avatar_url ? (
-            <img src={getAvatarDisplayUrl(p.avatar_url) ?? ''} alt={p.full_name || ''} className="w-full h-full object-cover" />
-          ) : (
-            <span className="text-steel-300 font-bold text-sm">{initials}</span>
-          )}
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="font-semibold text-white truncate">
-            {p.full_name || 'Sem nome'}
-            {isAdmin && <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-steel-700 text-steel-200">Admin</span>}
-          </p>
-          <p className="text-sm text-gray-400 truncate flex items-center gap-1">
-            <FiMail className="w-3 h-3 flex-shrink-0" />
-            {p.email}
-          </p>
-          {p.referral_code && (
-            <p className="text-xs text-steel-400 mt-0.5">Código: {p.referral_code}</p>
-          )}
-        </div>
-        {hasChildren && (
-          <span className="flex-shrink-0 text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">
-            {node.children.length} indicado(s)
-          </span>
-        )}
-      </div>
-      {hasChildren && expanded && (
-        <div className="mt-2 space-y-2 border-l-2 border-white/10 ml-5 pl-4">
-          {node.children.map((child) => (
-            <TopicNode key={child.profile.id} node={child} depth={depth + 1} defaultExpanded={depth < 1} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-type ViewMode = 'organogram' | 'topic' | 'avatar';
-
-const MIN_ZOOM = 0.25;
-const MAX_ZOOM = 2;
-const ZOOM_STEP = 0.15;
-const DEFAULT_ZOOM = 0.75;
+type ViewMode = RedeViewMode;
 
 export default function AdminRedePage() {
   const { user, profile, loading: authLoading } = useAuth();
@@ -196,92 +31,9 @@ export default function AdminRedePage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>('organogram');
-  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const dragStartRef = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const transformWrapperRef = useRef<HTMLDivElement>(null);
-
-  const zoomIn = useCallback(() => setZoom((z) => Math.min(MAX_ZOOM, z + ZOOM_STEP)), []);
-  const zoomOut = useCallback(() => setZoom((z) => Math.max(MIN_ZOOM, z - ZOOM_STEP)), []);
-
-  useEffect(() => {
-    setZoom(DEFAULT_ZOOM);
-  }, [viewMode]);
-
-  useLayoutEffect(() => {
-    const viewport = viewportRef.current;
-    const wrapper = transformWrapperRef.current;
-    const content = wrapper?.firstElementChild as HTMLElement | null;
-    if (!viewport || !content) return;
-    const vw = viewport.clientWidth;
-    const cw = content.offsetWidth;
-    const panX = vw / 2 - (cw * zoom) / 2;
-    setPan({ x: panX, y: 0 });
-  }, [viewMode, zoom, profiles.length]);
-
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button !== 0) return;
-    if ((e.target as HTMLElement).closest('button, a, [role="button"]')) return;
-    setIsDragging(true);
-    dragStartRef.current = { x: e.clientX, y: e.clientY, panX: pan.x, panY: pan.y };
-  }, [pan]);
-
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging) return;
-    setPan({
-      x: dragStartRef.current.panX + e.clientX - dragStartRef.current.x,
-      y: dragStartRef.current.panY + e.clientY - dragStartRef.current.y,
-    });
-  }, [isDragging]);
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  useEffect(() => {
-    if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-    }
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDragging, handleMouseMove, handleMouseUp]);
-
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (e.touches.length !== 1) return;
-    if ((e.target as HTMLElement).closest('button, a, [role="button"]')) return;
-    setIsDragging(true);
-    dragStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, panX: pan.x, panY: pan.y };
-  }, [pan]);
-
-  const handleTouchMove = useCallback((e: TouchEvent) => {
-    if (!isDragging || e.touches.length !== 1) return;
-    e.preventDefault();
-    setPan({
-      x: dragStartRef.current.panX + e.touches[0].clientX - dragStartRef.current.x,
-      y: dragStartRef.current.panY + e.touches[0].clientY - dragStartRef.current.y,
-    });
-  }, [isDragging]);
-
-  const handleTouchEnd = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  useEffect(() => {
-    if (isDragging) {
-      window.addEventListener('touchmove', handleTouchMove, { passive: false });
-      window.addEventListener('touchend', handleTouchEnd);
-    }
-    return () => {
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [isDragging, handleTouchMove, handleTouchEnd]);
+  const [viewMode, setViewMode] = useState<ViewMode>('vetor');
+  const [viewDropdownOpen, setViewDropdownOpen] = useState(false);
+  const viewDropdownRef = useRef<HTMLDivElement>(null);
 
   const fetchStarted = useRef(false);
   useEffect(() => {
@@ -311,6 +63,7 @@ export default function AdminRedePage() {
         referral_code: p.referral_code ?? null,
         role: p.role ?? null,
         avatar_url: p.avatar_url ?? null,
+        created_at: (p as { created_at?: string | null }).created_at ?? null,
       })));
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erro ao carregar rede');
@@ -318,6 +71,16 @@ export default function AdminRedePage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const onOutside = (e: MouseEvent) => {
+      if (viewDropdownRef.current && !viewDropdownRef.current.contains(e.target as Node)) setViewDropdownOpen(false);
+    };
+    if (viewDropdownOpen) {
+      document.addEventListener('click', onOutside);
+      return () => document.removeEventListener('click', onOutside);
+    }
+  }, [viewDropdownOpen]);
 
   if (authLoading) {
     return (
@@ -335,13 +98,6 @@ export default function AdminRedePage() {
     );
   }
 
-  const roots = buildTree(profiles, null);
-  const displayRoots = roots.length > 0 ? roots : profiles.length > 0 ? [{
-    profile: profiles.find((p) => p.role === 'admin') || profiles[0],
-    children: buildTree(profiles, profiles.find((p) => p.role === 'admin')?.id ?? profiles[0]?.id ?? ''),
-    depth: 0,
-  }] as TreeProfileNode[] : [];
-
   return (
     <div className="py-6">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -349,118 +105,72 @@ export default function AdminRedePage() {
           <div>
             <h1 className="text-3xl font-bold text-white font-display">Rede em mapa</h1>
             <p className="mt-2 text-sm text-gray-400">
-              {viewMode === 'organogram'
-                ? 'Visualização em organograma. Arraste para navegar.'
-                : viewMode === 'topic'
-                  ? 'Estrutura em tópicos. Clique na seta para expandir ou recolher.'
-                  : 'Avatares. Clique nos círculos para expandir ou recolher.'}
+              {viewMode === 'vetor'
+                ? 'Vetor horizontal: seta azul = indicação direta, amarela = bônus. 2º e 3º sob o mesmo sponsor sinalizados.'
+                : viewMode === 'avatar'
+                  ? 'Avatares em grafo. Use os controles para zoom e pan.'
+                  : 'Organograma em árvore. Use os controles para zoom e pan.'}
             </p>
             {error && <p className="mt-2 text-sm text-steel-400">{error}</p>}
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex gap-2">
+            <div className="relative" ref={viewDropdownRef}>
               <button
                 type="button"
-                onClick={() => setViewMode('organogram')}
-                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
-                  viewMode === 'organogram'
-                    ? 'bg-steel-800 border-steel-600 text-steel-300'
-                    : 'border-white/10 text-gray-400 hover:bg-white/5 hover:text-gray-200'
-                }`}
-                title="Organograma"
+                onClick={() => setViewDropdownOpen((o) => !o)}
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-sm font-medium transition-all min-w-[140px] justify-between"
+                title="Tipo de visualização"
               >
-                <FiGitBranch className="w-4 h-4" />
-                Organograma
+                <span className="flex items-center gap-2">
+                  {viewMode === 'vetor' && <FiGitBranch className="w-4 h-4" />}
+                  {viewMode === 'avatar' && <FiCircle className="w-4 h-4" />}
+                  {viewMode === 'organogram' && <FiGitBranch className="w-4 h-4" />}
+                  {viewMode === 'vetor' && 'Vetor'}
+                  {viewMode === 'avatar' && 'Avatares'}
+                  {viewMode === 'organogram' && 'Organograma'}
+                </span>
+                <FiChevronDown className={`w-4 h-4 transition-transform ${viewDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('topic')}
-                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
-                  viewMode === 'topic'
-                    ? 'bg-steel-800 border-steel-600 text-steel-300'
-                    : 'border-white/10 text-gray-400 hover:bg-white/5 hover:text-gray-200'
-                }`}
-                title="Estrutura em tópicos"
-              >
-                <FiList className="w-4 h-4" />
-                Tópicos
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('avatar')}
-                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
-                  viewMode === 'avatar'
-                    ? 'bg-steel-800 border-steel-600 text-steel-300'
-                    : 'border-white/10 text-gray-400 hover:bg-white/5 hover:text-gray-200'
-                }`}
-                title="Avatares"
-              >
-                <FiCircle className="w-4 h-4" />
-                Avatares
-              </button>
-            </div>
-            <div className="flex items-center gap-1 border border-white/10 rounded-lg overflow-hidden">
-              <button
-                type="button"
-                onClick={zoomOut}
-                disabled={zoom <= MIN_ZOOM}
-                className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                title="Diminuir zoom"
-              >
-                <FiMinus className="w-4 h-4" />
-              </button>
-              <span className="px-3 py-1.5 text-sm text-gray-300 min-w-[52px] text-center">
-                {Math.round(zoom * 100)}%
-              </span>
-              <button
-                type="button"
-                onClick={zoomIn}
-                disabled={zoom >= MAX_ZOOM}
-                className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                title="Aumentar zoom"
-              >
-                <FiPlus className="w-4 h-4" />
-              </button>
+              {viewDropdownOpen && (
+                <div className="absolute top-full left-0 mt-1 py-1 rounded-lg border border-white/10 bg-rich-black shadow-xl z-50 min-w-[160px]">
+                  <button
+                    type="button"
+                    onClick={() => { setViewMode('vetor'); setViewDropdownOpen(false); }}
+                    className={`w-full flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors ${viewMode === 'vetor' ? 'bg-steel-800 text-steel-200' : 'text-gray-300 hover:bg-white/10 hover:text-white'}`}
+                  >
+                    <FiGitBranch className="w-4 h-4 flex-shrink-0" />
+                    Vetor
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setViewMode('avatar'); setViewDropdownOpen(false); }}
+                    className={`w-full flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors ${viewMode === 'avatar' ? 'bg-steel-800 text-steel-200' : 'text-gray-300 hover:bg-white/10 hover:text-white'}`}
+                  >
+                    <FiCircle className="w-4 h-4 flex-shrink-0" />
+                    Avatares
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setViewMode('organogram'); setViewDropdownOpen(false); }}
+                    className={`w-full flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors ${viewMode === 'organogram' ? 'bg-steel-800 text-steel-200' : 'text-gray-300 hover:bg-white/10 hover:text-white'}`}
+                  >
+                    <FiGitBranch className="w-4 h-4 flex-shrink-0" />
+                    Organograma
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        <div
-          ref={viewportRef}
-          className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] min-h-[420px] select-none"
-          style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-          onMouseDown={handleMouseDown}
-          onTouchStart={handleTouchStart}
-        >
-          <div
-            ref={transformWrapperRef}
-            className="absolute top-0 left-0 py-6 px-2 origin-top-left transition-transform will-change-transform"
-            style={{
-              transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-              minWidth: viewMode === 'organogram' ? '100%' : undefined,
-              minHeight: viewMode === 'avatar' ? 300 : undefined,
-            }}
-          >
-            {displayRoots.length === 0 ? (
-              <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center text-gray-400 w-full">
-                Nenhum membro na rede ainda.
-              </div>
-            ) : viewMode === 'organogram' ? (
-              <div className="flex justify-center min-w-max pb-8">
-                {displayRoots.map((node) => (
-                  <OrganogramNode key={node.profile.id} node={node} />
-                ))}
-              </div>
-            ) : viewMode === 'avatar' ? (
-              <AvatarTreeChart roots={displayRoots} />
-            ) : (
-              <div className="space-y-3 max-w-3xl">
-                {displayRoots.map((node) => (
-                  <TopicNode key={node.profile.id} node={node} depth={0} defaultExpanded={true} />
-                ))}
-              </div>
-            )}
-          </div>
+        <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] min-h-[420px]">
+          {profiles.length === 0 ? (
+            <div className="flex items-center justify-center h-[420px] rounded-xl border border-white/10 bg-white/5 p-8 text-center text-gray-400">
+              Nenhum membro na rede ainda.
+            </div>
+          ) : (
+            <AdminRedeFlow viewMode={viewMode} profiles={profiles} />
+          )}
         </div>
       </div>
     </div>

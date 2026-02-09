@@ -18,7 +18,7 @@ serve(async (req) => {
     const { data: profiles, error: profilesError } = await supabase.from('profiles').select('id, full_name, email, sponsor_id, referral_code, role, avatar_url, created_at').order('created_at', { ascending: true })
     if (profilesError) throw profilesError
     if (flat && isAdmin) {
-      const list = (profiles ?? []).map((p: { id: string; full_name: string | null; email: string; sponsor_id: string | null; referral_code?: string; role?: string; avatar_url?: string | null }) => ({
+      const list = (profiles ?? []).map((p: { id: string; full_name: string | null; email: string; sponsor_id: string | null; referral_code?: string; role?: string; avatar_url?: string | null; created_at?: string | null }) => ({
         id: p.id,
         full_name: p.full_name,
         email: p.email,
@@ -26,6 +26,7 @@ serve(async (req) => {
         referral_code: p.referral_code ?? null,
         role: p.role ?? null,
         avatar_url: p.avatar_url ?? null,
+        created_at: p.created_at ?? null,
       }))
       return new Response(JSON.stringify({ profiles: list }), { headers: { ...cors, 'Content-Type': 'application/json' } })
     }

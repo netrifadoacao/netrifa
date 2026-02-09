@@ -8,7 +8,7 @@ import { SiWhatsapp } from 'react-icons/si';
 
 const CHAVE_PIX = process.env.NEXT_PUBLIC_CHAVE_PIX_RECEBIMENTO || '81622570200';
 const NOME_BENEFICIARIO = 'MOISES DA SILVA DUARTE';
-const WHATSAPP_LINK = `https://wa.me/${process.env.NEXT_PUBLIC_NUMERO_WHATSAPP_INTEGRACAO || '5592984759201'}`;
+const WHATSAPP_LINK = `https://wa.me/${process.env.NEXT_PUBLIC_NUMERO_WHATSAPP_INTEGRACAO || '559286009714'}`;
 const EXPIRES_SEC = 30;
 
 export default function PixCheckoutModal({
