@@ -230,7 +230,8 @@ export default function LandingPage() {
                 Já pensou abrir o app e ver <span className="text-gold-300 font-bold">R$ 1.000.000</span> na tela?
               </p>
               <p className="text-steel-400 text-sm leading-relaxed max-w-md ml-auto mb-6">
-                Todo mês um sorteado leva o pot inteiro. <span className="text-gold-200/90">R$ 5 para entrar.</span> O próximo nome pode ser o seu.
+                Todo mês um sorteado leva o pot inteiro. <span className="text-gold-200/90">R$ 5 para entrar.</span> 
+                <br />O próximo nome pode ser o seu.
               </p>
               {user ? (
                 <Link href={isAdmin ? '/admin' : '/escritorio'} className="inline-flex items-center justify-center gap-2 px-6 py-3 btn-gold-metallic font-semibold rounded-full text-sm lg:ml-auto">
@@ -297,10 +298,10 @@ export default function LandingPage() {
             </div>
             <div className="lg:col-span-4 flex flex-col justify-center order-3 text-center lg:text-left lg:pl-2">
               <p className="font-display text-[11px] sm:text-xs font-bold text-gold-400/90 uppercase tracking-[0.2em] mb-5">
-                Pode ser você.
+                O que você faria com UM MILHÃO?
               </p>
               <p className="text-xl sm:text-2xl text-white font-bold leading-snug mb-4">
-                E se o próximo nome sorteado fosse o seu?
+                E se o próximo sorteado for <span className="text-gold-300">você</span>?
               </p>
               <p className="text-steel-400 text-sm leading-relaxed max-w-md">
                 Uma live por mês. Um ganhador leva tudo. Acima de 1 milhão, o que sobra vai para a <span className="text-gold-300">Virada do Milhão</span>. Dúvida? A gente responde.
