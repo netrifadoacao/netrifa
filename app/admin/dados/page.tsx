@@ -14,7 +14,7 @@ import { uploadAvatarWithProgress } from '@/lib/uploadAvatar';
 function DadosSkeleton() {
   return (
     <div className="py-6">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <div className="h-9 w-48 bg-white/10 rounded animate-pulse" />
           <div className="mt-2 h-4 w-80 bg-white/5 rounded animate-pulse" />
@@ -198,7 +198,7 @@ export default function AdminDadosPage() {
         />
       )}
     <div className="py-6">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white font-display">Meus Dados</h1>
           <p className="mt-2 text-sm text-gray-400">

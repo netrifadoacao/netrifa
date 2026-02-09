@@ -59,6 +59,17 @@ export async function invokeFunction<T = unknown>(
 export type DashboardChartPoint = { data: string; quantidade: number }
 export type DashboardTopProduct = { nome: string; vendas: number }
 
+export type NetworkActivityItem = {
+  orderId?: string
+  createdAt: string
+  buyer: { id: string; nome: string; email: string; avatar_url: string | null } | null
+  upline: { id: string; nome: string; email: string; avatar_url: string | null } | null
+  bonusTotal: number
+  position: number
+  isPresente: boolean
+  orderAmount: number
+}
+
 export type AdminDashboardResponse = {
   totalVendidos: number
   faturamento: number
@@ -68,6 +79,7 @@ export type AdminDashboardResponse = {
   membersByDay: DashboardChartPoint[]
   withdrawalsByDay: DashboardChartPoint[]
   topProducts: DashboardTopProduct[]
+  networkActivity?: NetworkActivityItem[]
 }
 
 export type NetworkProfile = { id: string; full_name: string | null; email: string; sponsor_id: string | null; referral_code?: string | null; role?: string | null; avatar_url?: string | null }
