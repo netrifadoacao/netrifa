@@ -217,9 +217,9 @@ export default function LandingPage() {
       <section id="dia-do-milhao" className="relative py-12 md:py-16 overflow-y-hidden scroll-mt-20">
         <div className="absolute inset-0 bg-gradient-to-b from-gold-950/20 via-rich-black to-rich-black" aria-hidden />
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.05]" aria-hidden />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-4 items-center min-h-[480px] md:min-h-[520px]">
-            <div className="lg:col-span-3 flex flex-col justify-center order-2 lg:order-1 text-center lg:text-right lg:pr-6">
+        <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-5 lg:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-1 items-center min-h-[480px] md:min-h-[520px]">
+            <div className="lg:col-span-4 flex flex-col justify-center order-2 lg:order-1 text-center lg:text-right lg:pr-2">
               <p className="font-display text-[11px] sm:text-xs font-bold text-gold-400/90 uppercase tracking-[0.2em] mb-5">
                 Uma live. Um sorteado. Todo o pot.
               </p>
@@ -229,12 +229,23 @@ export default function LandingPage() {
               <p className="text-xl sm:text-2xl text-steel-200 font-medium leading-snug mb-5">
                 Já pensou abrir o app e ver <span className="text-gold-300 font-bold">R$ 1.000.000</span> na tela?
               </p>
-              <p className="text-steel-400 text-sm leading-relaxed max-w-xs ml-auto">
+              <p className="text-steel-400 text-sm leading-relaxed max-w-md ml-auto mb-6">
                 Todo mês um sorteado leva o pot inteiro. <span className="text-gold-200/90">R$ 5 para entrar.</span> O próximo nome pode ser o seu.
               </p>
+              {user ? (
+                <Link href={isAdmin ? '/admin' : '/escritorio'} className="inline-flex items-center justify-center gap-2 px-6 py-3 btn-gold-metallic font-semibold rounded-full text-sm lg:ml-auto">
+                  <span>Meu Escritório</span>
+                  <FiArrowRight className="w-4 h-4" />
+                </Link>
+              ) : (
+                <Link href="/register" className="inline-flex items-center justify-center gap-2 px-6 py-3 btn-gold-metallic font-semibold rounded-full text-sm lg:ml-auto">
+                  <span>Entrar na rede</span>
+                  <FiArrowRight className="w-4 h-4" />
+                </Link>
+              )}
             </div>
-            <div className="lg:col-span-6 flex justify-center items-start order-1 lg:order-2 overflow-y-hidden min-h-[380px] md:min-h-[440px] pt-2">
-              <div className="relative w-[320px] sm:w-[400px] md:w-[440px] flex-shrink-0" style={{ marginBottom: '-200px' }}>
+            <div className="lg:col-span-4 flex justify-center items-start order-1 lg:order-2 overflow-y-hidden min-h-[380px] md:min-h-[440px] pt-2">
+              <div className="relative w-[300px] sm:w-[380px] md:w-[400px] flex-shrink-0" style={{ marginBottom: '-200px' }}>
                 <div className="phone-glass-gold p-2.5 rounded-[2.75rem]">
                   <div className="phone-screen rounded-[2.25rem] h-[620px] sm:h-[700px] md:h-[760px] flex flex-col overflow-hidden min-w-0">
                     <div className="flex items-center justify-between px-4 pt-14 pb-2">
@@ -246,8 +257,8 @@ export default function LandingPage() {
                     <div className="px-4 pt-4 pb-5 border-b border-gold-500/15 min-w-0">
                       <p className="text-xs text-gold-400/70 mb-1">Saldo disponível</p>
                       <div className="flex items-baseline gap-1 min-w-0 overflow-hidden">
-                        <span className="counter-gold text-2xl sm:text-3xl md:text-4xl font-black shrink-0">R$</span>
-                        <span className="counter-gold text-2xl sm:text-3xl md:text-4xl font-black tabular-nums leading-none min-w-0 overflow-hidden">
+                        <span className="counter-gold text-3xl sm:text-4xl md:text-5xl font-black shrink-0">R$</span>
+                        <span className="counter-gold text-3xl sm:text-4xl md:text-5xl font-black tabular-nums leading-none min-w-0 overflow-hidden">
                           <AnimatedGoldCounter value={1000000} duration={3500} decimals={2} />
                         </span>
                       </div>
@@ -284,19 +295,25 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-            <div className="lg:col-span-3 flex flex-col justify-center order-3 text-center lg:text-left lg:pl-6">
+            <div className="lg:col-span-4 flex flex-col justify-center order-3 text-center lg:text-left lg:pl-2">
               <p className="font-display text-[11px] sm:text-xs font-bold text-gold-400/90 uppercase tracking-[0.2em] mb-5">
                 Pode ser você.
               </p>
               <p className="text-xl sm:text-2xl text-white font-bold leading-snug mb-4">
                 E se o próximo nome sorteado fosse o seu?
               </p>
-              <p className="text-steel-400 text-sm leading-relaxed max-w-xs">
+              <p className="text-steel-400 text-sm leading-relaxed max-w-md">
                 Uma live por mês. Um ganhador leva tudo. Acima de 1 milhão, o que sobra vai para a <span className="text-gold-300">Virada do Milhão</span>. Dúvida? A gente responde.
               </p>
-              <p className="text-gold-200/90 text-xs font-medium mt-6 uppercase tracking-wider">
+              <p className="text-gold-200/90 text-xs font-medium mt-6 uppercase tracking-wider mb-6">
                 R$ 5 · 1x por mês · 1 ganhador
               </p>
+              {!user && (
+                <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-full text-sm bg-[#25D366]/20 border border-[#25D366]/50 text-white hover:bg-[#25D366]/35 hover:border-[#25D366]/70 hover:brightness-110 lg:mr-auto">
+                  <SiWhatsapp className="w-5 h-5" />
+                  <span>Tirar dúvidas no WhatsApp</span>
+                </a>
+              )}
             </div>
           </div>
         </div>
