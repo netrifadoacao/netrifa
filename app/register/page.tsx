@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
@@ -8,6 +8,14 @@ import Image from 'next/image';
 import { TERMOS_TITULO, TERMOS_CONTEUDO } from '@/content/termos-adesao';
 
 const VALOR_ADESAO = 250;
+type CheckoutMethod = 'card' | 'pix';
+type RegisteredUser = { userId: string; email: string } | null;
+type PixData = {
+  paymentId: string;
+  qrCode: string;
+  qrCodeBase64: string;
+  expiresAt: string | null;
+};
 
 export default function RegisterPage() {
   const [nome, setNome] = useState('');
@@ -17,10 +25,107 @@ export default function RegisterPage() {
   const [aceiteTermos, setAceiteTermos] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [registeredUser, setRegisteredUser] = useState<RegisteredUser>(null);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [selectedMethod, setSelectedMethod] = useState<CheckoutMethod>('card');
+  const [pixData, setPixData] = useState<PixData | null>(null);
+  const [pixLoading, setPixLoading] = useState(false);
+  const [pixChecking, setPixChecking] = useState(false);
+  const [pixMessage, setPixMessage] = useState('');
+  const [copiedPixCode, setCopiedPixCode] = useState(false);
   const { register } = useAuth();
   const searchParams = useSearchParams();
   const patrocinadorLink = searchParams.get('ref');
   const pagamentoCancelado = searchParams.get('payment') === 'cancelled';
+
+  const closeCheckoutModal = () => {
+    setShowCheckoutModal(false);
+    setPixData(null);
+    setPixMessage('');
+    setCopiedPixCode(false);
+    setSelectedMethod('card');
+  };
+
+  const startCardCheckout = async (user: { userId: string; email: string }) => {
+    const checkoutRes = await fetch('/api/checkout/adesao', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: user.userId,
+        email: user.email,
+      }),
+    });
+
+    const checkoutData = await checkoutRes.json().catch(() => ({}));
+    if (!checkoutRes.ok) {
+      throw new Error(checkoutData?.error ?? 'Nao foi possivel iniciar o checkout Stripe.');
+    }
+    if (!checkoutData?.checkoutUrl || typeof checkoutData.checkoutUrl !== 'string') {
+      throw new Error('Checkout Stripe retornou sem URL valida.');
+    }
+    window.location.href = checkoutData.checkoutUrl;
+  };
+
+  const generatePixQrCode = async (user: { userId: string; email: string }) => {
+    setPixLoading(true);
+    setPixMessage('');
+    try {
+      const res = await fetch('/api/checkout/adesao/mp-pix', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.userId,
+          email: user.email,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data?.error ?? 'Falha ao gerar pagamento PIX.');
+      }
+      setPixData({
+        paymentId: String(data.paymentId),
+        qrCode: String(data.qrCode),
+        qrCodeBase64: String(data.qrCodeBase64),
+        expiresAt: typeof data.expiresAt === 'string' ? data.expiresAt : null,
+      });
+      setPixMessage('QR Code gerado. Pague via app do banco e aguarde a confirmacao.');
+    } catch (err: unknown) {
+      setPixMessage(err instanceof Error ? err.message : 'Erro ao gerar PIX.');
+    } finally {
+      setPixLoading(false);
+    }
+  };
+
+  const checkPixStatus = async (paymentId: string, userId: string) => {
+    setPixChecking(true);
+    try {
+      const res = await fetch(
+        `/api/checkout/adesao/mp-pix/status?payment_id=${encodeURIComponent(paymentId)}&user_id=${encodeURIComponent(userId)}`,
+        { cache: 'no-store' }
+      );
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data?.error ?? 'Falha ao consultar status PIX.');
+      }
+      if (Boolean(data?.isPaid)) {
+        window.location.href = `/register/confirmacao?mp_payment_id=${encodeURIComponent(paymentId)}&user_id=${encodeURIComponent(userId)}`;
+        return;
+      }
+      setPixMessage('Pagamento ainda pendente. Assim que aprovar, seguiremos automaticamente.');
+    } catch (err: unknown) {
+      setPixMessage(err instanceof Error ? err.message : 'Falha ao verificar pagamento PIX.');
+    } finally {
+      setPixChecking(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!showCheckoutModal || selectedMethod !== 'pix' || !pixData?.paymentId || !registeredUser?.userId) return;
+    const timer = setInterval(() => {
+      checkPixStatus(pixData.paymentId, registeredUser.userId);
+    }, 10000);
+    return () => clearInterval(timer);
+  }, [showCheckoutModal, selectedMethod, pixData?.paymentId, registeredUser?.userId]);
 
   const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,25 +143,8 @@ export default function RegisterPage() {
         senha,
         patrocinadorLink,
       });
-
-      const checkoutRes = await fetch('/api/checkout/adesao', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: signUp.userId,
-          email: signUp.email,
-        }),
-      });
-
-      const checkoutData = await checkoutRes.json().catch(() => ({}));
-      if (!checkoutRes.ok) {
-        throw new Error(checkoutData?.error ?? 'Nao foi possivel iniciar o checkout Stripe.');
-      }
-      if (!checkoutData?.checkoutUrl || typeof checkoutData.checkoutUrl !== 'string') {
-        throw new Error('Checkout Stripe retornou sem URL valida.');
-      }
-
-      window.location.href = checkoutData.checkoutUrl;
+      setRegisteredUser({ userId: signUp.userId, email: signUp.email });
+      setShowCheckoutModal(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Erro ao cadastrar');
     } finally {
@@ -186,18 +274,125 @@ export default function RegisterPage() {
           </label>
 
           <p className="text-sm text-steel-500">
-            Valor da adesão: <span className="font-semibold text-white">R$ {VALOR_ADESAO.toFixed(2)}</span> (pagamento via Stripe: cartao).
+            Valor da adesão: <span className="font-semibold text-white">R$ {VALOR_ADESAO.toFixed(2)}</span> (escolha PIX ou cartao no proximo passo).
           </p>
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !aceiteTermos}
             className="group relative w-full flex justify-center py-3 px-4 text-sm font-bold rounded-xl btn-gold-metallic focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-400 disabled:opacity-50 transition-all duration-200"
           >
             {loading ? 'Criando checkout...' : 'Continuar para pagamento'}
           </button>
         </form>
       </div>
+
+      {showCheckoutModal && registeredUser && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-lg glass-strong rounded-2xl border border-white/10 p-6 space-y-4">
+            <h3 className="text-xl font-display font-bold text-white">Escolha como deseja pagar</h3>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setSelectedMethod('pix')}
+                className={`rounded-xl border px-4 py-3 text-sm font-semibold transition-colors ${
+                  selectedMethod === 'pix'
+                    ? 'border-gold-400 bg-gold-500/20 text-white'
+                    : 'border-white/20 text-steel-300 hover:bg-white/5'
+                }`}
+              >
+                PIX (Mercado Pago)
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedMethod('card')}
+                className={`rounded-xl border px-4 py-3 text-sm font-semibold transition-colors ${
+                  selectedMethod === 'card'
+                    ? 'border-gold-400 bg-gold-500/20 text-white'
+                    : 'border-white/20 text-steel-300 hover:bg-white/5'
+                }`}
+              >
+                Cartao (Stripe)
+              </button>
+            </div>
+
+            {selectedMethod === 'pix' && !pixData && (
+              <button
+                type="button"
+                disabled={pixLoading}
+                onClick={() => generatePixQrCode(registeredUser)}
+                className="w-full py-3 px-4 rounded-xl btn-gold-metallic font-semibold disabled:opacity-50"
+              >
+                {pixLoading ? 'Gerando QR Code...' : 'Gerar QR Code PIX'}
+              </button>
+            )}
+
+            {selectedMethod === 'pix' && pixData && (
+              <div className="space-y-3 rounded-xl border border-white/10 bg-white/5 p-4">
+                <p className="text-sm text-steel-300">Escaneie o QR Code no app do seu banco para pagar.</p>
+                <div className="flex justify-center">
+                  <img
+                    src={`data:image/png;base64,${pixData.qrCodeBase64}`}
+                    alt="QR Code PIX"
+                    className="w-60 h-60 rounded-lg bg-white p-2"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(pixData.qrCode);
+                    setCopiedPixCode(true);
+                    setTimeout(() => setCopiedPixCode(false), 1800);
+                  }}
+                  className="w-full rounded-xl border border-white/20 px-4 py-2 text-sm text-steel-300 hover:bg-white/5"
+                >
+                  {copiedPixCode ? 'Codigo PIX copiado!' : 'Copiar codigo PIX'}
+                </button>
+                {pixData.expiresAt && <p className="text-xs text-steel-500">Expira em: {new Date(pixData.expiresAt).toLocaleString('pt-BR')}</p>}
+                <button
+                  type="button"
+                  disabled={pixChecking}
+                  onClick={() => checkPixStatus(pixData.paymentId, registeredUser.userId)}
+                  className="w-full rounded-xl btn-gold-metallic px-4 py-2 font-semibold disabled:opacity-50"
+                >
+                  {pixChecking ? 'Verificando pagamento...' : 'Ja paguei, verificar agora'}
+                </button>
+              </div>
+            )}
+
+            {selectedMethod === 'card' && (
+              <button
+                type="button"
+                disabled={loading}
+                onClick={async () => {
+                  try {
+                    setLoading(true);
+                    await startCardCheckout(registeredUser);
+                  } catch (err: unknown) {
+                    setPixMessage(err instanceof Error ? err.message : 'Falha ao abrir checkout de cartao.');
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                className="w-full py-3 px-4 rounded-xl btn-gold-metallic font-semibold disabled:opacity-50"
+              >
+                {loading ? 'Abrindo checkout...' : 'Continuar com cartao'}
+              </button>
+            )}
+
+            {pixMessage && <p className="text-sm text-steel-300">{pixMessage}</p>}
+
+            <button
+              type="button"
+              onClick={closeCheckoutModal}
+              className="w-full rounded-xl border border-white/20 px-4 py-2 text-sm text-steel-300 hover:bg-white/5"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -9,25 +9,32 @@ type CheckoutState = 'loading' | 'paid' | 'pending' | 'error';
 export default function RegisterConfirmationPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
+  const mpPaymentId = searchParams.get('mp_payment_id');
+  const mpUserId = searchParams.get('user_id');
   const [state, setState] = useState<CheckoutState>('loading');
   const [message, setMessage] = useState('Validando pagamento...');
   const [lastCheck, setLastCheck] = useState<string | null>(null);
 
   const hasSessionId = useMemo(() => Boolean(sessionId && sessionId.trim()), [sessionId]);
+  const hasMpInfo = useMemo(
+    () => Boolean(mpPaymentId && mpPaymentId.trim() && mpUserId && mpUserId.trim()),
+    [mpPaymentId, mpUserId]
+  );
 
   const checkStatus = useCallback(async () => {
-    if (!sessionId) {
+    if (!hasSessionId && !hasMpInfo) {
       setState('error');
-      setMessage('Sessao de checkout nao informada.');
+      setMessage('Dados de pagamento nao informados.');
       return;
     }
     setState('loading');
     setMessage('Validando pagamento...');
 
     try {
-      const res = await fetch(`/api/checkout/adesao/status?session_id=${encodeURIComponent(sessionId)}`, {
-        credentials: 'include',
-      });
+      const url = hasSessionId && sessionId
+        ? `/api/checkout/adesao/status?session_id=${encodeURIComponent(sessionId)}`
+        : `/api/checkout/adesao/mp-pix/status?payment_id=${encodeURIComponent(mpPaymentId ?? '')}&user_id=${encodeURIComponent(mpUserId ?? '')}`;
+      const res = await fetch(url, { credentials: 'include' });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         throw new Error(data?.error ?? 'Nao foi possivel validar o pagamento.');
@@ -46,24 +53,24 @@ export default function RegisterConfirmationPage() {
       setState('error');
       setMessage(err instanceof Error ? err.message : 'Erro ao consultar status do checkout.');
     }
-  }, [sessionId]);
+  }, [sessionId, hasSessionId, hasMpInfo, mpPaymentId, mpUserId]);
 
   useEffect(() => {
-    if (!hasSessionId) {
+    if (!hasSessionId && !hasMpInfo) {
       setState('error');
-      setMessage('Sessao de checkout nao informada.');
+      setMessage('Dados de pagamento nao informados.');
       return;
     }
     checkStatus();
-  }, [hasSessionId, checkStatus]);
+  }, [hasSessionId, hasMpInfo, checkStatus]);
 
   useEffect(() => {
-    if (state !== 'pending' || !sessionId) return;
+    if (state !== 'pending') return;
     const timer = setInterval(() => {
       checkStatus();
     }, 10000);
     return () => clearInterval(timer);
-  }, [state, sessionId, checkStatus]);
+  }, [state, checkStatus]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-rich-black p-6">
