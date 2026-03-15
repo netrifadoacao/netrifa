@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { getStripeClient } from '@/lib/stripe';
+import Stripe from 'stripe';
 
 function normalizeAmountToCents(value: number) {
   return Math.round(Number(value) * 100);
@@ -31,9 +32,8 @@ export async function POST(req: NextRequest) {
 
     const stripe = getStripeClient();
     const baseUrl = req.nextUrl.origin;
-    const session = await stripe.checkout.sessions.create({
+    const basePayload: Omit<Stripe.Checkout.SessionCreateParams, 'payment_method_types'> = {
       mode: 'payment',
-      payment_method_types: ['card', 'pix'],
       customer_email: email,
       line_items: [
         {
@@ -54,6 +54,11 @@ export async function POST(req: NextRequest) {
       },
       success_url: `${baseUrl}/register/confirmacao?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/register?payment=cancelled`,
+    };
+
+    const session: Stripe.Checkout.Session = await stripe.checkout.sessions.create({
+      ...basePayload,
+      payment_method_types: ['card'],
     });
 
     return NextResponse.json({
