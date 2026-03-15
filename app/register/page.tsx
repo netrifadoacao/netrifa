@@ -186,7 +186,7 @@ export default function RegisterPage() {
           </label>
 
           <p className="text-sm text-steel-500">
-            Valor da adesão: <span className="font-semibold text-white">R$ {VALOR_ADESAO.toFixed(2)}</span> (pagamento via Stripe: credito, debito e PIX).
+            Valor da adesão: <span className="font-semibold text-white">R$ {VALOR_ADESAO.toFixed(2)}</span> (pagamento via Stripe: cartao).
           </p>
 
           <button
