@@ -1,11 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
-import PixCheckoutModal from '@/components/PixCheckoutModal';
 import { TERMOS_TITULO, TERMOS_CONTEUDO } from '@/content/termos-adesao';
 
 const VALOR_ADESAO = 250;
@@ -18,35 +17,46 @@ export default function RegisterPage() {
   const [aceiteTermos, setAceiteTermos] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPixModal, setShowPixModal] = useState(false);
   const { register } = useAuth();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const patrocinadorLink = searchParams.get('ref');
+  const pagamentoCancelado = searchParams.get('payment') === 'cancelled';
 
-  const handleSubmitForm = (e: React.FormEvent) => {
+  const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     if (!aceiteTermos) {
       setError('É obrigatório aceitar os termos do contrato para continuar.');
       return;
     }
-    setShowPixModal(true);
-  };
-
-  const handlePixContinue = async () => {
-    setError('');
     setLoading(true);
     try {
-      await register({
+      const signUp = await register({
         nome,
         email,
         telefone,
         senha,
         patrocinadorLink,
       });
-      setShowPixModal(false);
-      router.replace('/escritorio');
+
+      const checkoutRes = await fetch('/api/checkout/adesao', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: signUp.userId,
+          email: signUp.email,
+        }),
+      });
+
+      const checkoutData = await checkoutRes.json().catch(() => ({}));
+      if (!checkoutRes.ok) {
+        throw new Error(checkoutData?.error ?? 'Nao foi possivel iniciar o checkout Stripe.');
+      }
+      if (!checkoutData?.checkoutUrl || typeof checkoutData.checkoutUrl !== 'string') {
+        throw new Error('Checkout Stripe retornou sem URL valida.');
+      }
+
+      window.location.href = checkoutData.checkoutUrl;
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Erro ao cadastrar');
     } finally {
@@ -95,6 +105,13 @@ export default function RegisterPage() {
           {error && (
             <div className="rounded-lg bg-white/5 border border-white/10 p-4">
               <div className="text-sm text-steel-300">{error}</div>
+            </div>
+          )}
+          {pagamentoCancelado && !error && (
+            <div className="rounded-lg bg-white/5 border border-white/10 p-4">
+              <div className="text-sm text-steel-300">
+                Pagamento cancelado. Revise os dados e tente novamente.
+              </div>
             </div>
           )}
           <div className="space-y-4">
@@ -169,7 +186,7 @@ export default function RegisterPage() {
           </label>
 
           <p className="text-sm text-steel-500">
-            Valor da adesão: <span className="font-semibold text-white">R$ {VALOR_ADESAO.toFixed(2)}</span> (pagamento via PIX na próxima etapa).
+            Valor da adesão: <span className="font-semibold text-white">R$ {VALOR_ADESAO.toFixed(2)}</span> (pagamento via Stripe: credito, debito e PIX).
           </p>
 
           <button
@@ -177,18 +194,10 @@ export default function RegisterPage() {
             disabled={loading}
             className="group relative w-full flex justify-center py-3 px-4 text-sm font-bold rounded-xl btn-gold-metallic focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-400 disabled:opacity-50 transition-all duration-200"
           >
-            {loading ? 'Cadastrando...' : 'Continuar para pagamento PIX'}
+            {loading ? 'Criando checkout...' : 'Continuar para pagamento'}
           </button>
         </form>
       </div>
-
-      {showPixModal && (
-        <PixCheckoutModal
-          valor={VALOR_ADESAO}
-          onClose={() => setShowPixModal(false)}
-          onContinue={handlePixContinue}
-        />
-      )}
     </div>
   );
 }

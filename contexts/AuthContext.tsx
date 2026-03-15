@@ -26,7 +26,7 @@ interface AuthContextType {
   session: Session | null;
   login: (email: string, senha: string) => Promise<{ session: { user: { id: string } } } | null>;
   loginAndGetRole: (email: string, senha: string) => Promise<'admin' | 'member' | null>;
-  register: (data: any) => Promise<void>;
+  register: (data: any) => Promise<{ userId: string; email: string }>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   loading: boolean;
@@ -240,7 +240,7 @@ export function AuthProvider({
   };
 
   const register = async (data: any) => {
-    const { error } = await supabase.auth.signUp({
+    const { data: signUpData, error } = await supabase.auth.signUp({
       email: data.email,
       password: data.senha,
       options: {
@@ -252,6 +252,11 @@ export function AuthProvider({
       }
     });
     if (error) throw error;
+    const userId = signUpData.user?.id;
+    if (!userId) {
+      throw new Error('Nao foi possivel identificar o usuario cadastrado.');
+    }
+    return { userId, email: data.email };
   };
 
   const logout = useCallback(async () => {
