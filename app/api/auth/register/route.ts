@@ -1,62 +1,64 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readJsonFile, writeJsonFile } from '@/lib/dataManager';
+import { createAdminClient } from '@/utils/supabase/admin';
+
+type RegisterBody = {
+  nome?: string;
+  email?: string;
+  telefone?: string;
+  senha?: string;
+  patrocinadorLink?: string | null;
+};
+
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
 
 export async function POST(request: NextRequest) {
   try {
-    const { nome, email, telefone, senha, patrocinadorLink } = await request.json();
-    
-    const users = readJsonFile<any>('users.json');
-    
-    // Verificar se email já existe
-    if (users.find((u: any) => u.email === email)) {
-      return NextResponse.json(
-        { error: 'Email já cadastrado' },
-        { status: 400 }
-      );
+    const body = (await request.json().catch(() => ({}))) as RegisterBody;
+    const nome = String(body.nome ?? '').trim();
+    const email = String(body.email ?? '').trim().toLowerCase();
+    const telefone = String(body.telefone ?? '').trim();
+    const senha = String(body.senha ?? '');
+    const patrocinadorLink = body.patrocinadorLink ? String(body.patrocinadorLink).trim() : null;
+
+    if (!nome || !email || !senha) {
+      return NextResponse.json({ error: 'Nome, email e senha sao obrigatorios.' }, { status: 400 });
     }
-    
-    // Encontrar patrocinador
-    let patrocinadorId = null;
-    if (patrocinadorLink) {
-      const patrocinador = users.find((u: any) => u.linkIndicacao === patrocinadorLink);
-      if (patrocinador) {
-        patrocinadorId = patrocinador.id;
-      }
+    if (!isValidEmail(email)) {
+      return NextResponse.json({ error: 'Email invalido.' }, { status: 400 });
     }
-    
-    // Criar novo usuário
-    const novoUsuario = {
-      id: String(users.length + 1),
-      nome,
+    if (senha.length < 6) {
+      return NextResponse.json({ error: 'A senha deve ter pelo menos 6 caracteres.' }, { status: 400 });
+    }
+
+    const admin = createAdminClient();
+    const { data, error } = await admin.auth.admin.createUser({
       email,
-      telefone,
-      senha,
-      tipo: 'usuario',
-      linkIndicacao: nome.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now(),
-      saldo: 0,
-      dadosBancarios: {
-        banco: '',
-        agencia: '',
-        conta: '',
-        pix: ''
+      password: senha,
+      email_confirm: false,
+      user_metadata: {
+        full_name: nome,
+        sponsor_referral_code: patrocinadorLink,
+        phone: telefone || null,
       },
-      patrocinadorId,
-      dataCadastro: new Date().toISOString()
-    };
-    
-    users.push(novoUsuario);
-    writeJsonFile('users.json', users);
-    
-    const { senha: _, ...userWithoutPassword } = novoUsuario;
-    
-    return NextResponse.json({
-      user: userWithoutPassword,
-      token: `mock-token-${novoUsuario.id}`
     });
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Erro ao cadastrar usuário' },
-      { status: 500 }
-    );
+
+    if (error) {
+      const code = String((error as { code?: string }).code ?? '');
+      if (code === 'email_exists') {
+        return NextResponse.json({ error: 'Email ja cadastrado.' }, { status: 409 });
+      }
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    const userId = data.user?.id;
+    if (!userId) {
+      return NextResponse.json({ error: 'Falha ao criar usuario.' }, { status: 500 });
+    }
+
+    return NextResponse.json({ userId, email }, { status: 201 });
+  } catch {
+    return NextResponse.json({ error: 'Erro ao cadastrar usuario.' }, { status: 500 });
   }
 }

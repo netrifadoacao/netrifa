@@ -240,23 +240,30 @@ export function AuthProvider({
   };
 
   const register = async (data: any) => {
-    const { data: signUpData, error } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.senha,
-      options: {
-        data: {
-          full_name: data.nome,
-          sponsor_referral_code: data.patrocinadorLink,
-          phone: data.telefone ?? null
-        }
-      }
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        nome: data.nome,
+        email: data.email,
+        telefone: data.telefone ?? null,
+        senha: data.senha,
+        patrocinadorLink: data.patrocinadorLink ?? null,
+      }),
     });
-    if (error) throw error;
-    const userId = signUpData.user?.id;
+
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(payload?.error ?? 'Falha ao cadastrar.');
+    }
+
+    const userId = payload?.userId;
     if (!userId) {
       throw new Error('Nao foi possivel identificar o usuario cadastrado.');
     }
-    return { userId, email: data.email };
+    return { userId, email: String(payload?.email ?? data.email) };
   };
 
   const logout = useCallback(async () => {
