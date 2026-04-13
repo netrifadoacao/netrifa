@@ -426,3 +426,11 @@ verify_jwt = false
 [functions.profile]
 enabled = true
 verify_jwt = false
+
+[functions.network-activity]
+enabled = true
+verify_jwt = false
+
+[functions.approve-users]
+enabled = true
+verify_jwt = false
