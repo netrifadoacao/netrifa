@@ -4,10 +4,14 @@ import { useMemo } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
-const getFunctionsUrl = () => {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  if (!url) throw new Error('NEXT_PUBLIC_SUPABASE_URL is required')
-  return `${url.replace(/\/$/, '')}/functions/v1`
+/** Chamadas passam por /api (same-origin); o servidor repassa ao Supabase e evita CORS. */
+const getFunctionsProxyPath = (name: string, params?: Record<string, string>) => {
+  const sp = new URLSearchParams()
+  if (params) {
+    Object.entries(params).forEach(([k, v]) => sp.set(k, v))
+  }
+  const qs = sp.toString()
+  return `/api/supabase-fn/${name}${qs ? `?${qs}` : ''}`
 }
 
 const EDGE_FUNCTION_TIMEOUT_MS = 20000
@@ -23,29 +27,28 @@ export async function invokeFunction<T = unknown>(
     const { data: { session } } = await supabase.auth.getSession()
     token = session?.access_token ?? undefined
   }
-  const base = getFunctionsUrl()
-  const url = new URL(`${base}/${name}`)
-  if (options.params) {
-    Object.entries(options.params).forEach(([k, v]) => url.searchParams.set(k, v))
-  }
+  const path = getFunctionsProxyPath(name, options.params)
+  const method = options.method ?? 'GET'
+  const hasBody = options.body !== undefined
+  const headers: Record<string, string> = {}
+  if (hasBody) headers['Content-Type'] = 'application/json'
+  if (token) headers.Authorization = `Bearer ${token}`
+
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), EDGE_FUNCTION_TIMEOUT_MS)
   let res: Response
   try {
-    res = await fetch(url.toString(), {
-      method: options.method ?? 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      ...(options.body !== undefined ? { body: JSON.stringify(options.body) } : {}),
+    res = await fetch(path, {
+      method,
+      credentials: 'include',
+      headers,
+      ...(hasBody ? { body: JSON.stringify(options.body) } : {}),
       signal: controller.signal,
     })
   } catch (e) {
-    clearTimeout(timeoutId)
     if (e instanceof Error) {
       if (e.name === 'AbortError') throw new Error('Timeout ao chamar o backend. Verifique se as Edge Functions estão em deploy no Supabase.')
-      throw new Error(e.message || 'Falha ao conectar ao backend. Verifique CORS e se as Edge Functions estão publicadas.')
+      throw new Error(e.message || 'Falha ao conectar ao backend.')
     }
     throw e
   } finally {
