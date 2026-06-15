@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
       .eq('key', 'valor_adesao')
       .single();
 
-    const valorAdesao = normalizeAmount(Number(configRow?.value ?? 250));
+    const valorAdesao = normalizeAmount(Number(configRow?.value ?? 1));
     if (!Number.isFinite(valorAdesao) || valorAdesao <= 0) {
       return NextResponse.json({ error: 'Valor de adesao invalido.' }, { status: 400 });
     }

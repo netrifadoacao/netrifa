@@ -32,8 +32,8 @@ export default function ConfigPage() {
     nivel3: 2,
     nivel4: 1,
     nivel5: 0.5,
-    valorMinimoSaque: 50,
-    valorAdesao: 250,
+    valorMinimoSaque: 1,
+    valorAdesao: 1,
     limiteMaximoSaque: 3000,
   });
 
@@ -203,7 +203,7 @@ export default function ConfigPage() {
                   min="0"
                   required
                   className="mt-1 block w-full border border-white/10 bg-black/20 rounded-lg shadow-sm py-2 px-3 text-white placeholder-gray-500 focus:outline-none focus:ring-steel-500 focus:border-steel-500 sm:text-sm transition-colors"
-                  value={formData.valorAdesao ?? 250}
+                  value={formData.valorAdesao ?? 1}
                   onChange={(e) => setFormData({ ...formData, valorAdesao: parseFloat(e.target.value) })}
                 />
               </div>

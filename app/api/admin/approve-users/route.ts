@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
     .select('value')
     .eq('key', 'valor_adesao')
     .single()
-  const valorAdesao = Number(configRow?.value ?? 250)
+  const valorAdesao = Number(configRow?.value ?? 1)
   const { data: existingOrder } = await admin
     .from('orders')
     .select('id')

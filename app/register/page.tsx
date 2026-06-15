@@ -7,7 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { TERMOS_TITULO, TERMOS_CONTEUDO } from '@/content/termos-adesao';
 
-const VALOR_ADESAO = 250;
+const VALOR_ADESAO = 1;
 type CheckoutMethod = 'card' | 'pix';
 type RegisteredUser = { userId: string; email: string } | null;
 type PixData = {

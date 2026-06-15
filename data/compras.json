@@ -21,7 +21,7 @@
     "id": "3",
     "usuarioId": "2",
     "produtoId": "2",
-    "valor": 250,
+    "valor": 1,
     "status": "aprovado",
     "dataCompra": "2024-02-10T00:00:00Z",
     "dataAprovacao": "2026-01-12T01:51:31.828Z"
@@ -39,7 +39,7 @@
     "id": "5",
     "usuarioId": "2",
     "produtoId": "2",
-    "valor": 250,
+    "valor": 1,
     "status": "aprovado",
     "dataCompra": "2026-01-25T21:15:07.190Z",
     "dataAprovacao": "2026-01-25T21:15:07.191Z"
@@ -48,7 +48,7 @@
     "id": "6",
     "usuarioId": "2",
     "produtoId": "2",
-    "valor": 250,
+    "valor": 1,
     "status": "aprovado",
     "dataCompra": "2026-01-25T21:35:21.969Z",
     "dataAprovacao": "2026-01-25T21:35:21.969Z"
@@ -57,7 +57,7 @@
     "id": "7",
     "usuarioId": "2",
     "produtoId": "2",
-    "valor": 250,
+    "valor": 1,
     "status": "aprovado",
     "dataCompra": "2026-01-25T22:30:43.340Z",
     "dataAprovacao": "2026-01-25T22:30:43.341Z"
